@@ -1,5 +1,5 @@
-import { doc, setDoc, updateDoc, Timestamp, getDoc, deleteDoc, collection, DocumentReference, type DocumentData, query, where, getDocs, type WhereFilterOp, serverTimestamp } from "firebase/firestore";
-import { _db, getRecaptchaVerifier, type AppUser, type Collections, type FirebaseUserPublicData } from "../";
+import { doc, setDoc, updateDoc, Timestamp, getDoc, deleteDoc, collection, DocumentReference, type DocumentData, query, where, getDocs, type WhereFilterOp, serverTimestamp, Firestore } from "firebase/firestore";
+import { getRecaptchaVerifier, type AppUser, type Collections, type FirebaseUserPublicData } from "../";
 import { logger } from "../../";
 import { validate } from "../../";
 import {
@@ -21,9 +21,9 @@ const _getFsUser = (auth: Auth): User => {
   return auth.currentUser;
 };
 
-export async function _getDoc<T>(collectionName:string, id: string): Promise<(T & { id: string }) | null>  {
+export async function _getDoc<T>(db: Firestore, collectionName:string, id: string): Promise<(T & { id: string }) | null>  {
   if(!validate.string(id)) throw new Error("Missing document ID.");
-  const ref = doc(_db, collectionName, id);
+  const ref = doc(db, collectionName, id);
   const snap = await getDoc(ref);
   if (!snap.exists()) return null;
   return { id: snap.id, ...snap.data() } as T & { id: string };
@@ -32,13 +32,13 @@ export async function _getDoc<T>(collectionName:string, id: string): Promise<(T 
 /**
  * @returns Restituisce l'id del documento creato 
  */
-export async function create<T>(auth: Auth, collectionName: Collections, data: T): Promise<string> {
+export async function create<T>(auth: Auth, db: Firestore, collectionName: Collections, data: T): Promise<string> {
   _userCollectionRestriction(collectionName);
   const date: Date = new Date();
-  const preRef = doc(collection(_db, collectionName)); // genera un nuovo doc ID dentro la collection
+  const preRef = doc(collection(db, collectionName)); // genera un nuovo doc ID dentro la collection
   await setDoc(preRef, {
     id: preRef.id,
-    locale: navigator?.language || (await appUserGet(auth))?.locale,
+    locale: navigator?.language || (await appUserGet(auth, db))?.locale,
     createdAt: Timestamp.fromDate(date),
     ...data
   });
@@ -48,11 +48,11 @@ export async function create<T>(auth: Auth, collectionName: Collections, data: T
 /**
  * @returns Restituisce l'id del documento 
  */
-export async function update<T>(collectionName: Collections, id: string, data: Partial<T>): Promise<string> {
+export async function update<T>(db: Firestore, collectionName: Collections, id: string, data: Partial<T>): Promise<string> {
   _userCollectionRestriction(collectionName);
   if(!validate.string(id)) throw new Error("Missing document ID.");
   const date: Date = new Date();
-  await updateDoc(doc(_db, collectionName, id), {
+  await updateDoc(doc(db, collectionName, id), {
     ...data
   });
   return id;
@@ -61,11 +61,11 @@ export async function update<T>(collectionName: Collections, id: string, data: P
 /**
  * @returns Restituisce l'id del documento 
  */
-export async function set<T>(collectionName: Collections, id: string, data: Partial<T>): Promise<string> {
+export async function set<T>(db: Firestore, collectionName: Collections, id: string, data: Partial<T>): Promise<string> {
   _userCollectionRestriction(collectionName);
   if(!validate.string(id)) throw new Error("Missing document ID.");
   const date: Date = new Date();
-  await setDoc(doc(_db, collectionName, id), {
+  await setDoc(doc(db, collectionName, id), {
     ...data,
     id
   });
@@ -78,24 +78,25 @@ export async function set<T>(collectionName: Collections, id: string, data: Part
  * @param id L'id del documento
  * @returns Restituisce i dati del documento se esiste, altrimenti null
  */
-export async function get<T>(collectionName: Collections, id: string): Promise<(T & { id: string }) | null> {
+export async function get<T>(db: Firestore, collectionName: Collections, id: string): Promise<(T & { id: string }) | null> {
   _userCollectionRestriction(collectionName);
-  return await _getDoc(collectionName,id);
+  return await _getDoc(db, collectionName,id);
 }
 
-export async function remove(collection: Collections, id: string): Promise<string> {
+export async function remove(db: Firestore, collection: Collections, id: string): Promise<string> {
   if(!validate.string(id)) throw new Error("Missing document ID.");
-  const docRef = doc(_db, collection, id);
+  const docRef = doc(db, collection, id);
   await deleteDoc(docRef);
   return id;
 }
 
 export async function removeWhere(
+  db: Firestore,
   collectionName: Collections,
   conditions: [string, WhereFilterOp, any][]
 ): Promise<string[]> {
   const q = query(
-    collection(_db, collectionName),
+    collection(db, collectionName),
     ...conditions.map(([field, op, value]) => where(field, op, value))
   );
   const snapshot = await getDocs(q);
@@ -108,14 +109,14 @@ export async function removeWhere(
 
 ///////////// users collection functions /////////////
 
-export async function appUserSet(auth: Auth, data: Record<string, any> | AppUser, opts:{merge?:boolean;id?:string}={merge:true}){
+export async function appUserSet(auth: Auth, db: Firestore, data: Record<string, any> | AppUser, opts:{merge?:boolean;id?:string}={merge:true}){
   const user = _getFsUser(auth);
   const {merge, id} = opts;
   const userId: string = id ?? (user?.uid as string);
   
   if (!validate.string(userId)) throw new Error("Could not find User or its uid.");
    await setDoc(
-    doc(_db, 'users', userId),
+    doc(db, 'users', userId),
     {
       ...data,
       displayName: (data?.displayName) ?? user.displayName
@@ -124,11 +125,11 @@ export async function appUserSet(auth: Auth, data: Record<string, any> | AppUser
   );
 }
 
-export async function appUserGet(auth: Auth): Promise<AppUser>{
+export async function appUserGet(auth: Auth, db: Firestore): Promise<AppUser>{
   logger.logCaller();
   const userId: string = auth.currentUser?.uid as string;
   if (!validate.string(userId)) throw new Error("Could not find User or its uid.");
-  const userData = await _getDoc("users",userId);
+  const userData = await _getDoc(db, "users",userId);
   if(!userData) logger.warn("⚠️ No user document found.");
   return userData as AppUser;
 }
@@ -148,7 +149,8 @@ export async function userProfileSet(auth: Auth, data: FirebaseUserPublicData){
 
 // --- Update Phone Number (requires verification) ---
 export async function updateUserPhoneNumber(
-  auth: Auth, 
+  auth: Auth,
+  db: Firestore,
   phoneNumber: string
 ) {
   const user = _getFsUser(auth);
@@ -172,7 +174,7 @@ export async function updateUserPhoneNumber(
 
   const credential = PhoneAuthProvider.credential(verificationId, verificationCode);
   await linkWithCredential(user, credential);
-  await appUserSet(auth,{phoneNumber});
+  await appUserSet(auth,db,{phoneNumber});
 }
 
 

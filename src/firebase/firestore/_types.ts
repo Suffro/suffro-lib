@@ -1,4 +1,4 @@
-import type { WhereFilterOp } from 'firebase/firestore';
+import type { Firestore, WhereFilterOp } from 'firebase/firestore';
 import type { AppUser, Collections, FirebaseUserPublicData } from '../_types';
 import type { Auth, User } from 'firebase/auth';
 
@@ -6,17 +6,18 @@ export type FStoreUser = {
 	doc: {
 		set: (
 			auth: Auth,
+			db: Firestore,
 			data: Record<string, any> | AppUser,
 			opts?: {
 				merge?: boolean;
 				id?: string;
 			}
 		) => Promise<void>;
-		get: (auth: Auth) => Promise<AppUser>;
+		get: (auth: Auth, db: Firestore) => Promise<AppUser>;
 	};
 	set: {
 		profile: (auth: Auth, data: FirebaseUserPublicData) => Promise<void>;
-		phoneNumber: (auth: Auth, phoneNumber: string) => Promise<void>;
+		phoneNumber: (auth: Auth, db: Firestore, phoneNumber: string) => Promise<void>;
 	};
 	get: (auth: Auth) => User;
 
@@ -26,10 +27,11 @@ export type FStoreUser = {
 };
 
 export type FStoreDoc = {
-	create: <T>(auth: Auth, collectionName: Collections, data: T) => Promise<string>;
-	update: <T>(collectionName: Collections, id: string, data: Partial<T>) => Promise<string>;
-	set: <T>(collectionName: Collections, id: string, data: Partial<T>) => Promise<string>;
+	create: <T>(auth: Auth, db: Firestore, collectionName: Collections, data: T) => Promise<string>;
+	update: <T>(db: Firestore, collectionName: Collections, id: string, data: Partial<T>) => Promise<string>;
+	set: <T>(db: Firestore, collectionName: Collections, id: string, data: Partial<T>) => Promise<string>;
 	get: <T>(
+		db: Firestore,
 		collectionName: Collections,
 		id: string
 	) => Promise<
@@ -38,8 +40,9 @@ export type FStoreDoc = {
 		  })
 		| null
 	>;
-	remove: (collection: Collections, id: string) => Promise<string>;
+	remove: (db: Firestore, collection: Collections, id: string) => Promise<string>;
 	removeWhere: (
+		db: Firestore,
 		collectionName: Collections,
 		conditions: [string, WhereFilterOp, any][]
 	) => Promise<string[]>;
