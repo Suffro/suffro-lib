@@ -6,4 +6,5 @@ export * from "./_typesValidation";
 export * from "./_browserStorage";
 export * from "./_classSets";
 export * from "./_idb";
-export * from "./_pageStore"
+export * from "./_pageStore";
+export * from "./firebase";

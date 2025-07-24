@@ -1,9 +1,10 @@
 import type { Auth, User } from 'firebase/auth';
 import type { Firestore, Timestamp, WhereFilterOp } from 'firebase/firestore';
-import type { FirebaseAuthService } from './auth/_types';
+import type { FirebaseAuthMethods } from './auth/_types';
 import type { FirebaseApp } from 'firebase/app';
 import type { FirebaseStorage } from 'firebase/storage';
 import { FStore, FStoreDoc, FStoreUser } from './firestore/_types';
+import { StorageMethodsInterface } from './storage';
 
 /**
  * The collection names in your firestore
@@ -86,24 +87,17 @@ export type FirebaseUserSensitiveData = {
  */
 export type FirebaseUserData = FirebaseUserPublicData & FirebaseUserSensitiveData;
 
-
-export type FirebaseClientUserMethods = FStoreUser & {loggedIn: (auth: Auth) => boolean};
-
-export type FirebaseClientDocumentsMethods = FStoreDoc;
-
-export type FirebaseClientStorageMethods={
-	uploadFile: (file: File, fileName: string, folderSegments: string[]) => Promise<string>;
-	deleteFile: (fileName: string, folderSegments: string[]) => Promise<void>;
-	downloadFile: (fileName: string, folderSegments: string[]) => Promise<Blob>;
-	getFileUrl: (fileName: string, folderSegments: string[]) => Promise<string>;
-	listFiles: (folderSegments: string[]) => Promise<string[]>;
-	instance: FirebaseStorage;
+export type FirebaseServiceIstances = {
+    auth?: Auth;
+    firestore?: Firestore;
+    storage?: FirebaseStorage;
+    analytics?: any;
 };
 
+
 export type FirebaseClient = {
-	user: FirebaseClientUserMethods;
-	auth: FirebaseAuthService & {instance: ()=> Auth};
-	db: Firestore;
-	doc: FirebaseClientDocumentsMethods;
-	storage: FirebaseClientStorageMethods;
+	firestore?: FStoreDoc;
+	currentUser?: FirebaseAuthMethods & {doc?: FStoreUser};
+	storage?: StorageMethodsInterface;
+	instances: { app: FirebaseApp } & FirebaseServiceIstances;
 };

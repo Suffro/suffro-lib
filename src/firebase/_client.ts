@@ -1,25 +1,41 @@
+import type { FirebaseClient, FirebaseServiceIstances } from "./_types";
+import type { Auth } from "firebase/auth";
+import { initStorageMethods } from "./storage";
+import { initAuthMethods } from "./auth";
+import { FirebaseAuthMethods } from "./auth/_types";
+import { logger } from "../_logger";
+import {
+  initFirestoreCurrentUserDocMethods,
+  initFirestoreDocsMethods,
+} from "./firestore";
+import { FirebaseApp, getApp, getApps } from "firebase/app";
 
-import { _storageMethods } from "./storage"
-import { _firebaseAuthMethods, isLoggedIn } from "./auth"
-import type { FirebaseClient } from "./_types"
-import { _fstore } from "./firestore"
-import type { Auth } from "firebase/auth"
-import { Firestore } from "firebase/firestore"
+export const initFirebaseClient = (
+  services?: FirebaseServiceIstances
+): FirebaseClient => {
+  logger.logCaller();
 
-export const initFirebaseClient = (auth: Auth, db: Firestore): FirebaseClient => {
-    const client: FirebaseClient = {
-        user: {
-            ...(_fstore.user),
-            loggedIn: isLoggedIn
-        },
-        auth: {
-            ..._firebaseAuthMethods,
-            instance: ()=> auth
-        },
-        db,
-        doc: _fstore.doc,
-        storage: _storageMethods,
-        // analytics: _analytics
-    };
-    return client;
-}
+  const apps: FirebaseApp[] = getApps() || [];
+
+  if (apps.length === 0) throw "Couldn't find any Firebase initialization.";
+  else if (apps.length > 1)
+    logger.warn("Multiple Firebase initializations detected.");
+
+  let _client: FirebaseClient = {
+    instances: {
+      app: getApp(),
+      ...services,
+    },
+  };
+
+  if (services?.storage) _client.storage = initStorageMethods(services.storage); // non dipende da auth (credo)
+
+  const auth = services?.auth;
+  if (auth) _client["currentUser"] = initAuthMethods(auth);
+  else return _client;
+
+  if (services?.firestore) _client["currentUser"]["doc"] = initFirestoreCurrentUserDocMethods(auth, services.firestore);
+  if (services?.firestore) _client["firestore"] = initFirestoreDocsMethods(auth, services.firestore);
+
+  return _client;
+};

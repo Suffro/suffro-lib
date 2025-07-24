@@ -603,8 +603,8 @@ export function arrayGetByKey<T, K extends keyof T>(
 
 export function checkFileSize(files: FileList | File[], maxSizeMB: number): { valid: boolean; message?: string } {
 	const maxSizeBytes = maxSizeMB * 1024 * 1024;
-
-	for (const file of files) {
+	let iterable = Array.from(files);
+	for (const file of iterable) {
 		if (file.size > maxSizeBytes) {
 			return {
 				valid: false,

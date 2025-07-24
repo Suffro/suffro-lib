@@ -1,4 +1,4 @@
-import {logger} from "$lib";
+import {logger} from "./";
 
 export type BrowserStorageType = "local" | "session";
 
