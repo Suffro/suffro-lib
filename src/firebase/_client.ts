@@ -10,16 +10,14 @@ import {
 } from "./firestore";
 import { FirebaseApp, getApp, getApps } from "firebase/app";
 
-export const initFirebaseClient = (
+export const initializeFirebaseClient = (
   services?: FirebaseServiceIstances
 ): FirebaseClient => {
   logger.logCaller();
 
   const apps: FirebaseApp[] = getApps() || [];
 
-  if (apps.length === 0) throw "Couldn't find any Firebase initialization.";
-  else if (apps.length > 1)
-    logger.warn("Multiple Firebase initializations detected.");
+  if (apps?.length && apps?.length === 0) throw "Couldn't find any Firebase initialization.";
 
   let _client: FirebaseClient = {
     instances: {

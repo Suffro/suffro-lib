@@ -101,3 +101,11 @@ export type FirebaseClient = {
 	storage?: StorageMethodsInterface;
 	instances: { app: FirebaseApp } & FirebaseServiceIstances;
 };
+
+export type FirebaseInitializationContext = {
+	app: FirebaseApp;
+	auth: Auth;
+	firestore: Firestore;
+	storage?: FirebaseStorage;
+	client: FirebaseClient;
+  };
