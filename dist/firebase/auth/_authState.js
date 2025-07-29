@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authState = authState;
+exports.authStateObsverver = authStateObsverver;
 const auth_1 = require("firebase/auth");
 const _typesValidation_1 = require("../../_typesValidation");
 /**
@@ -10,7 +10,7 @@ const _typesValidation_1 = require("../../_typesValidation");
  * - logged(): restituisce true se l'utente è loggato altrimenti false
  * - get(): Returns app auth instance
  */
-function authState(appAuth) {
+function authStateObsverver(appAuth) {
     let listeners = [];
     let current = null;
     function notify(user) {

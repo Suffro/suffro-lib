@@ -1,4 +1,4 @@
-import type { User } from "firebase/auth";
+import type { Auth, User } from "firebase/auth";
 export type FirebaseAuthMethods = {
     get: () => User;
     signout: () => Promise<void>;
@@ -11,4 +11,10 @@ export type FirebaseAuthMethods = {
     googleAuth: () => Promise<void>;
     githubAuth: () => Promise<void>;
     isLoggedIn: () => boolean;
+};
+export type AuthState = {
+    subscribe(callback: (user: User | null) => void): () => void;
+    user(): User | null;
+    logged(): boolean;
+    get(): Auth;
 };

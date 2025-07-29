@@ -14,11 +14,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authState = void 0;
+exports.authStateObsverver = void 0;
 __exportStar(require("./_types"), exports);
 __exportStar(require("./_reCaptchaVerifier"), exports);
 __exportStar(require("./_client"), exports);
 __exportStar(require("./_init"), exports);
 var auth_1 = require("./auth");
-Object.defineProperty(exports, "authState", { enumerable: true, get: function () { return auth_1.authState; } });
+Object.defineProperty(exports, "authStateObsverver", { enumerable: true, get: function () { return auth_1.authStateObsverver; } });
 //# sourceMappingURL=index.js.map

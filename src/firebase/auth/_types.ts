@@ -14,3 +14,10 @@ export type FirebaseAuthMethods = {
 	githubAuth: () => Promise<void>;
 	isLoggedIn: () => boolean;
 };
+
+export type AuthState = {
+    subscribe(callback: (user: User | null) => void): () => void;
+    user(): User | null;
+    logged(): boolean;
+    get(): Auth;
+}

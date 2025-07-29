@@ -1,5 +1,6 @@
 import { Auth, onAuthStateChanged, type User } from 'firebase/auth';
 import { validate } from '../../_typesValidation';
+import { AuthState } from './_types';
 
 /**
  * Store reattivo per l’utente Firebase.
@@ -8,7 +9,7 @@ import { validate } from '../../_typesValidation';
  * - logged(): restituisce true se l'utente è loggato altrimenti false
  * - get(): Returns app auth instance
  */
-export function authState(appAuth: ReturnType<typeof import('firebase/auth').getAuth>) {
+export function authStateObsverver(appAuth: ReturnType<typeof import('firebase/auth').getAuth>): AuthState {
   let listeners: Array<(user: User | null) => void> = [];
   let current: User | null = null;
 

@@ -5,6 +5,7 @@ import type { FirebaseApp } from 'firebase/app';
 import type { FirebaseStorage } from 'firebase/storage';
 import { FStoreDoc, FStoreUser } from './firestore/_types';
 import { StorageMethodsInterface } from './storage';
+export { type AuthState } from "./auth";
 /**
  * The collection names in your firestore
  */
