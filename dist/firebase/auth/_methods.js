@@ -135,7 +135,7 @@ export const initAuthMethods = (auth) => ({
         await updatePassword(user, newPassword);
     },
     // --- Update Password ---
-    get: async function get() {
+    get: function get() {
         logger.logCaller();
         const user = auth?.currentUser;
         if (!user)

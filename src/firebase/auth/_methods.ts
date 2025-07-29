@@ -183,7 +183,7 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
   },
 
   // --- Update Password ---
-  get: async function get() {
+  get: function get() {
     logger.logCaller();
     const user = auth?.currentUser;
     if (!user) throw "User is not authenticated.";
