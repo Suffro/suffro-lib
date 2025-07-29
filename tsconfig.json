@@ -1,15 +1,34 @@
 {
-    "compilerOptions": {
-      "target": "ES2021",
-      "lib": ["DOM", "ES2021"],
-      "module": "ESNext",
-      "declaration": true,
-      "outDir": "dist",
-      "moduleResolution": "Node",
-      "esModuleInterop": true,
-      "strict": true,
-      "skipLibCheck": true
-    },
-    "include": ["src"]
-  }
-  
+  "compilerOptions": {
+    // Target moderno ma ampiamente supportato
+    "target": "ES2021",
+    // Includiamo le API DOM perché probabilmente lo userai in browser
+    "lib": ["DOM", "ES2021"],
+    // Genera moduli ESM, perfetti per bundler moderni e Tree‑shaking
+    "module": "ESNext",
+    // Dove mettere gli output compilati
+    "outDir": "dist",
+    // Radice dei sorgenti
+    "rootDir": "src",
+    // Abilita generazione dei .d.ts
+    "declaration": true,
+    // Mettiamo i .d.ts in una sottocartella separata
+    "declarationDir": "dist/types",
+    // Consente import CommonJS interop
+    "esModuleInterop": true,
+    // Rispetta i percorsi Node-style per import
+    "moduleResolution": "Node",
+    // Mappa di origine per debugging (opzionale, ma utile)
+    "sourceMap": true,
+    // Controllo rigoroso
+    "strict": true,
+    // Ignora controlli sulle librerie esterne per velocizzare la build
+    "skipLibCheck": true,
+    // Permette di importare JSON direttamente
+    "resolveJsonModule": true
+  },
+  // Compila solo il codice sotto src
+  "include": ["src"],
+  // Evita di considerare automaticamente file come test o demo
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

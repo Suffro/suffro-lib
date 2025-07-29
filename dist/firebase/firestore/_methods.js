@@ -243,3 +243,4 @@ export const initFirestoreCurrentUserDocMethods = (auth, db) => ({
         return await appUserGet(auth, db);
     },
 });
+//# sourceMappingURL=_methods.js.map

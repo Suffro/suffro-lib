@@ -155,3 +155,4 @@ export async function idb(dbName, version, storeDefs) {
     };
     return endpoints;
 }
+//# sourceMappingURL=_idb.js.map

@@ -144,3 +144,4 @@ export function browserStorage(type, namespace) {
         keysList,
     };
 }
+//# sourceMappingURL=_browserStorage.js.map

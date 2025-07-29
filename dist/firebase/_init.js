@@ -90,3 +90,4 @@ export const initializeFirebaseContext = (configuration, logs) => {
         console.log("Created Firebase context.");
     return context;
 };
+//# sourceMappingURL=_init.js.map

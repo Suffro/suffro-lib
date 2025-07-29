@@ -5,3 +5,4 @@ export const _firestoreValidate = {
     geoPoint: (v) => v instanceof GeoPoint,
     fieldValue: (v) => typeof v === 'object' && v !== null && typeof v._methodName === 'string',
 };
+//# sourceMappingURL=_firestoreTypesValidation.js.map

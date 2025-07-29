@@ -152,3 +152,4 @@ export const initAuthMethods = (auth) => ({
 // 	googleAuth,
 // 	gitHubAuth
 // };
+//# sourceMappingURL=_methods.js.map

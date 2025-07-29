@@ -45,3 +45,4 @@ export const validate = {
     /** Checks if the value is a function. */
     function: (v) => typeof v === 'function'
 };
+//# sourceMappingURL=_typesValidation.js.map

@@ -86,3 +86,4 @@ export const initStorageMethods = (storage) => ({
         return await getDownloadURL(fileRef);
     },
 });
+//# sourceMappingURL=_methods.js.map

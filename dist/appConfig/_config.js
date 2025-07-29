@@ -19,3 +19,4 @@ export function getAppConfig() {
     }
     return _config;
 }
+//# sourceMappingURL=_config.js.map

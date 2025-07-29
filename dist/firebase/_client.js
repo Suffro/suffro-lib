@@ -27,3 +27,4 @@ export const initializeFirebaseClient = (services) => {
         _client["firestore"] = initFirestoreDocsMethods(auth, services.firestore);
     return _client;
 };
+//# sourceMappingURL=_client.js.map

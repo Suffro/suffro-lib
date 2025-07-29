@@ -20,3 +20,4 @@ export async function getRecaptchaVerifier(auth) {
         throw new Error("Failed to create reCAPTCHA verifier");
     return recaptchaVerifier;
 }
+//# sourceMappingURL=_reCaptchaVerifier.js.map
