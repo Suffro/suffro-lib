@@ -10,8 +10,8 @@ export type FirebaseAuthMethods = {
 	reauthenticate: (email: string, currentPassword: string) => Promise<void>;
 	updatePassword: (newPassword: string) => Promise<void>;
 	updateEmail: (newEmail: string) => Promise<void>;
-	googleAuth: () => Promise<void>;
-	githubAuth: () => Promise<void>;
+	googleAuth: (withRedirect?: boolean) => Promise<void>;
+	githubAuth: (withRedirect?: boolean) => Promise<void>;
 	isLoggedIn: () => boolean;
 };
 

@@ -102,7 +102,7 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
   },
 
   //////////////////// GOOGLE AUTH ////////////////////
-  googleAuth: async function googleAuth(): Promise<void> {
+  googleAuth: async function googleAuth(withRedirect?: boolean): Promise<void> {
     try {
       logger.logCaller();
       await wait(200);
@@ -112,14 +112,16 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
       await setPersistence(auth, browserLocalPersistence);
       logger.log("✅ persistence set");
 
-      await signInWithRedirect(auth, provider);
+      if(withRedirect) await signInWithRedirect(auth, provider);
+      else await signInWithPopup(auth, provider);
+
     } catch (error: any) {
-      logger.devError("Google auth error:", error.message);
+      logger.devError("Google auth error:\n", error?.message);
     }
   },
 
   //////////////////// GITHUB AUTH ////////////////////
-  githubAuth: async function gitHubAuth(): Promise<void> {
+  githubAuth: async function gitHubAuth(withRedirect?: boolean): Promise<void> {
     try {
       logger.logCaller();
       await wait(200);
@@ -128,10 +130,12 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
 
       await setPersistence(auth, browserLocalPersistence);
       logger.log("✅ persistence set");
+      
+      if(withRedirect) await signInWithRedirect(auth, provider);
+      else await signInWithPopup(auth, provider);
 
-      await signInWithRedirect(auth, provider);
     } catch (error: any) {
-      logger.devError("GitHub auth error:", error.message);
+      logger.devError("GitHub auth error:\n", error?.message);
     }
   },
 
