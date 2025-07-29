@@ -120,5 +120,7 @@ export const initializeFirebaseContext = (
   };
   if(logs && dev) console.log("Created Firebase context");
 
+  _context=context;
+
   return context;
 };

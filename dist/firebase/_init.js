@@ -98,6 +98,7 @@ const initializeFirebaseContext = (configuration, logs) => {
     };
     if (logs && dev)
         console.log("Created Firebase context");
+    _context = context;
     return context;
 };
 exports.initializeFirebaseContext = initializeFirebaseContext;
