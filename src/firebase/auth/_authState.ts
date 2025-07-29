@@ -2,6 +2,8 @@ import { Auth, onAuthStateChanged, type User } from 'firebase/auth';
 import { validate } from '../../_typesValidation';
 import { AuthState } from './_types';
 
+let observer: AuthState | null | undefined = null;
+
 /**
  * Store reattivo per l’utente Firebase.
  * - subscribe(cb): si registra per ricevere aggiornamenti (via onAuthStateChanged)
@@ -10,6 +12,11 @@ import { AuthState } from './_types';
  * - get(): Returns app auth instance
  */
 export function authStateObsverver(appAuth: ReturnType<typeof import('firebase/auth').getAuth>): AuthState {
+  if(observer) {
+    console.warn("authStateObsverver() already initialized, returning active instance.");
+    return observer;
+  };
+
   let listeners: Array<(user: User | null) => void> = [];
   let current: User | null = null;
 
@@ -18,19 +25,12 @@ export function authStateObsverver(appAuth: ReturnType<typeof import('firebase/a
     for (const cb of listeners) cb(user);
   }
 
-  const isLocalhost =
-    typeof window !== 'undefined' &&
-    ['localhost', '127.0.0.1'].includes(window.location.hostname);
-
   // Avvia il listener Firebase una sola volta
-  if (typeof window !== 'undefined') {
-    onAuthStateChanged(appAuth, (user) => {
-      if(isLocalhost) console.log('🔄 Auth state changed:', user);
-      notify(user);
-    });
-  } else console.error("Error while initializing 'authState()':\n 'window' is not defined.");
+  onAuthStateChanged(appAuth, (user) => {
+    notify(user);
+  });
 
-  return {
+  const _observer = {
     /** 
      * callback: (user) => void  
      * restituisce un unsubscribe 
@@ -59,4 +59,7 @@ export function authStateObsverver(appAuth: ReturnType<typeof import('firebase/a
 		  return appAuth;
 	  }
   };
+
+  observer = _observer;
+  return _observer;
 }
