@@ -3,13 +3,11 @@ import { initAuthMethods } from "./auth";
 import { logger } from "../_logger";
 import { initFirestoreCurrentUserDocMethods, initFirestoreDocsMethods, } from "./firestore";
 import { getApp, getApps } from "firebase/app";
-export const initFirebaseClient = (services) => {
+export const initializeFirebaseClient = (services) => {
     logger.logCaller();
     const apps = getApps() || [];
-    if (apps.length === 0)
+    if (apps?.length && apps?.length === 0)
         throw "Couldn't find any Firebase initialization.";
-    else if (apps.length > 1)
-        logger.warn("Multiple Firebase initializations detected.");
     let _client = {
         instances: {
             app: getApp(),
