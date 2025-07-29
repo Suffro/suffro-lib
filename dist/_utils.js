@@ -69,7 +69,10 @@ const isWindowAvailable = () => {
 };
 exports.isWindowAvailable = isWindowAvailable;
 const isDev = () => {
-    return (process.env.NODE_ENV !== 'production');
+    const isLocalhost = typeof window !== 'undefined' &&
+        ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    const nodeEnv = process?.env?.NODE_ENV;
+    return ((nodeEnv !== 'production') || isLocalhost);
 };
 exports.isDev = isDev;
 function checkPasswordStrength(password) {

@@ -1,8 +1,6 @@
 import type { FirebaseClient, FirebaseServiceIstances } from "./_types";
-import type { Auth } from "firebase/auth";
 import { initStorageMethods } from "./storage";
 import { initAuthMethods } from "./auth";
-import { FirebaseAuthMethods } from "./auth/_types";
 import { logger } from "../_logger";
 import {
   initFirestoreCurrentUserDocMethods,
@@ -10,10 +8,17 @@ import {
 } from "./firestore";
 import { FirebaseApp, getApp, getApps } from "firebase/app";
 
+let client: FirebaseClient | null | undefined;
+
 export const initializeFirebaseClient = (
   services?: FirebaseServiceIstances
 ): FirebaseClient => {
   logger.logCaller();
+
+  if(client) {
+    logger.warn("Firebase client already initialized, returning active instance");
+    return client;
+  }
 
   const apps: FirebaseApp[] = getApps() || [];
 
@@ -34,6 +39,8 @@ export const initializeFirebaseClient = (
 
   if (services?.firestore) _client["currentUser"]["doc"] = initFirestoreCurrentUserDocMethods(auth, services.firestore);
   if (services?.firestore) _client["firestore"] = initFirestoreDocsMethods(auth, services.firestore);
+
+  client=_client;
 
   return _client;
 };

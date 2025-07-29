@@ -16,6 +16,9 @@ import {
 import { validate } from "../_typesValidation";
 import { initializeFirebaseClient } from "./_client";
 import { FirebaseInitializationContext } from "./_types";
+import { isDev } from "../_utils";
+
+let _context: FirebaseInitializationContext | null | undefined;
 
 /**
  * Initializes and returns a fully configured Firebase instance.
@@ -52,7 +55,10 @@ export const initializeFirebaseContext = (
 ): FirebaseInitializationContext => {
   if (!configuration) throw new Error("Missing Firebase configuration");
 
-  if (logs) console.log("Initializing Firebase instances...");
+  if(_context){
+    console.warn("Firebase app already initialized, returning active instance");
+    return _context;
+  }
 
   const apps: FirebaseApp[] = getApps();
 
@@ -65,16 +71,20 @@ export const initializeFirebaseContext = (
     apps.length > 0
   )
     alreadyInitialized = true;
-  if (alreadyInitialized) console.error("Firebase app already initialized");
+  if (alreadyInitialized) throw("Firebase app already initialized");
+
+  const dev = isDev();
+
+  if (logs && dev) console.log("Initializing Firebase instances...");
 
   // Initialize Firebase
   const app: FirebaseApp = alreadyInitialized
     ? getApp()
     : initializeApp(configuration);
-  if (logs) console.log("Firebase app initialized");
+  if(logs && dev) console.log("Firebase app initialized");
 
   const auth: Auth = getAuth(app);
-  if (logs) console.log("Firebase auth initialized");
+  if(logs && dev) console.log("Firebase auth initialized");
 
   const storage: FirebaseStorage | undefined = configuration.storageBucket
     ? getStorage(app)
@@ -87,11 +97,11 @@ export const initializeFirebaseContext = (
       tabManager: persistentMultipleTabManager(),
     }),
   });
-  if (logs) console.log("Firebase firestore initialized");
+  if(logs && dev) console.log("Firebase firestore initialized");
 
-  if (logs) console.log("Firebase instances initialized successfully");
+  if(logs && dev) console.log("Firebase instances initialized successfully");
 
-  if (logs) console.log("Initializing Firebase client...");
+  if(logs && dev) console.log("Initializing Firebase client...");
 
   const client = initializeFirebaseClient({
     auth,
@@ -99,7 +109,7 @@ export const initializeFirebaseContext = (
     storage,
   });
 
-  if (logs) console.log("Firebase client initialization completed.");
+  if(logs && dev) console.log("Firebase client initialization completed.");
 
   const context: FirebaseInitializationContext = {
     app,
@@ -108,7 +118,7 @@ export const initializeFirebaseContext = (
     storage,
     client,
   };
-  if (logs) console.log("Created Firebase context");
+  if(logs && dev) console.log("Created Firebase context");
 
   return context;
 };

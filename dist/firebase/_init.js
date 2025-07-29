@@ -7,6 +7,8 @@ const auth_1 = require("firebase/auth");
 const firestore_1 = require("firebase/firestore");
 const _typesValidation_1 = require("../_typesValidation");
 const _client_1 = require("./_client");
+const _utils_1 = require("../_utils");
+let _context;
 /**
  * Initializes and returns a fully configured Firebase instance.
  *
@@ -39,8 +41,10 @@ const _client_1 = require("./_client");
 const initializeFirebaseContext = (configuration, logs) => {
     if (!configuration)
         throw new Error("Missing Firebase configuration");
-    if (logs)
-        console.log("Initializing Firebase instances...");
+    if (_context) {
+        console.warn("Firebase app already initialized, returning active instance");
+        return _context;
+    }
     const apps = (0, app_1.getApps)();
     let alreadyInitialized = false;
     if (apps &&
@@ -49,15 +53,18 @@ const initializeFirebaseContext = (configuration, logs) => {
         apps.length > 0)
         alreadyInitialized = true;
     if (alreadyInitialized)
-        console.error("Firebase app already initialized");
+        throw ("Firebase app already initialized");
+    const dev = (0, _utils_1.isDev)();
+    if (logs && dev)
+        console.log("Initializing Firebase instances...");
     // Initialize Firebase
     const app = alreadyInitialized
         ? (0, app_1.getApp)()
         : (0, app_1.initializeApp)(configuration);
-    if (logs)
+    if (logs && dev)
         console.log("Firebase app initialized");
     const auth = (0, auth_1.getAuth)(app);
-    if (logs)
+    if (logs && dev)
         console.log("Firebase auth initialized");
     const storage = configuration.storageBucket
         ? (0, storage_1.getStorage)(app)
@@ -69,18 +76,18 @@ const initializeFirebaseContext = (configuration, logs) => {
             tabManager: (0, firestore_1.persistentMultipleTabManager)(),
         }),
     });
-    if (logs)
+    if (logs && dev)
         console.log("Firebase firestore initialized");
-    if (logs)
+    if (logs && dev)
         console.log("Firebase instances initialized successfully");
-    if (logs)
+    if (logs && dev)
         console.log("Initializing Firebase client...");
     const client = (0, _client_1.initializeFirebaseClient)({
         auth,
         firestore,
         storage,
     });
-    if (logs)
+    if (logs && dev)
         console.log("Firebase client initialization completed.");
     const context = {
         app,
@@ -89,7 +96,7 @@ const initializeFirebaseContext = (configuration, logs) => {
         storage,
         client,
     };
-    if (logs)
+    if (logs && dev)
         console.log("Created Firebase context");
     return context;
 };

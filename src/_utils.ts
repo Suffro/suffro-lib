@@ -9,7 +9,14 @@ export const isWindowAvailable = (): boolean => {
 	return (typeof window !== 'undefined');
 };
 export const isDev = (): boolean => {
-	return (process.env.NODE_ENV !== 'production');
+
+	const isLocalhost =
+		typeof window !== 'undefined' &&
+		['localhost', '127.0.0.1'].includes(window.location.hostname);
+
+	const nodeEnv = process?.env?.NODE_ENV;
+
+	return ((nodeEnv !== 'production') || isLocalhost);
 };
 
 export function checkPasswordStrength(password: string): PasswordStrength {
