@@ -1,7 +1,6 @@
 import type { FirebaseClient, FirebaseServiceIstances } from "./_types";
 import { initStorageMethods } from "./storage";
 import { initAuthMethods } from "./auth";
-import { logger } from "../_logger";
 import {
   initFirestoreCurrentUserDocMethods,
   initFirestoreDocsMethods,
@@ -13,10 +12,9 @@ let client: FirebaseClient | null | undefined;
 export const initializeFirebaseClient = (
   services?: FirebaseServiceIstances
 ): FirebaseClient => {
-  logger.logCaller();
 
   if(client) {
-    logger.warn("Firebase client already initialized, returning active instance");
+    console.warn("Firebase client already initialized, returning active instance");
     return client;
   }
 

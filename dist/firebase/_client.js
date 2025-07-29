@@ -3,14 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeFirebaseClient = void 0;
 const storage_1 = require("./storage");
 const auth_1 = require("./auth");
-const _logger_1 = require("../_logger");
 const firestore_1 = require("./firestore");
 const app_1 = require("firebase/app");
 let client;
 const initializeFirebaseClient = (services) => {
-    _logger_1.logger.logCaller();
     if (client) {
-        _logger_1.logger.warn("Firebase client already initialized, returning active instance");
+        console.warn("Firebase client already initialized, returning active instance");
         return client;
     }
     const apps = (0, app_1.getApps)() || [];
