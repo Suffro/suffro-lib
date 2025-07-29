@@ -17,7 +17,7 @@ export const initializeFirebaseClient = (
 
   const apps: FirebaseApp[] = getApps() || [];
 
-  if (apps?.length && apps?.length === 0) throw "Couldn't find any Firebase initialization.";
+  if (apps?.length && apps?.length === 0) throw "Couldn't find any Firebase initialization";
 
   let _client: FirebaseClient = {
     instances: {

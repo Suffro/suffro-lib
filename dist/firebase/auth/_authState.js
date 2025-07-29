@@ -13,7 +13,7 @@ let observer = null;
  */
 function authStateObsverver(appAuth) {
     if (observer) {
-        console.warn("authStateObsverver() already initialized, returning active instance.");
+        console.warn("authStateObsverver() already initialized, returning active instance");
         return observer;
     }
     ;

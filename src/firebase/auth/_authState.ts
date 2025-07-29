@@ -13,7 +13,7 @@ let observer: AuthState | null | undefined = null;
  */
 export function authStateObsverver(appAuth: ReturnType<typeof import('firebase/auth').getAuth>): AuthState {
   if(observer) {
-    console.warn("authStateObsverver() already initialized, returning active instance.");
+    console.warn("authStateObsverver() already initialized, returning active instance");
     return observer;
   };
 

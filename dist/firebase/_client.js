@@ -10,7 +10,7 @@ const initializeFirebaseClient = (services) => {
     _logger_1.logger.logCaller();
     const apps = (0, app_1.getApps)() || [];
     if (apps?.length && apps?.length === 0)
-        throw "Couldn't find any Firebase initialization.";
+        throw "Couldn't find any Firebase initialization";
     let _client = {
         instances: {
             app: (0, app_1.getApp)(),

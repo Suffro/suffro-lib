@@ -38,7 +38,7 @@ const _client_1 = require("./_client");
  */
 const initializeFirebaseContext = (configuration, logs) => {
     if (!configuration)
-        throw new Error("Missing Firebase configuration.");
+        throw new Error("Missing Firebase configuration");
     if (logs)
         console.log("Initializing Firebase instances...");
     const apps = (0, app_1.getApps)();
@@ -49,30 +49,30 @@ const initializeFirebaseContext = (configuration, logs) => {
         apps.length > 0)
         alreadyInitialized = true;
     if (alreadyInitialized)
-        console.error("Firebase app already initialized.");
+        console.error("Firebase app already initialized");
     // Initialize Firebase
     const app = alreadyInitialized
         ? (0, app_1.getApp)()
         : (0, app_1.initializeApp)(configuration);
     if (logs)
-        console.log("Firebase app initialized.");
+        console.log("Firebase app initialized");
     const auth = (0, auth_1.getAuth)(app);
     if (logs)
-        console.log("Firebase auth initialized.");
+        console.log("Firebase auth initialized");
     const storage = configuration.storageBucket
         ? (0, storage_1.getStorage)(app)
         : undefined;
     if (logs && configuration.storageBucket)
-        console.log("Firebase storage initialized.");
+        console.log("Firebase storage initialized");
     const firestore = (0, firestore_1.initializeFirestore)(app, {
         localCache: (0, firestore_1.persistentLocalCache)({
             tabManager: (0, firestore_1.persistentMultipleTabManager)(),
         }),
     });
     if (logs)
-        console.log("Firebase firestore initialized.");
+        console.log("Firebase firestore initialized");
     if (logs)
-        console.log("Firebase instances initialized successfully.");
+        console.log("Firebase instances initialized successfully");
     if (logs)
         console.log("Initializing Firebase client...");
     const client = (0, _client_1.initializeFirebaseClient)({
@@ -90,7 +90,7 @@ const initializeFirebaseContext = (configuration, logs) => {
         client,
     };
     if (logs)
-        console.log("Created Firebase context.");
+        console.log("Created Firebase context");
     return context;
 };
 exports.initializeFirebaseContext = initializeFirebaseContext;

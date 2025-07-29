@@ -9,7 +9,8 @@ let _config = null;
  */
 function initAppConfig(config) {
     if (_config) {
-        throw new Error('❌ AppConfig already initialized.');
+        console.error('AppConfig already initialized, returning active configuration');
+        return;
     }
     _config = config;
 }
@@ -19,7 +20,7 @@ function initAppConfig(config) {
  */
 function getAppConfig() {
     if (!_config) {
-        throw new Error('❌ No AppConfig initializtion. Use initAppConfig(config) to initialize it.');
+        throw new Error('No AppConfig initializtion. Use initAppConfig(config) to initialize it');
     }
     return _config;
 }
