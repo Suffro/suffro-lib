@@ -1,5 +1,8 @@
-import { onAuthStateChanged } from 'firebase/auth';
-import { validate } from '../../_typesValidation';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authState = authState;
+const auth_1 = require("firebase/auth");
+const _typesValidation_1 = require("../../_typesValidation");
 /**
  * Store reattivo per l’utente Firebase.
  * - subscribe(cb): si registra per ricevere aggiornamenti (via onAuthStateChanged)
@@ -7,7 +10,7 @@ import { validate } from '../../_typesValidation';
  * - logged(): restituisce true se l'utente è loggato altrimenti false
  * - get(): Returns app auth instance
  */
-export function authState(appAuth) {
+function authState(appAuth) {
     let listeners = [];
     let current = null;
     function notify(user) {
@@ -19,7 +22,7 @@ export function authState(appAuth) {
         ['localhost', '127.0.0.1'].includes(window.location.hostname);
     // Avvia il listener Firebase una sola volta
     if (typeof window !== 'undefined') {
-        onAuthStateChanged(appAuth, (user) => {
+        (0, auth_1.onAuthStateChanged)(appAuth, (user) => {
             if (isLocalhost)
                 console.log('🔄 Auth state changed:', user);
             notify(user);
@@ -46,7 +49,7 @@ export function authState(appAuth) {
         /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
         logged() {
             const uid = current?.uid;
-            return validate.nonEmptyString(uid);
+            return _typesValidation_1.validate.nonEmptyString(uid);
         },
         /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
         get() {

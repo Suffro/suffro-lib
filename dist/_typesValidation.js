@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validate = void 0;
 /**
  * A collection of type guards and validation helpers for core JavaScript types.
  * Each method returns a boolean and acts as a type guard where applicable.
@@ -7,7 +10,7 @@
  *     value.toISOString();
  *   }
  */
-export const validate = {
+exports.validate = {
     /** Checks if the value is a string. */
     string: (v) => typeof v === 'string',
     /** Checks if the value is a non-empty string (after trimming whitespace). */

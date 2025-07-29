@@ -1,9 +1,12 @@
-import { getApp, getApps, initializeApp, } from "firebase/app";
-import { getStorage } from "firebase/storage";
-import { getAuth } from "firebase/auth";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, } from "firebase/firestore";
-import { validate } from "../_typesValidation";
-import { initializeFirebaseClient } from "./_client";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initializeFirebaseContext = void 0;
+const app_1 = require("firebase/app");
+const storage_1 = require("firebase/storage");
+const auth_1 = require("firebase/auth");
+const firestore_1 = require("firebase/firestore");
+const _typesValidation_1 = require("../_typesValidation");
+const _client_1 = require("./_client");
 /**
  * Initializes and returns a fully configured Firebase instance.
  *
@@ -33,37 +36,37 @@ import { initializeFirebaseClient } from "./_client";
  * const auth = firebase.auth;
  * const db = firebase.firestore;
  */
-export const initializeFirebaseContext = (configuration, logs) => {
+const initializeFirebaseContext = (configuration, logs) => {
     if (!configuration)
         throw new Error("Missing Firebase configuration.");
     if (logs)
         console.log("Initializing Firebase instances...");
-    const apps = getApps();
+    const apps = (0, app_1.getApps)();
     let alreadyInitialized = false;
     if (apps &&
-        validate.array(apps) &&
-        validate.nonEmptyArray(apps) &&
+        _typesValidation_1.validate.array(apps) &&
+        _typesValidation_1.validate.nonEmptyArray(apps) &&
         apps.length > 0)
         alreadyInitialized = true;
     if (alreadyInitialized)
         console.error("Firebase app already initialized.");
     // Initialize Firebase
     const app = alreadyInitialized
-        ? getApp()
-        : initializeApp(configuration);
+        ? (0, app_1.getApp)()
+        : (0, app_1.initializeApp)(configuration);
     if (logs)
         console.log("Firebase app initialized.");
-    const auth = getAuth(app);
+    const auth = (0, auth_1.getAuth)(app);
     if (logs)
         console.log("Firebase auth initialized.");
     const storage = configuration.storageBucket
-        ? getStorage(app)
+        ? (0, storage_1.getStorage)(app)
         : undefined;
     if (logs && configuration.storageBucket)
         console.log("Firebase storage initialized.");
-    const firestore = initializeFirestore(app, {
-        localCache: persistentLocalCache({
-            tabManager: persistentMultipleTabManager(),
+    const firestore = (0, firestore_1.initializeFirestore)(app, {
+        localCache: (0, firestore_1.persistentLocalCache)({
+            tabManager: (0, firestore_1.persistentMultipleTabManager)(),
         }),
     });
     if (logs)
@@ -72,7 +75,7 @@ export const initializeFirebaseContext = (configuration, logs) => {
         console.log("Firebase instances initialized successfully.");
     if (logs)
         console.log("Initializing Firebase client...");
-    const client = initializeFirebaseClient({
+    const client = (0, _client_1.initializeFirebaseClient)({
         auth,
         firestore,
         storage,
@@ -90,4 +93,5 @@ export const initializeFirebaseContext = (configuration, logs) => {
         console.log("Created Firebase context.");
     return context;
 };
+exports.initializeFirebaseContext = initializeFirebaseContext;
 //# sourceMappingURL=_init.js.map

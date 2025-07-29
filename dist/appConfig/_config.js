@@ -1,9 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initAppConfig = initAppConfig;
+exports.getAppConfig = getAppConfig;
 let _config = null;
 /**
  * Inizializza la configurazione dell'app.
  * Deve essere chiamata **una sola volta** all'avvio dell'app.
  */
-export function initAppConfig(config) {
+function initAppConfig(config) {
     if (_config) {
         throw new Error('❌ AppConfig already initialized.');
     }
@@ -13,7 +17,7 @@ export function initAppConfig(config) {
  * Restituisce la configurazione attuale.
  * Lancia un errore se `initAppConfig()` non è stato chiamato prima.
  */
-export function getAppConfig() {
+function getAppConfig() {
     if (!_config) {
         throw new Error('❌ No AppConfig initializtion. Use initAppConfig(config) to initialize it.');
     }

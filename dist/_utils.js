@@ -1,15 +1,78 @@
-import { logger } from "./";
-import { validate } from "./_typesValidation";
-export const isBrowser = () => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.dropdownOptionsFromStrings = exports.wait = exports.componentCallbackDispatcher = exports.toggleHiddenStatus = exports.setHiddenStatus = exports.removeWWW = exports.isDev = exports.isWindowAvailable = exports.isBrowser = void 0;
+exports.checkPasswordStrength = checkPasswordStrength;
+exports.capitalize = capitalize;
+exports.formSubmit = formSubmit;
+exports.capitalizeEachWord = capitalizeEachWord;
+exports.parseCookie = parseCookie;
+exports.isLocalhost = isLocalhost;
+exports.getUrlParam = getUrlParam;
+exports.sleep = sleep;
+exports.mapToObject = mapToObject;
+exports.getRandomNumber = getRandomNumber;
+exports.getRandomString = getRandomString;
+exports.arrrayGetLast = arrrayGetLast;
+exports.getPathList = getPathList;
+exports.getCurrentPath = getCurrentPath;
+exports.buildPath = buildPath;
+exports.detectAnalysisFileType = detectAnalysisFileType;
+exports.scrollToElement = scrollToElement;
+exports.clickOutside = clickOutside;
+exports.toHtmlId = toHtmlId;
+exports.toggleArrayItem = toggleArrayItem;
+exports.updateUniqueArray = updateUniqueArray;
+exports.updateArrayByKey = updateArrayByKey;
+exports.toCamelCase = toCamelCase;
+exports.toSnakeCase = toSnakeCase;
+exports.portal = portal;
+exports.isValidTimeStr = isValidTimeStr;
+exports.isValidDate = isValidDate;
+exports.formatDateForInput = formatDateForInput;
+exports.addMinutesToTime = addMinutesToTime;
+exports.setTimeForDate = setTimeForDate;
+exports.addMinutesToDate = addMinutesToDate;
+exports.parseDate = parseDate;
+exports.dateToTime24h = dateToTime24h;
+exports.dateToTime12h = dateToTime12h;
+exports.URLGetParam = URLGetParam;
+exports.isSameMonth = isSameMonth;
+exports.isSameYear = isSameYear;
+exports.getMidpointDate = getMidpointDate;
+exports.getYearBounds = getYearBounds;
+exports.callerName = callerName;
+exports.arrayGetByKey = arrayGetByKey;
+exports.checkFileSize = checkFileSize;
+exports.getMatchScore = getMatchScore;
+exports.objectsDiffer = objectsDiffer;
+exports.removeNullish = removeNullish;
+exports.flattenObject = flattenObject;
+exports.getTimeBounds = getTimeBounds;
+exports.listMonthsInRange = listMonthsInRange;
+exports.getMonthBoundsByYearMonthString = getMonthBoundsByYearMonthString;
+exports.getYearMonthStringFromDate = getYearMonthStringFromDate;
+exports.getMonthBounds = getMonthBounds;
+exports.mergeByKey = mergeByKey;
+exports.removeFromArrayByKey = removeFromArrayByKey;
+exports.hexToRgb = hexToRgb;
+exports.copyToClipboard = copyToClipboard;
+exports.URLReload = URLReload;
+exports.flagEmojiToCountryCode = flagEmojiToCountryCode;
+const _1 = require("./");
+const _typesValidation_1 = require("./_typesValidation");
+const isBrowser = () => {
     return (typeof window !== 'undefined' && typeof document !== 'undefined');
 };
-export const isWindowAvailable = () => {
+exports.isBrowser = isBrowser;
+const isWindowAvailable = () => {
     return (typeof window !== 'undefined');
 };
-export const isDev = () => {
+exports.isWindowAvailable = isWindowAvailable;
+const isDev = () => {
     return (process.env.NODE_ENV !== 'production');
 };
-export function checkPasswordStrength(password) {
+exports.isDev = isDev;
+function checkPasswordStrength(password) {
     if (password.length < 8)
         return { text: 'very weak', score: 0 };
     let score = 0;
@@ -38,48 +101,49 @@ export function checkPasswordStrength(password) {
             return { text: 'very weak', score: 0 };
     }
 }
-export function capitalize(str) {
+function capitalize(str) {
     if (!str)
         return '';
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-export function formSubmit(callback) {
+function formSubmit(callback) {
     return async (event) => {
         event.preventDefault();
         await callback();
     };
 }
-export function capitalizeEachWord(input) {
+function capitalizeEachWord(input) {
     return input
         .toLowerCase()
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 }
-export function parseCookie(header) {
+function parseCookie(header) {
     return Object.fromEntries(header.split('; ').map(c => c.split('=')));
 }
-export function isLocalhost() {
+function isLocalhost() {
     if (typeof window === 'undefined')
         return false;
     return window.location.hostname.startsWith('localhost');
 }
-export function getUrlParam(param) {
+function getUrlParam(param) {
     if (typeof window === 'undefined')
         return null;
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
-export function sleep(seconds) {
+function sleep(seconds) {
     return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
-export const removeWWW = (host) => {
+const removeWWW = (host) => {
     if (host && typeof host == "string")
         return host.replace(/^www\./, '');
     else
         return null;
 };
-export function mapToObject(value) {
+exports.removeWWW = removeWWW;
+function mapToObject(value) {
     try {
         if (value instanceof Map) {
             const obj = {};
@@ -103,15 +167,15 @@ export function mapToObject(value) {
         }
     }
     catch (error) {
-        logger.error(error);
+        _1.logger.error(error);
         return value;
     }
 }
-export function getRandomNumber(min = 0, max = 10000, integer = true) {
+function getRandomNumber(min = 0, max = 10000, integer = true) {
     const rand = Math.random() * (max - min) + min;
     return integer ? Math.floor(rand) : rand;
 }
-export function getRandomString(options) {
+function getRandomString(options) {
     const length = options?.length || 6;
     const includeUppercase = options?.includeUppercase || true;
     const lower = 'abcdefghijklmnopqrstuvwxyz';
@@ -128,21 +192,21 @@ export function getRandomString(options) {
     else
         return result;
 }
-export function arrrayGetLast(arr) {
+function arrrayGetLast(arr) {
     return arr.length > 0 ? arr[arr.length - 1] : undefined;
 }
-export function getPathList(path) {
+function getPathList(path) {
     try {
         if (path)
             return path.split('/');
         return window.location.pathname.split('/');
     }
     catch (error) {
-        logger.error(error);
+        _1.logger.error(error);
         return null;
     }
 }
-export function getCurrentPath(path) {
+function getCurrentPath(path) {
     try {
         let pathList = getPathList(path);
         if (pathList)
@@ -151,15 +215,15 @@ export function getCurrentPath(path) {
             return null;
     }
     catch (error) {
-        logger.error(error);
+        _1.logger.error(error);
         return null;
     }
 }
-export function buildPath(parts, endIndex) {
+function buildPath(parts, endIndex) {
     const sliced = endIndex !== undefined ? parts.slice(0, endIndex + 1) : parts;
     return '/' + sliced.filter(Boolean).join('/');
 }
-export function detectAnalysisFileType(filename) {
+function detectAnalysisFileType(filename) {
     const ext = filename.split('.').pop()?.toLowerCase();
     switch (ext) {
         case 'vcf':
@@ -177,7 +241,7 @@ export function detectAnalysisFileType(filename) {
             return 'unknown';
     }
 }
-export function scrollToElement(target, offset = 0, scrollBehavior = "auto") {
+function scrollToElement(target, offset = 0, scrollBehavior = "auto") {
     let element = null;
     if (typeof target == 'string') {
         const normalizedId = target.startsWith('#') ? target.slice(1) : target;
@@ -194,7 +258,7 @@ export function scrollToElement(target, offset = 0, scrollBehavior = "auto") {
         behavior: scrollBehavior
     });
 }
-export function clickOutside(node, callback) {
+function clickOutside(node, callback) {
     const handleClick = (event) => {
         if (!node.contains(event.target)) {
             callback();
@@ -207,7 +271,7 @@ export function clickOutside(node, callback) {
         }
     };
 }
-export const setHiddenStatus = (element, hidden) => {
+const setHiddenStatus = (element, hidden) => {
     let el;
     if (typeof element === "string") {
         el = document.getElementById(element);
@@ -216,7 +280,7 @@ export const setHiddenStatus = (element, hidden) => {
         el = element;
     }
     if (!el) {
-        logger.error("Element is null running setHiddenStatus()");
+        _1.logger.error("Element is null running setHiddenStatus()");
         return;
     }
     if (hidden) {
@@ -232,7 +296,8 @@ export const setHiddenStatus = (element, hidden) => {
     }
     ;
 };
-export const toggleHiddenStatus = (element) => {
+exports.setHiddenStatus = setHiddenStatus;
+const toggleHiddenStatus = (element) => {
     let el;
     if (typeof element === "string") {
         el = document.getElementById(element);
@@ -241,7 +306,7 @@ export const toggleHiddenStatus = (element) => {
         el = element;
     }
     if (!el) {
-        logger.error("Element is null running toggleHiddenStatus()");
+        _1.logger.error("Element is null running toggleHiddenStatus()");
         return;
     }
     const hasHidden = el?.classList.contains("hidden");
@@ -258,7 +323,8 @@ export const toggleHiddenStatus = (element) => {
     }
     ;
 };
-export function toHtmlId(str) {
+exports.toggleHiddenStatus = toggleHiddenStatus;
+function toHtmlId(str) {
     return str
         .toLowerCase()
         .trim()
@@ -266,12 +332,12 @@ export function toHtmlId(str) {
         .replace(/[^a-z0-9\-_]/g, '') // remove invalid characters
         .replace(/^-+|-+$/g, ''); // remove leading/trailing hyphens
 }
-export function toggleArrayItem(array, item) {
+function toggleArrayItem(array, item) {
     return array.includes(item)
         ? array.filter(i => i !== item) // remove if exists
         : [...array, item]; // add if not present
 }
-export function updateUniqueArray(array, item, action) {
+function updateUniqueArray(array, item, action) {
     if (action === 'add') {
         return array.includes(item) ? array : [...array, item];
     }
@@ -279,7 +345,7 @@ export function updateUniqueArray(array, item, action) {
         return array.filter(i => i !== item);
     }
 }
-export function updateArrayByKey(array, item, action, key) {
+function updateArrayByKey(array, item, action, key) {
     const referenceKey = (key || "id");
     const index = array.findIndex(el => el[referenceKey] === item[referenceKey]);
     if (action === "add") {
@@ -296,7 +362,7 @@ export function updateArrayByKey(array, item, action, key) {
     }
     throw new Error(`Unknown action: ${action}`);
 }
-export function toCamelCase(input) {
+function toCamelCase(input) {
     // Normalize separators to space
     const normalized = input.replace(/[_\-\s]+/g, ' ').trim();
     // Split by space first
@@ -315,7 +381,7 @@ export function toCamelCase(input) {
         : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join('');
 }
-export function toSnakeCase(input) {
+function toSnakeCase(input) {
     // Normalize separators to space
     const normalized = input.replace(/[_\-\s]+/g, ' ').trim();
     // Split by space
@@ -329,7 +395,7 @@ export function toSnakeCase(input) {
     }
     return words.map(w => w.toLowerCase()).join('_');
 }
-export function portal(node, target = document.body) {
+function portal(node, target = document.body) {
     target.appendChild(node);
     return {
         destroy() {
@@ -339,7 +405,7 @@ export function portal(node, target = document.body) {
         }
     };
 }
-export function isValidTimeStr(timeStr) {
+function isValidTimeStr(timeStr) {
     if (timeStr.trim() == "")
         return false;
     if (typeof timeStr !== 'string')
@@ -354,12 +420,12 @@ export function isValidTimeStr(timeStr) {
     const minutes = Number(mStr);
     return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
 }
-export function isValidDate(date) {
+function isValidDate(date) {
     return date && (date instanceof Date) && !isNaN(date.getTime());
 }
-export function formatDateForInput(date) {
+function formatDateForInput(date) {
     if (!isValidDate(date)) {
-        logger.warn("Invalid 'date' in function 'formatDateForInput(date: Date)'");
+        _1.logger.warn("Invalid 'date' in function 'formatDateForInput(date: Date)'");
         return;
     }
     ;
@@ -368,9 +434,9 @@ export function formatDateForInput(date) {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
-export function addMinutesToTime(timeStr, minutesToAdd) {
+function addMinutesToTime(timeStr, minutesToAdd) {
     if (!isValidTimeStr(timeStr)) {
-        logger.error("Invalid 'timeStr' at ddMinutesToTime(timeStr: string, minutesToAdd: number).");
+        _1.logger.error("Invalid 'timeStr' at ddMinutesToTime(timeStr: string, minutesToAdd: number).");
         return;
     }
     ;
@@ -382,13 +448,13 @@ export function addMinutesToTime(timeStr, minutesToAdd) {
     const newMinutes = String(date.getMinutes()).padStart(2, '0');
     return `${newHours}:${newMinutes}`;
 }
-export function setTimeForDate(date, timeStr) {
+function setTimeForDate(date, timeStr) {
     /*if(!isValidDate(date)) {
         logger.error("Invalid 'date' at setTimeForDate(date: Date, timeStr: string).")
         return;
     };*/
     if (!isValidTimeStr(timeStr)) {
-        logger.error("Invalid 'timeStr' at setTimeForDate(date: Date, timeStr: string).");
+        _1.logger.error("Invalid 'timeStr' at setTimeForDate(date: Date, timeStr: string).");
         return date;
     }
     ;
@@ -398,9 +464,9 @@ export function setTimeForDate(date, timeStr) {
     newDate.setMinutes(newDate.getMinutes());
     return newDate;
 }
-export function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
+function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
     if (!isValidDate(date)) {
-        logger.error("Invalid 'date' at addMinutesToDate(date: Date, minutesToAdd: number, dateTimeStr?: string).");
+        _1.logger.error("Invalid 'date' at addMinutesToDate(date: Date, minutesToAdd: number, dateTimeStr?: string).");
         return;
     }
     ;
@@ -410,7 +476,7 @@ export function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
     newDate.setMinutes(newDate.getMinutes() + minutesToAdd);
     return newDate;
 }
-export function parseDate(dateStr, fallbackToToday) {
+function parseDate(dateStr, fallbackToToday) {
     try {
         if (typeof dateStr !== 'string')
             return null;
@@ -433,7 +499,7 @@ export function parseDate(dateStr, fallbackToToday) {
         }
     }
     catch (error) {
-        logger.devError(error);
+        _1.logger.devError(error);
     }
     finally {
         if (fallbackToToday) {
@@ -445,14 +511,14 @@ export function parseDate(dateStr, fallbackToToday) {
         }
     }
 }
-export function dateToTime24h(date) {
-    if (!validate.date(date))
+function dateToTime24h(date) {
+    if (!_typesValidation_1.validate.date(date))
         return null;
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
 }
-export function dateToTime12h(date) {
+function dateToTime12h(date) {
     if (!(date instanceof Date) || isNaN(date.getTime()))
         return null;
     let hours = date.getHours();
@@ -462,7 +528,7 @@ export function dateToTime12h(date) {
     hours = hours === 0 ? 12 : hours; // 0 => 12
     return `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 }
-export function URLGetParam(paramName, url = window.location.href) {
+function URLGetParam(paramName, url = window.location.href) {
     try {
         const parsedUrl = new URL(url);
         return parsedUrl.searchParams.get(paramName);
@@ -471,22 +537,22 @@ export function URLGetParam(paramName, url = window.location.href) {
         return null; // URL malformato
     }
 }
-export function isSameMonth(date1, date2) {
-    if (!validate.date(date1) || !validate.date(date2)) {
-        logger.devError("One or more dates are invalid at isSameMonth(date1: Date, date2: Date)");
+function isSameMonth(date1, date2) {
+    if (!_typesValidation_1.validate.date(date1) || !_typesValidation_1.validate.date(date2)) {
+        _1.logger.devError("One or more dates are invalid at isSameMonth(date1: Date, date2: Date)");
         return false;
     }
     return (date1.getFullYear() === date2.getFullYear() &&
         date1.getMonth() === date2.getMonth());
 }
-export function isSameYear(date1, date2) {
+function isSameYear(date1, date2) {
     if (!(date1 instanceof Date) || isNaN(date1.getTime()))
         return false;
     if (!(date2 instanceof Date) || isNaN(date2.getTime()))
         return false;
     return date1.getFullYear() === date2.getFullYear();
 }
-export function getMidpointDate(date1, date2) {
+function getMidpointDate(date1, date2) {
     if (!(date1 instanceof Date) || isNaN(date1.getTime()) ||
         !(date2 instanceof Date) || isNaN(date2.getTime())) {
         throw new Error('Invalid date');
@@ -496,14 +562,14 @@ export function getMidpointDate(date1, date2) {
     const midpoint = (time1 + time2) / 2;
     return new Date(midpoint);
 }
-export function getYearBounds(date) {
+function getYearBounds(date) {
     const d = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
     const year = d.getFullYear();
     const start = new Date(year, 0, 1, 0, 0, 0, 0); // 1 gennaio alle 00:00
     const end = new Date(year, 11, 31, 23, 59, 59, 999); // 31 dicembre alle 23:59:59.999
     return { start, end };
 }
-export function callerName(level = 2) {
+function callerName(level = 2) {
     const err = new Error();
     const stack = err.stack?.split('\n');
     if (stack && stack.length > level) {
@@ -512,7 +578,7 @@ export function callerName(level = 2) {
     }
     return '<unknown>';
 }
-export function arrayGetByKey(array, value, key = 'id') {
+function arrayGetByKey(array, value, key = 'id') {
     if (!value)
         return [];
     if (!key)
@@ -521,7 +587,7 @@ export function arrayGetByKey(array, value, key = 'id') {
         return [];
     return array.filter(item => item[key] === value);
 }
-export function checkFileSize(files, maxSizeMB) {
+function checkFileSize(files, maxSizeMB) {
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
     let iterable = Array.from(files);
     for (const file of iterable) {
@@ -534,7 +600,7 @@ export function checkFileSize(files, maxSizeMB) {
     }
     return { valid: true };
 }
-export function getMatchScore(text, term) {
+function getMatchScore(text, term) {
     if (text === term)
         return 100;
     if (text.startsWith(term))
@@ -545,11 +611,12 @@ export function getMatchScore(text, term) {
         return 40;
     return 0;
 }
-export const componentCallbackDispatcher = (callback, data) => {
+const componentCallbackDispatcher = (callback, data) => {
     if (callback)
         callback(data);
 };
-export function objectsDiffer(a, b, strict = false) {
+exports.componentCallbackDispatcher = componentCallbackDispatcher;
+function objectsDiffer(a, b, strict = false) {
     const clean = (obj) => {
         // Rimuove Proxy, getter, reactive wrapper ecc.
         try {
@@ -588,10 +655,10 @@ function deepCompare(a, b, strict) {
     }
     return false;
 }
-export function removeNullish(obj) {
+function removeNullish(obj) {
     return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value != null));
 }
-export function flattenObject(obj, options = {}) {
+function flattenObject(obj, options = {}) {
     return _flattenObject(obj, options, '', {}, new Set());
 }
 function _flattenObject(obj, options, _parentKey, _result, _seen) {
@@ -625,7 +692,7 @@ function _flattenObject(obj, options, _parentKey, _result, _seen) {
 /**
  * @param normalizeMonthly If true and units is months or years, it will normalize the start and end date to the first and last day of the first and last month.
  */
-export function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
+function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
     const center = new Date(midpoint);
     const start = new Date(center);
     const end = new Date(center);
@@ -669,7 +736,7 @@ export function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
     }
     return { start, end };
 }
-export function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
+function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
     const { locale = 'en-US', excludeStart = false, excludeEnd = false, descending = false } = options || {};
     let startDate = new Date(start);
     let endDate = new Date(end);
@@ -714,7 +781,7 @@ export function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
  * @param monthKey (deve essere in formato YYYY-MM)
  * @returns Restituisce un oggetto contente start e end
  */
-export function getMonthBoundsByYearMonthString(monthKey) {
+function getMonthBoundsByYearMonthString(monthKey) {
     const [year, month] = monthKey.split("-").map(Number); // es. 2025, 6
     const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0)); // primo giorno del mese
     const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999)); // ultimo giorno del mese
@@ -723,7 +790,7 @@ export function getMonthBoundsByYearMonthString(monthKey) {
 /**
  * @returns The month of the passed date as string in the format YYYY-MM (eg. 2025-05), in UTC
  */
-export function getYearMonthStringFromDate(date) {
+function getYearMonthStringFromDate(date) {
     const year = date.getUTCFullYear();
     const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
     return `${year}-${month}`;
@@ -731,7 +798,7 @@ export function getYearMonthStringFromDate(date) {
 /**
 * @returns Restituisce un oggetto contente start e end
 */
-export function getMonthBounds(date) {
+function getMonthBounds(date) {
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth(); // 0-based
     const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0)); // primo giorno del mese
@@ -745,7 +812,7 @@ export function getMonthBounds(date) {
  * @param key Chiave identificativa (default: "id")
  * @returns Nuovo array aggiornato
  */
-export function mergeByKey(original, updates, key = "id") {
+function mergeByKey(original, updates, key = "id") {
     const map = new Map();
     for (const item of original) {
         map.set(item[key], item);
@@ -763,12 +830,12 @@ export function mergeByKey(original, updates, key = "id") {
  * @param key - Il campo su cui fare il confronto (default: "id")
  * @returns Un nuovo array senza l'elemento corrispondente
  */
-export function removeFromArrayByKey(array, value, key = "id") {
-    if (!validate.array(array))
+function removeFromArrayByKey(array, value, key = "id") {
+    if (!_typesValidation_1.validate.array(array))
         throw new Error("Invalid array");
     return array.filter(item => item[key] !== value);
 }
-export function hexToRgb(hexString) {
+function hexToRgb(hexString) {
     const hex = hexString || "#000000";
     const cleaned = hex.replace(/^#/, '');
     if (![3, 6].includes(cleaned.length))
@@ -779,15 +846,15 @@ export function hexToRgb(hexString) {
     const num = parseInt(fullHex, 16);
     return (`(${((num >> 16) & 255) || 0},${((num >> 8) & 255) || 0},${(num & 255) || 0})`);
 }
-export async function copyToClipboard(text, callback) {
+async function copyToClipboard(text, callback) {
     try {
         await navigator.clipboard.writeText(text);
-        logger.log('Text copied to clipboard');
+        _1.logger.log('Text copied to clipboard');
         if (callback)
             callback();
     }
     catch (err) {
-        logger.error('Failed to copy text: ', err);
+        _1.logger.error('Failed to copy text: ', err);
     }
 }
 /**
@@ -798,10 +865,10 @@ export async function copyToClipboard(text, callback) {
  * @param newParams An object containing key-value pairs to be added to the URL.
  * @param anchor Optional ID of the element to scroll to after reload (e.g. 'comments')
  */
-export function URLReload(newParams, anchor) {
+function URLReload(newParams, anchor) {
     const current = new URLSearchParams(window.location.search);
     let changed = false;
-    if (!validate.object(newParams)) {
+    if (!_typesValidation_1.validate.object(newParams)) {
         const hash = anchor ? `#${anchor}` : '';
         location.replace(`${window.location.pathname}${window.location.search}${hash}`);
         return location.reload();
@@ -818,13 +885,13 @@ export function URLReload(newParams, anchor) {
     window.location.replace(newUrl);
     return location.reload();
 }
-export function flagEmojiToCountryCode(flag) {
+function flagEmojiToCountryCode(flag) {
     const countryCode = [...flag]
         .map(char => String.fromCharCode(char.codePointAt(0) - 0x1F1E6 + 0x61))
         .join('');
     return countryCode.trim().toLowerCase();
 }
-export const wait = (timeout = 100, callback) => {
+const wait = (timeout = 100, callback) => {
     return new Promise((resolve) => {
         setTimeout(() => {
             callback?.();
@@ -832,11 +899,12 @@ export const wait = (timeout = 100, callback) => {
         }, timeout);
     });
 };
-export const dropdownOptionsFromStrings = (strings) => {
+exports.wait = wait;
+const dropdownOptionsFromStrings = (strings) => {
     const options = [];
     const optionsIds = [];
     for (const str of strings) {
-        if (!(str.trim()) || !validate.nonEmptyString(str))
+        if (!(str.trim()) || !_typesValidation_1.validate.nonEmptyString(str))
             continue;
         const sluggifiedStr = ((str.trim())?.replaceAll(" ", "_")).toLowerCase();
         if (optionsIds?.includes(sluggifiedStr))
@@ -851,4 +919,5 @@ export const dropdownOptionsFromStrings = (strings) => {
     }
     return options || [];
 };
+exports.dropdownOptionsFromStrings = dropdownOptionsFromStrings;
 //# sourceMappingURL=_utils.js.map
