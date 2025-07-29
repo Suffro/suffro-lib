@@ -1,4 +1,4 @@
-import { onAuthStateChanged, type User } from 'firebase/auth';
+import { Auth, onAuthStateChanged, type User } from 'firebase/auth';
 import { validate } from '../../_typesValidation';
 
 /**
@@ -6,6 +6,7 @@ import { validate } from '../../_typesValidation';
  * - subscribe(cb): si registra per ricevere aggiornamenti (via onAuthStateChanged)
  * - user(): restituisce lo stato corrente dell’utente (User | null)
  * - logged(): restituisce true se l'utente è loggato altrimenti false
+ * - get(): Returns app auth instance
  */
 export function authState(appAuth: ReturnType<typeof import('firebase/auth').getAuth>) {
   let listeners: Array<(user: User | null) => void> = [];
@@ -48,8 +49,13 @@ export function authState(appAuth: ReturnType<typeof import('firebase/auth').get
 
     /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
     logged(): boolean {
-		const uid = current?.uid;
-		return validate.nonEmptyString(uid);
+      const uid = current?.uid;
+      return validate.nonEmptyString(uid);
+	  },
+
+    /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
+    get(): Auth {
+		  return appAuth;
 	  }
   };
 }

@@ -5,6 +5,7 @@ import { validate } from '../../_typesValidation';
  * - subscribe(cb): si registra per ricevere aggiornamenti (via onAuthStateChanged)
  * - user(): restituisce lo stato corrente dell’utente (User | null)
  * - logged(): restituisce true se l'utente è loggato altrimenti false
+ * - get(): Returns app auth instance
  */
 export function authState(appAuth) {
     let listeners = [];
@@ -46,6 +47,10 @@ export function authState(appAuth) {
         logged() {
             const uid = current?.uid;
             return validate.nonEmptyString(uid);
+        },
+        /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
+        get() {
+            return appAuth;
         }
     };
 }
