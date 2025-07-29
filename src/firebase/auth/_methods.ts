@@ -110,7 +110,8 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
       const provider = new GoogleAuthProvider();
 
       await setPersistence(auth, browserLocalPersistence);
-      logger.log("✅ persistence set");
+      logger.log("Auth persistence set");
+      console.log(`Starting Google auth [${withRedirect?"redirect":"popup"}]`);
 
       if(withRedirect) await signInWithRedirect(auth, provider);
       else await signInWithPopup(auth, provider);
@@ -129,8 +130,10 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
       const provider = new GithubAuthProvider();
 
       await setPersistence(auth, browserLocalPersistence);
-      logger.log("✅ persistence set");
-      
+      logger.log("Auth persistence set");
+
+      console.log(`Starting GitHub auth [${withRedirect?"redirect":"popup"}]`);
+
       if(withRedirect) await signInWithRedirect(auth, provider);
       else await signInWithPopup(auth, provider);
 

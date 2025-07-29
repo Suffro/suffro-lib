@@ -73,7 +73,8 @@ const initAuthMethods = (auth) => ({
             await (0, __1.wait)(200);
             const provider = new auth_1.GoogleAuthProvider();
             await (0, auth_1.setPersistence)(auth, auth_1.browserLocalPersistence);
-            __1.logger.log("✅ persistence set");
+            __1.logger.log("Auth persistence set");
+            console.log(`Starting Google auth [${withRedirect ? "redirect" : "popup"}]`);
             if (withRedirect)
                 await (0, auth_1.signInWithRedirect)(auth, provider);
             else
@@ -90,7 +91,8 @@ const initAuthMethods = (auth) => ({
             await (0, __1.wait)(200);
             const provider = new auth_1.GithubAuthProvider();
             await (0, auth_1.setPersistence)(auth, auth_1.browserLocalPersistence);
-            __1.logger.log("✅ persistence set");
+            __1.logger.log("Auth persistence set");
+            console.log(`Starting GitHub auth [${withRedirect ? "redirect" : "popup"}]`);
             if (withRedirect)
                 await (0, auth_1.signInWithRedirect)(auth, provider);
             else
