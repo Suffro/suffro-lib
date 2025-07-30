@@ -70,15 +70,20 @@ const initAuthMethods = (auth) => ({
     googleAuth: async function googleAuth(withRedirect) {
         try {
             __1.logger.logCaller();
-            await (0, __1.wait)(200);
             const provider = new auth_1.GoogleAuthProvider();
             await (0, auth_1.setPersistence)(auth, auth_1.browserLocalPersistence);
             __1.logger.log("Auth persistence set");
-            console.log(`Starting Google auth [${withRedirect ? "redirect" : "popup"}]`);
-            if (withRedirect)
+            if (withRedirect) {
+                console.log(`Starting Google auth [redirect]`);
                 await (0, auth_1.signInWithRedirect)(auth, provider);
-            else
-                await (0, auth_1.signInWithPopup)(auth, provider);
+            }
+            else {
+                console.log(`Starting Google auth [popup]`);
+                const result = await (0, auth_1.signInWithPopup)(auth, provider);
+                const user = result?.user;
+                if (user)
+                    console.log('Signed in as:', user?.email);
+            }
         }
         catch (error) {
             __1.logger.devError("Google auth error:\n", error?.message);
@@ -88,15 +93,20 @@ const initAuthMethods = (auth) => ({
     githubAuth: async function gitHubAuth(withRedirect) {
         try {
             __1.logger.logCaller();
-            await (0, __1.wait)(200);
             const provider = new auth_1.GithubAuthProvider();
             await (0, auth_1.setPersistence)(auth, auth_1.browserLocalPersistence);
             __1.logger.log("Auth persistence set");
-            console.log(`Starting GitHub auth [${withRedirect ? "redirect" : "popup"}]`);
-            if (withRedirect)
+            if (withRedirect) {
+                console.log(`Starting GitHub auth [redirect]`);
                 await (0, auth_1.signInWithRedirect)(auth, provider);
-            else
-                await (0, auth_1.signInWithPopup)(auth, provider);
+            }
+            else {
+                console.log(`Starting GitHub auth [popup]`);
+                const result = await (0, auth_1.signInWithPopup)(auth, provider);
+                const user = result?.user;
+                if (user)
+                    console.log('Signed in as:', user?.email);
+            }
         }
         catch (error) {
             __1.logger.devError("GitHub auth error:\n", error?.message);
