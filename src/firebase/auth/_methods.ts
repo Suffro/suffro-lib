@@ -105,17 +105,21 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
   googleAuth: async function googleAuth(withRedirect?: boolean): Promise<void> {
     try {
       logger.logCaller();
-      await wait(200);
 
       const provider = new GoogleAuthProvider();
 
       await setPersistence(auth, browserLocalPersistence);
       logger.log("Auth persistence set");
-      console.log(`Starting Google auth [${withRedirect?"redirect":"popup"}]`);
 
-      if(withRedirect) await signInWithRedirect(auth, provider);
-      else await signInWithPopup(auth, provider);
-
+      if(withRedirect) {
+        console.log(`Starting Google auth [redirect]`);
+        await signInWithRedirect(auth, provider);
+      } else {
+        console.log(`Starting Google auth [popup]`);
+        const result = await signInWithPopup(auth, provider);
+        const user = result?.user;
+        if(user) console.log('Signed in as:', user?.email);
+      }
     } catch (error: any) {
       logger.devError("Google auth error:\n", error?.message);
     }
@@ -125,17 +129,21 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
   githubAuth: async function gitHubAuth(withRedirect?: boolean): Promise<void> {
     try {
       logger.logCaller();
-      await wait(200);
 
       const provider = new GithubAuthProvider();
 
       await setPersistence(auth, browserLocalPersistence);
       logger.log("Auth persistence set");
 
-      console.log(`Starting GitHub auth [${withRedirect?"redirect":"popup"}]`);
-
-      if(withRedirect) await signInWithRedirect(auth, provider);
-      else await signInWithPopup(auth, provider);
+      if(withRedirect) {
+        console.log(`Starting GitHub auth [redirect]`);
+        await signInWithRedirect(auth, provider);
+      } else {
+        console.log(`Starting GitHub auth [popup]`);
+        const result = await signInWithPopup(auth, provider);
+        const user = result?.user;
+        if(user) console.log('Signed in as:', user?.email);
+      }
 
     } catch (error: any) {
       logger.devError("GitHub auth error:\n", error?.message);
