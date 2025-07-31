@@ -10,13 +10,17 @@ const _getFsUser = (auth) => {
 };
 const initAuthMethods = (auth) => ({
     //////////////////// SIGNOUT ////////////////////
-    signout: async function firebaseSignout(redirectPath) {
+    signout: async function firebaseSignout(options) {
         try {
             __1.logger.logCaller();
             await (0, auth_1.signOut)(auth);
-            await (0, __1.wait)(400, () => {
-                location.reload();
-            });
+            try {
+                await (0, __1.wait)(400);
+                (0, __1.redirectOrReload)({ reload: true });
+            }
+            catch (error) {
+                __1.logger.error(error);
+            }
         }
         catch (err) {
             __1.logger.devError("Logout failed:", err);

@@ -2,6 +2,15 @@ import type { AnyObject, DropdownOption, HexColor, PasswordStrength } from "./";
 export declare const isBrowser: () => boolean;
 export declare const isWindowAvailable: () => boolean;
 export declare const isDev: () => boolean;
+/**
+ *
+ * @param options.reload If true, redirect url and related logic will be ignored
+ */
+export declare const redirectOrReload: (options?: {
+    redirectUrl?: string;
+    reload?: boolean;
+    redirectReplace?: boolean;
+}) => void;
 export declare function checkPasswordStrength(password: string): PasswordStrength;
 export declare function capitalize(str: string): string;
 export declare function formSubmit(callback: () => void | Promise<void>): (event: SubmitEvent) => Promise<void>;

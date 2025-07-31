@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dropdownOptionsFromStrings = exports.wait = exports.componentCallbackDispatcher = exports.toggleHiddenStatus = exports.setHiddenStatus = exports.removeWWW = exports.isDev = exports.isWindowAvailable = exports.isBrowser = void 0;
+exports.dropdownOptionsFromStrings = exports.wait = exports.componentCallbackDispatcher = exports.toggleHiddenStatus = exports.setHiddenStatus = exports.removeWWW = exports.redirectOrReload = exports.isDev = exports.isWindowAvailable = exports.isBrowser = void 0;
 exports.checkPasswordStrength = checkPasswordStrength;
 exports.capitalize = capitalize;
 exports.formSubmit = formSubmit;
@@ -75,6 +75,29 @@ const isDev = () => {
     return ((nodeEnv !== 'production') || isLocalhost);
 };
 exports.isDev = isDev;
+/**
+ *
+ * @param options.reload If true, redirect url and related logic will be ignored
+ */
+const redirectOrReload = (options) => {
+    if (options?.reload)
+        window.location.reload();
+    if (!(options?.reload) && _typesValidation_1.validate.nonEmptyString(options?.redirectUrl)) {
+        const redirectUrl = new URL(options?.redirectUrl);
+        if (redirectUrl?.href) {
+            switch (options?.redirectReplace) {
+                case true:
+                    window.location.replace(redirectUrl?.href);
+                    break;
+                default:
+                    window.location.href = redirectUrl?.href;
+                    break;
+            }
+        }
+        ;
+    }
+};
+exports.redirectOrReload = redirectOrReload;
 function checkPasswordStrength(password) {
     if (password.length < 8)
         return { text: 'very weak', score: 0 };

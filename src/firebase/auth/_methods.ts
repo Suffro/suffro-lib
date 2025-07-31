@@ -1,4 +1,4 @@
-import { logger, validate, wait } from "../../";
+import { logger, redirectOrReload, validate, wait } from "../../";
 import {
   browserLocalPersistence,
   browserSessionPersistence,
@@ -27,13 +27,16 @@ const _getFsUser = (auth: Auth): User => {
 
 export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
   //////////////////// SIGNOUT ////////////////////
-  signout: async function firebaseSignout(redirectPath?: string) {
+  signout: async function firebaseSignout(options?: {redirectUrl?: string; reload?: boolean}) {
     try {
       logger.logCaller();
       await signOut(auth);
-      await wait(400, () => {
-        location.reload();
-      });
+      try{
+        await wait(400);
+        redirectOrReload({reload: true});
+      } catch(error) {
+        logger.error(error);
+      }
     } catch (err) {
       logger.devError("Logout failed:", err);
     }

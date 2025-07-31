@@ -19,6 +19,28 @@ export const isDev = (): boolean => {
 	return ((nodeEnv !== 'production') || isLocalhost);
 };
 
+/**
+ * 
+ * @param options.reload If true, redirect url and related logic will be ignored 
+ */
+export const redirectOrReload = (options?: {redirectUrl?: string; reload?: boolean, redirectReplace?: boolean}): void => {
+	if(options?.reload) window.location.reload();
+	if(!(options?.reload) && validate.nonEmptyString(options?.redirectUrl)) {
+		const redirectUrl = new URL(options?.redirectUrl);
+		if(redirectUrl?.href) {
+			switch (options?.redirectReplace) {
+				case true:
+					window.location.replace(redirectUrl?.href);
+					break;
+			
+				default:
+					window.location.href=redirectUrl?.href
+					break;
+			}
+		};
+	}
+}
+
 export function checkPasswordStrength(password: string): PasswordStrength {
 	if (password.length < 8) return { text: 'very weak', score: 0 };
 
