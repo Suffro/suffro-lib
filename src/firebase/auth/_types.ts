@@ -3,7 +3,7 @@ import type { Auth, User } from "firebase/auth";
 //////////////////// TYPE ////////////////////
 export type FirebaseAuthMethods = {
 	get: () => User;
-	signout: () => Promise<void>;
+	signout: (options?: {redirectUrl?: string; reload?: boolean;}) => Promise<void>;
 	signup: (email: string, password: string, passwordConfirmation: string) => Promise<void>;
 	signin: (email: string, password: string, remember: boolean) => Promise<void>;
 	forgotPassword: (email: string) => Promise<void>;
