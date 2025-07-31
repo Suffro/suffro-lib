@@ -1,10 +1,11 @@
 import type { Auth, User } from 'firebase/auth';
 import type { Firestore, Timestamp, WhereFilterOp } from 'firebase/firestore';
 import type { FirebaseAuthMethods } from './auth/_types';
-import type { FirebaseApp } from 'firebase/app';
+import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import type { FirebaseStorage } from 'firebase/storage';
 import { FStore, FStoreDoc, FStoreUser } from './firestore/_types';
 import { StorageMethodsInterface } from './storage';
+import { Functions, HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
 export {type AuthState} from "./auth"
 
 /**
@@ -103,10 +104,19 @@ export type FirebaseClient = {
 	instances: { app: FirebaseApp } & FirebaseServiceIstances;
 };
 
+export type ExtendedFirebaseOptions = FirebaseOptions & {
+    /**
+     * To use for Firebase functions initialization
+     * one of: a) The region the callable functions are located in (ex: us-central1) b) A custom domain hosting the callable functions (ex: https://mydomain.com)
+     */
+    regionOrCustomDomain?: string;
+}
+
 export type FirebaseInitializationContext = {
 	app: FirebaseApp;
 	auth: Auth;
 	firestore: Firestore;
 	storage?: FirebaseStorage;
 	client: FirebaseClient;
+	callableFunction?: (name: string, data?: any, regionOrCustomDomain?: string, options?: HttpsCallableOptions) => Promise<HttpsCallableResult<unknown> | null>;
   };
