@@ -12,5 +12,17 @@ export declare const logger: {
     devError: LogFn;
     logCaller: LogFn;
     page: LogFn;
+    prod: {
+        log: {
+            (...data: any[]): void;
+            (message?: any, ...optionalParams: any[]): void;
+        };
+        warn: {
+            (...data: any[]): void;
+            (message?: any, ...optionalParams: any[]): void;
+        };
+        logCaller: (...args: any[]) => void;
+        page: () => void;
+    };
 };
 export {};

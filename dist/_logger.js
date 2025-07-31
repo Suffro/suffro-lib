@@ -21,6 +21,17 @@ exports.logger = {
         ? () => {
             console.log("Page:", (0, _pageStore_1.pageStore)().get());
         }
-        : noop
+        : noop,
+    prod: {
+        log: console.log.bind(console),
+        warn: console.warn.bind(console),
+        logCaller: (...args) => {
+            const name = (0, _utils_1.callerName)(3); // called at log time (3 means level 3, it looks for the caller of the caller, otherwise would always log logger.logCaller)
+            console.log(`${name}()`, ...args);
+        },
+        page: () => {
+            console.log("Page:", (0, _pageStore_1.pageStore)().get());
+        }
+    }
 };
 //# sourceMappingURL=_logger.js.map

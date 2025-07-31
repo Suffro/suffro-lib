@@ -24,5 +24,16 @@ export const logger = {
       ? () => {
           console.log("Page:",pageStore().get());
         }
-      : noop
+      : noop,
+    prod: {
+      log: console.log.bind(console),
+      warn: console.warn.bind(console),
+      logCaller: (...args: any[]) => {
+            const name = callerName(3); // called at log time (3 means level 3, it looks for the caller of the caller, otherwise would always log logger.logCaller)
+            console.log(`${name}()`, ...args);
+          },
+      page: () => {
+            console.log("Page:",pageStore().get());
+          }
+    }
   };
