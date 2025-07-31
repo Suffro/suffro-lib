@@ -11,10 +11,14 @@
     }
   },
   "scripts": {
-    "build": "npm ci && tsc"
+    "remove:dist": "rimraf dist",
+    "build": "npm run remove:dist && npm ci && tsc"
   },
   "dependencies": {
     "firebase": "^12.0.0",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
   }
 }
