@@ -33,7 +33,7 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
       await signOut(auth);
       try{
         await wait(400);
-        redirectOrReload({reload: true});
+        redirectOrReload(options);
       } catch(error) {
         logger.error(error);
       }
