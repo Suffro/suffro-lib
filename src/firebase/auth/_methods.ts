@@ -121,7 +121,6 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
         console.log(`Starting Google auth [popup]`);
         const result = await signInWithPopup(auth, provider);
         const user = result?.user;
-        if(user) console.log('Signed in as:', user?.email);
       }
     } catch (error: any) {
       logger.devError("Google auth error:\n", error?.message);
@@ -145,7 +144,6 @@ export const initAuthMethods = (auth: Auth): FirebaseAuthMethods => ({
         console.log(`Starting GitHub auth [popup]`);
         const result = await signInWithPopup(auth, provider);
         const user = result?.user;
-        if(user) console.log('Signed in as:', user?.email);
       }
 
     } catch (error: any) {

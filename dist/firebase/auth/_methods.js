@@ -85,8 +85,6 @@ const initAuthMethods = (auth) => ({
                 console.log(`Starting Google auth [popup]`);
                 const result = await (0, auth_1.signInWithPopup)(auth, provider);
                 const user = result?.user;
-                if (user)
-                    console.log('Signed in as:', user?.email);
             }
         }
         catch (error) {
@@ -108,8 +106,6 @@ const initAuthMethods = (auth) => ({
                 console.log(`Starting GitHub auth [popup]`);
                 const result = await (0, auth_1.signInWithPopup)(auth, provider);
                 const user = result?.user;
-                if (user)
-                    console.log('Signed in as:', user?.email);
             }
         }
         catch (error) {
