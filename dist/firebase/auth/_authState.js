@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.authStateObsverver = authStateObsverver;
-const auth_1 = require("firebase/auth");
-const _typesValidation_1 = require("../../_typesValidation");
+import { onAuthStateChanged } from 'firebase/auth';
+import { validate } from '../../_typesValidation';
 let observer = null;
 /**
  * Store reattivo per l’utente Firebase.
@@ -11,7 +8,7 @@ let observer = null;
  * - logged(): restituisce true se l'utente è loggato altrimenti false
  * - get(): Returns app auth instance
  */
-function authStateObsverver(appAuth) {
+export function authStateObsverver(appAuth) {
     if (observer) {
         console.warn("authStateObsverver() already initialized, returning active instance");
         return observer;
@@ -25,7 +22,7 @@ function authStateObsverver(appAuth) {
             cb(user);
     }
     // Avvia il listener Firebase una sola volta
-    (0, auth_1.onAuthStateChanged)(appAuth, (user) => {
+    onAuthStateChanged(appAuth, (user) => {
         notify(user);
     });
     const _observer = {
@@ -47,7 +44,7 @@ function authStateObsverver(appAuth) {
         /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
         logged() {
             const uid = current?.uid;
-            return _typesValidation_1.validate.nonEmptyString(uid);
+            return validate.nonEmptyString(uid);
         },
         /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
         get() {

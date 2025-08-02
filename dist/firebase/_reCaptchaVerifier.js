@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRecaptchaVerifier = getRecaptchaVerifier;
 // Global singleton
 let recaptchaVerifier = null;
-async function getRecaptchaVerifier(auth) {
+export async function getRecaptchaVerifier(auth) {
     if (typeof window === 'undefined')
         throw new Error("reCAPTCHA can only be used in the browser.");
     // Remove old instance

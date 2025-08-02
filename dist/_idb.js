@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.idb = idb;
-const idb_1 = require("idb");
-const _logger_1 = require("./_logger");
-async function idb(dbName, version, storeDefs) {
+import { openDB } from 'idb';
+import { logger } from './_logger';
+export async function idb(dbName, version, storeDefs) {
     if (typeof window === 'undefined' || typeof indexedDB === 'undefined') {
         console.error('[IDB] IndexedDB is not available in this context.');
         return null;
     }
-    const DB_INSTANCE = await (0, idb_1.openDB)(dbName, version, {
+    const DB_INSTANCE = await openDB(dbName, version, {
         upgrade(db) {
             if (!storeDefs)
                 return;
@@ -41,7 +38,7 @@ async function idb(dbName, version, storeDefs) {
             return count === 0 ? 'empty' : 'populated';
         }
         catch (err) {
-            _logger_1.logger.error('Error on DB check:', err);
+            logger.error('Error on DB check:', err);
             return 'not-found';
         }
     }

@@ -5,8 +5,8 @@
     //
     // → Emuliamo il comportamento di Node 18+ ESM,  
     //   così TS emette import “./_types.js” anziché “./_types”
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "es2022",
+    "moduleResolution": "bundler",
 
     "declaration": true,
     "declarationDir": "dist/types",
@@ -23,3 +23,4 @@
   "include": ["src"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
+

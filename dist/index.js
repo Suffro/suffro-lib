@@ -1,26 +1,10 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./_types"), exports);
-__exportStar(require("./_utils"), exports);
-__exportStar(require("./_logger"), exports);
-__exportStar(require("./_typesValidation"), exports);
-__exportStar(require("./_browserStorage"), exports);
-__exportStar(require("./appConfig"), exports);
-__exportStar(require("./_idb"), exports);
-__exportStar(require("./_pageStore"), exports);
-__exportStar(require("./firebase"), exports);
+export * from "./_types";
+export * from "./_utils";
+export * from "./_logger";
+export * from "./_typesValidation";
+export * from "./_browserStorage";
+export * from "./appConfig";
+export * from "./_idb";
+export * from "./_pageStore";
+export * from "./firebase";
 //# sourceMappingURL=index.js.map

@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.initStorageMethods = void 0;
-const storage_1 = require("firebase/storage");
-const _logger_1 = require("../../_logger");
+import { ref, uploadBytes, getDownloadURL, listAll, getBlob, deleteObject, } from "firebase/storage";
+import { logger } from "../../_logger";
 const getFilePath = (fileName, folderSegments) => {
     const cleanedFileName = fileName
         .trim()
@@ -27,7 +24,7 @@ const getFilePath = (fileName, folderSegments) => {
         fileName: cleanedFileName,
     };
 };
-const initStorageMethods = (storage) => ({
+export const initStorageMethods = (storage) => ({
     /**
      * Carica un file su Firebase Storage in un path dinamico.
      * @param file - Il file da caricare
@@ -35,14 +32,14 @@ const initStorageMethods = (storage) => ({
      * @returns URL pubblico al file caricato
      */
     uploadFile: async function _uploadFile(file, fileName, folderSegments) {
-        _logger_1.logger.logCaller();
+        logger.logCaller();
         if (folderSegments.length === 0) {
             throw new Error("Storage path is required");
         }
         const filePath = getFilePath(fileName, folderSegments);
-        const fileRef = (0, storage_1.ref)(storage, filePath?.fullPath);
-        const snapshot = await (0, storage_1.uploadBytes)(fileRef, file);
-        const url = await (0, storage_1.getDownloadURL)(snapshot.ref);
+        const fileRef = ref(storage, filePath?.fullPath);
+        const snapshot = await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(snapshot.ref);
         return url;
     },
     /**
@@ -50,21 +47,21 @@ const initStorageMethods = (storage) => ({
      * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
      */
     deleteFile: async function _deleteFile(fileName, folderSegments) {
-        _logger_1.logger.logCaller();
+        logger.logCaller();
         const filePath = getFilePath(fileName, folderSegments);
-        const fileRef = (0, storage_1.ref)(storage, filePath?.fullPath);
-        await (0, storage_1.deleteObject)(fileRef);
+        const fileRef = ref(storage, filePath?.fullPath);
+        await deleteObject(fileRef);
     },
     /**
      * Elenca tutti i file in una cartella.
      * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
      */
     listFiles: async function _listFiles(folderSegments) {
-        _logger_1.logger.logCaller();
+        logger.logCaller();
         const folderPath = getFilePath("", folderSegments)?.folderPath;
-        const folderRef = (0, storage_1.ref)(storage, folderPath);
-        const res = await (0, storage_1.listAll)(folderRef);
-        const urls = await Promise.all(res.items.map((itemRef) => (0, storage_1.getDownloadURL)(itemRef)));
+        const folderRef = ref(storage, folderPath);
+        const res = await listAll(folderRef);
+        const urls = await Promise.all(res.items.map((itemRef) => getDownloadURL(itemRef)));
         return urls;
     },
     /**
@@ -73,21 +70,20 @@ const initStorageMethods = (storage) => ({
      * @returns Un Blob del file
      */
     downloadFile: async function _downloadFileAsBlob(fileName, folderSegments) {
-        _logger_1.logger.logCaller();
+        logger.logCaller();
         const filePath = getFilePath(fileName, folderSegments);
-        const fileRef = (0, storage_1.ref)(storage, filePath?.fullPath);
-        return await (0, storage_1.getBlob)(fileRef);
+        const fileRef = ref(storage, filePath?.fullPath);
+        return await getBlob(fileRef);
     },
     /**
      * Ottiene l'URL pubblico di un file.
      * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
      */
     getFileUrl: async function _getPublicDownloadURL(fileName, folderSegments) {
-        _logger_1.logger.logCaller();
+        logger.logCaller();
         const filePath = getFilePath(fileName, folderSegments);
-        const fileRef = (0, storage_1.ref)(storage, filePath?.fullPath);
-        return await (0, storage_1.getDownloadURL)(fileRef);
+        const fileRef = ref(storage, filePath?.fullPath);
+        return await getDownloadURL(fileRef);
     },
 });
-exports.initStorageMethods = initStorageMethods;
 //# sourceMappingURL=_methods.js.map

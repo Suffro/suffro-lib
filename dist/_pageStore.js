@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.pageStore = pageStore;
 /**
  * Crea uno store reattivo che fornisce informazioni aggiornate sulla pagina corrente.
  * Si comporta in modo simile allo store `$page` di SvelteKit ma in ambiente JS puro.
@@ -11,7 +8,7 @@ exports.pageStore = pageStore;
  *  - `get()`: restituisce lo stato corrente della pagina
  *  - Utilizza come 'const page=pageStore()' e poi 'page.get()' o 'page.subscribe((info)=>{})'
  */
-function pageStore() {
+export function pageStore() {
     let listeners = [];
     function getPage() {
         const url = new URL(window.location.href);

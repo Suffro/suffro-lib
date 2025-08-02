@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.browserStorage = browserStorage;
-const _1 = require("./");
+import { logger } from "./";
 const _isBrowser = typeof window !== "undefined" && typeof document !== "undefined";
-function browserStorage(type, namespace) {
+export function browserStorage(type, namespace) {
     const _storage = _isBrowser
         ? type === "local"
             ? localStorage
@@ -87,7 +84,7 @@ function browserStorage(type, namespace) {
             _storage?.setItem(_fullKey(key), JSON.stringify(payload));
         }
         catch (err) {
-            _1.logger.warn(`[browserStorage] Failed to set key "${key}"`, err);
+            logger.warn(`[browserStorage] Failed to set key "${key}"`, err);
         }
     }
     function removeItem(key) {
