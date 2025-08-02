@@ -33,7 +33,7 @@ export const isDev = (): boolean => {
  * getSubdomain("https://bubbledesk.app"); // null
  * getSubdomain("http://localhost:5173"); // null
  */
-export function getSubdomain(url?: string): string | null {
+export const getSubdomain = (url?: string): string | null => {
 	const hostname = url ? new URL(url).hostname : window.location.hostname;
 	const parts = hostname.split('.');
 
