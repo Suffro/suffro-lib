@@ -20,6 +20,32 @@ export const isDev = (): boolean => {
 };
 
 /**
+ * Estrae il sottodominio da un URL o dal dominio corrente (es. builder.bubbledesk.app → "builder").
+ *
+ * ⚠️ Restituisce `null` se non è presente alcun sottodominio (es. bubbledesk.app o localhost).
+ *
+ * @param url - (opzionale) Una stringa URL da cui estrarre il sottodominio. Se non fornita, usa `window.location.hostname`.
+ * @returns Il sottodominio come stringa, oppure `null` se non rilevabile.
+ *
+ * @example
+ * getSubdomain("https://auth.bubbledesk.app"); // "auth"
+ * getSubdomain(); // se eseguito su builder.bubbledesk.app → "builder"
+ * getSubdomain("https://bubbledesk.app"); // null
+ * getSubdomain("http://localhost:5173"); // null
+ */
+export function getSubdomain(url?: string): string | null {
+	const hostname = url ? new URL(url).hostname : window.location.hostname;
+	const parts = hostname.split('.');
+
+	// Gestisce casi tipo: "builder.bubbledesk.app"
+	// Evita problemi su "localhost" o "bubbledesk.app"
+	if (parts.length >= 3) return parts[0];
+
+	return null;
+}
+
+
+/**
  * 
  * @param options.reload If true, redirect url and related logic will be ignored 
  */
