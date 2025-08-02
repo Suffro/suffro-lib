@@ -1,4 +1,3 @@
-import { FirebaseStorage } from "firebase/storage";
 
 
 export type StorageMethodsInterface = {
