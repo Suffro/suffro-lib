@@ -26,4 +26,3 @@ type StoreSchema = {
 type StoreDefinition = Record<string, StoreSchema>;
 export declare function idb<T = unknown>(dbName: string, version?: number, storeDefs?: StoreDefinition): Promise<IDBApi<T> | null>;
 export {};
-//# sourceMappingURL=_idb.d.ts.map

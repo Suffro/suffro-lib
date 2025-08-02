@@ -23,4 +23,3 @@ export declare function userProfileSet(auth: Auth, data: FirebaseUserPublicData)
 export declare function updateUserPhoneNumber(auth: Auth, db: Firestore, phoneNumber: string): Promise<void>;
 export declare const initFirestoreDocsMethods: (auth: Auth, db: Firestore, usersCollectionName?: string) => FStoreDoc;
 export declare const initFirestoreCurrentUserDocMethods: (auth: Auth, db: Firestore) => FStoreUser;
-//# sourceMappingURL=_methods.d.ts.map

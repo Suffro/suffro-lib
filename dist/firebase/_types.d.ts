@@ -84,4 +84,3 @@ export type FirebaseInitializationContext = {
     client: FirebaseClient;
     callableFunction?: (name: string, data?: any, regionOrCustomDomain?: string, options?: HttpsCallableOptions) => Promise<HttpsCallableResult<unknown> | null>;
 };
-//# sourceMappingURL=_types.d.ts.map

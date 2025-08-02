@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validate = void 0;
-exports.validate = {
+export const validate = {
     string: (v) => typeof v === 'string',
     nonEmptyString: (v) => typeof v === 'string' && v.trim().length > 0,
     number: (v) => typeof v === 'number' && !isNaN(v),

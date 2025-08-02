@@ -26,4 +26,3 @@ export declare const logger: {
     };
 };
 export {};
-//# sourceMappingURL=_logger.d.ts.map

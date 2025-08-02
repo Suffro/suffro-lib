@@ -31,4 +31,3 @@ export type FStore = {
     doc: FStoreDoc;
     userDoc: FStoreUser;
 };
-//# sourceMappingURL=_types.d.ts.map

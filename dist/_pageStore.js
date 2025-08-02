@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.pageStore = pageStore;
-function pageStore() {
+export function pageStore() {
     let listeners = [];
     function getPage() {
         const url = new URL(window.location.href);

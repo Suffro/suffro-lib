@@ -1,92 +1,28 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.dropdownOptionsFromStrings = exports.wait = exports.componentCallbackDispatcher = exports.toggleHiddenStatus = exports.setHiddenStatus = exports.removeWWW = exports.redirectOrReload = exports.getSubdomain = exports.isDev = exports.isWindowAvailable = exports.isBrowser = void 0;
-exports.checkPasswordStrength = checkPasswordStrength;
-exports.capitalize = capitalize;
-exports.formSubmit = formSubmit;
-exports.capitalizeEachWord = capitalizeEachWord;
-exports.parseCookie = parseCookie;
-exports.isLocalhost = isLocalhost;
-exports.getUrlParam = getUrlParam;
-exports.sleep = sleep;
-exports.mapToObject = mapToObject;
-exports.getRandomNumber = getRandomNumber;
-exports.getRandomString = getRandomString;
-exports.arrrayGetLast = arrrayGetLast;
-exports.getPathList = getPathList;
-exports.getCurrentPath = getCurrentPath;
-exports.buildPath = buildPath;
-exports.detectAnalysisFileType = detectAnalysisFileType;
-exports.scrollToElement = scrollToElement;
-exports.clickOutside = clickOutside;
-exports.toHtmlId = toHtmlId;
-exports.toggleArrayItem = toggleArrayItem;
-exports.updateUniqueArray = updateUniqueArray;
-exports.updateArrayByKey = updateArrayByKey;
-exports.toCamelCase = toCamelCase;
-exports.toSnakeCase = toSnakeCase;
-exports.portal = portal;
-exports.isValidTimeStr = isValidTimeStr;
-exports.isValidDate = isValidDate;
-exports.formatDateForInput = formatDateForInput;
-exports.addMinutesToTime = addMinutesToTime;
-exports.setTimeForDate = setTimeForDate;
-exports.addMinutesToDate = addMinutesToDate;
-exports.parseDate = parseDate;
-exports.dateToTime24h = dateToTime24h;
-exports.dateToTime12h = dateToTime12h;
-exports.URLGetParam = URLGetParam;
-exports.isSameMonth = isSameMonth;
-exports.isSameYear = isSameYear;
-exports.getMidpointDate = getMidpointDate;
-exports.getYearBounds = getYearBounds;
-exports.callerName = callerName;
-exports.arrayGetByKey = arrayGetByKey;
-exports.checkFileSize = checkFileSize;
-exports.getMatchScore = getMatchScore;
-exports.objectsDiffer = objectsDiffer;
-exports.removeNullish = removeNullish;
-exports.flattenObject = flattenObject;
-exports.getTimeBounds = getTimeBounds;
-exports.listMonthsInRange = listMonthsInRange;
-exports.getMonthBoundsByYearMonthString = getMonthBoundsByYearMonthString;
-exports.getYearMonthStringFromDate = getYearMonthStringFromDate;
-exports.getMonthBounds = getMonthBounds;
-exports.mergeByKey = mergeByKey;
-exports.removeFromArrayByKey = removeFromArrayByKey;
-exports.hexToRgb = hexToRgb;
-exports.copyToClipboard = copyToClipboard;
-exports.URLReload = URLReload;
-exports.flagEmojiToCountryCode = flagEmojiToCountryCode;
-const _1 = require("./");
-const _typesValidation_1 = require("./_typesValidation");
-const isBrowser = () => {
+import { logger } from "./";
+import { validate } from "./_typesValidation";
+export const isBrowser = () => {
     return (typeof window !== 'undefined' && typeof document !== 'undefined');
 };
-exports.isBrowser = isBrowser;
-const isWindowAvailable = () => {
+export const isWindowAvailable = () => {
     return (typeof window !== 'undefined');
 };
-exports.isWindowAvailable = isWindowAvailable;
-const isDev = () => {
+export const isDev = () => {
     const isLocalhost = typeof window !== 'undefined' &&
         ['localhost', '127.0.0.1'].includes(window.location.hostname);
     const nodeEnv = process?.env?.NODE_ENV;
     return ((nodeEnv !== 'production') || isLocalhost);
 };
-exports.isDev = isDev;
-const getSubdomain = (url) => {
+export const getSubdomain = (url) => {
     const hostname = url ? new URL(url).hostname : window.location.hostname;
     const parts = hostname.split('.');
     if (parts.length >= 3)
         return parts[0];
     return null;
 };
-exports.getSubdomain = getSubdomain;
-const redirectOrReload = (options) => {
+export const redirectOrReload = (options) => {
     if (options?.reload)
         window.location.reload();
-    if (!(options?.reload) && _typesValidation_1.validate.nonEmptyString(options?.redirectUrl)) {
+    if (!(options?.reload) && validate.nonEmptyString(options?.redirectUrl)) {
         const redirectUrl = new URL(options?.redirectUrl);
         if (redirectUrl?.href) {
             switch (options?.redirectReplace) {
@@ -101,8 +37,7 @@ const redirectOrReload = (options) => {
         ;
     }
 };
-exports.redirectOrReload = redirectOrReload;
-function checkPasswordStrength(password) {
+export function checkPasswordStrength(password) {
     if (password.length < 8)
         return { text: 'very weak', score: 0 };
     let score = 0;
@@ -131,49 +66,48 @@ function checkPasswordStrength(password) {
             return { text: 'very weak', score: 0 };
     }
 }
-function capitalize(str) {
+export function capitalize(str) {
     if (!str)
         return '';
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-function formSubmit(callback) {
+export function formSubmit(callback) {
     return async (event) => {
         event.preventDefault();
         await callback();
     };
 }
-function capitalizeEachWord(input) {
+export function capitalizeEachWord(input) {
     return input
         .toLowerCase()
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
 }
-function parseCookie(header) {
+export function parseCookie(header) {
     return Object.fromEntries(header.split('; ').map(c => c.split('=')));
 }
-function isLocalhost() {
+export function isLocalhost() {
     if (typeof window === 'undefined')
         return false;
     return window.location.hostname.startsWith('localhost');
 }
-function getUrlParam(param) {
+export function getUrlParam(param) {
     if (typeof window === 'undefined')
         return null;
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
-function sleep(seconds) {
+export function sleep(seconds) {
     return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
-const removeWWW = (host) => {
+export const removeWWW = (host) => {
     if (host && typeof host == "string")
         return host.replace(/^www\./, '');
     else
         return null;
 };
-exports.removeWWW = removeWWW;
-function mapToObject(value) {
+export function mapToObject(value) {
     try {
         if (value instanceof Map) {
             const obj = {};
@@ -197,15 +131,15 @@ function mapToObject(value) {
         }
     }
     catch (error) {
-        _1.logger.error(error);
+        logger.error(error);
         return value;
     }
 }
-function getRandomNumber(min = 0, max = 10000, integer = true) {
+export function getRandomNumber(min = 0, max = 10000, integer = true) {
     const rand = Math.random() * (max - min) + min;
     return integer ? Math.floor(rand) : rand;
 }
-function getRandomString(options) {
+export function getRandomString(options) {
     const length = options?.length || 6;
     const includeUppercase = options?.includeUppercase || true;
     const lower = 'abcdefghijklmnopqrstuvwxyz';
@@ -222,21 +156,21 @@ function getRandomString(options) {
     else
         return result;
 }
-function arrrayGetLast(arr) {
+export function arrrayGetLast(arr) {
     return arr.length > 0 ? arr[arr.length - 1] : undefined;
 }
-function getPathList(path) {
+export function getPathList(path) {
     try {
         if (path)
             return path.split('/');
         return window.location.pathname.split('/');
     }
     catch (error) {
-        _1.logger.error(error);
+        logger.error(error);
         return null;
     }
 }
-function getCurrentPath(path) {
+export function getCurrentPath(path) {
     try {
         let pathList = getPathList(path);
         if (pathList)
@@ -245,15 +179,15 @@ function getCurrentPath(path) {
             return null;
     }
     catch (error) {
-        _1.logger.error(error);
+        logger.error(error);
         return null;
     }
 }
-function buildPath(parts, endIndex) {
+export function buildPath(parts, endIndex) {
     const sliced = endIndex !== undefined ? parts.slice(0, endIndex + 1) : parts;
     return '/' + sliced.filter(Boolean).join('/');
 }
-function detectAnalysisFileType(filename) {
+export function detectAnalysisFileType(filename) {
     const ext = filename.split('.').pop()?.toLowerCase();
     switch (ext) {
         case 'vcf':
@@ -271,7 +205,7 @@ function detectAnalysisFileType(filename) {
             return 'unknown';
     }
 }
-function scrollToElement(target, offset = 0, scrollBehavior = "auto") {
+export function scrollToElement(target, offset = 0, scrollBehavior = "auto") {
     let element = null;
     if (typeof target == 'string') {
         const normalizedId = target.startsWith('#') ? target.slice(1) : target;
@@ -288,7 +222,7 @@ function scrollToElement(target, offset = 0, scrollBehavior = "auto") {
         behavior: scrollBehavior
     });
 }
-function clickOutside(node, callback) {
+export function clickOutside(node, callback) {
     const handleClick = (event) => {
         if (!node.contains(event.target)) {
             callback();
@@ -301,7 +235,7 @@ function clickOutside(node, callback) {
         }
     };
 }
-const setHiddenStatus = (element, hidden) => {
+export const setHiddenStatus = (element, hidden) => {
     let el;
     if (typeof element === "string") {
         el = document.getElementById(element);
@@ -310,7 +244,7 @@ const setHiddenStatus = (element, hidden) => {
         el = element;
     }
     if (!el) {
-        _1.logger.error("Element is null running setHiddenStatus()");
+        logger.error("Element is null running setHiddenStatus()");
         return;
     }
     if (hidden) {
@@ -326,8 +260,7 @@ const setHiddenStatus = (element, hidden) => {
     }
     ;
 };
-exports.setHiddenStatus = setHiddenStatus;
-const toggleHiddenStatus = (element) => {
+export const toggleHiddenStatus = (element) => {
     let el;
     if (typeof element === "string") {
         el = document.getElementById(element);
@@ -336,7 +269,7 @@ const toggleHiddenStatus = (element) => {
         el = element;
     }
     if (!el) {
-        _1.logger.error("Element is null running toggleHiddenStatus()");
+        logger.error("Element is null running toggleHiddenStatus()");
         return;
     }
     const hasHidden = el?.classList.contains("hidden");
@@ -353,8 +286,7 @@ const toggleHiddenStatus = (element) => {
     }
     ;
 };
-exports.toggleHiddenStatus = toggleHiddenStatus;
-function toHtmlId(str) {
+export function toHtmlId(str) {
     return str
         .toLowerCase()
         .trim()
@@ -362,12 +294,12 @@ function toHtmlId(str) {
         .replace(/[^a-z0-9\-_]/g, '')
         .replace(/^-+|-+$/g, '');
 }
-function toggleArrayItem(array, item) {
+export function toggleArrayItem(array, item) {
     return array.includes(item)
         ? array.filter(i => i !== item)
         : [...array, item];
 }
-function updateUniqueArray(array, item, action) {
+export function updateUniqueArray(array, item, action) {
     if (action === 'add') {
         return array.includes(item) ? array : [...array, item];
     }
@@ -375,7 +307,7 @@ function updateUniqueArray(array, item, action) {
         return array.filter(i => i !== item);
     }
 }
-function updateArrayByKey(array, item, action, key) {
+export function updateArrayByKey(array, item, action, key) {
     const referenceKey = (key || "id");
     const index = array.findIndex(el => el[referenceKey] === item[referenceKey]);
     if (action === "add") {
@@ -392,7 +324,7 @@ function updateArrayByKey(array, item, action, key) {
     }
     throw new Error(`Unknown action: ${action}`);
 }
-function toCamelCase(input) {
+export function toCamelCase(input) {
     const normalized = input.replace(/[_\-\s]+/g, ' ').trim();
     const roughWords = normalized.split(' ');
     const words = [];
@@ -407,7 +339,7 @@ function toCamelCase(input) {
         : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join('');
 }
-function toSnakeCase(input) {
+export function toSnakeCase(input) {
     const normalized = input.replace(/[_\-\s]+/g, ' ').trim();
     const roughWords = normalized.split(' ');
     const words = [];
@@ -418,7 +350,7 @@ function toSnakeCase(input) {
     }
     return words.map(w => w.toLowerCase()).join('_');
 }
-function portal(node, target = document.body) {
+export function portal(node, target = document.body) {
     target.appendChild(node);
     return {
         destroy() {
@@ -428,7 +360,7 @@ function portal(node, target = document.body) {
         }
     };
 }
-function isValidTimeStr(timeStr) {
+export function isValidTimeStr(timeStr) {
     if (timeStr.trim() == "")
         return false;
     if (typeof timeStr !== 'string')
@@ -443,12 +375,12 @@ function isValidTimeStr(timeStr) {
     const minutes = Number(mStr);
     return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
 }
-function isValidDate(date) {
+export function isValidDate(date) {
     return date && (date instanceof Date) && !isNaN(date.getTime());
 }
-function formatDateForInput(date) {
+export function formatDateForInput(date) {
     if (!isValidDate(date)) {
-        _1.logger.warn("Invalid 'date' in function 'formatDateForInput(date: Date)'");
+        logger.warn("Invalid 'date' in function 'formatDateForInput(date: Date)'");
         return;
     }
     ;
@@ -457,9 +389,9 @@ function formatDateForInput(date) {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
-function addMinutesToTime(timeStr, minutesToAdd) {
+export function addMinutesToTime(timeStr, minutesToAdd) {
     if (!isValidTimeStr(timeStr)) {
-        _1.logger.error("Invalid 'timeStr' at ddMinutesToTime(timeStr: string, minutesToAdd: number).");
+        logger.error("Invalid 'timeStr' at ddMinutesToTime(timeStr: string, minutesToAdd: number).");
         return;
     }
     ;
@@ -471,9 +403,9 @@ function addMinutesToTime(timeStr, minutesToAdd) {
     const newMinutes = String(date.getMinutes()).padStart(2, '0');
     return `${newHours}:${newMinutes}`;
 }
-function setTimeForDate(date, timeStr) {
+export function setTimeForDate(date, timeStr) {
     if (!isValidTimeStr(timeStr)) {
-        _1.logger.error("Invalid 'timeStr' at setTimeForDate(date: Date, timeStr: string).");
+        logger.error("Invalid 'timeStr' at setTimeForDate(date: Date, timeStr: string).");
         return date;
     }
     ;
@@ -483,9 +415,9 @@ function setTimeForDate(date, timeStr) {
     newDate.setMinutes(newDate.getMinutes());
     return newDate;
 }
-function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
+export function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
     if (!isValidDate(date)) {
-        _1.logger.error("Invalid 'date' at addMinutesToDate(date: Date, minutesToAdd: number, dateTimeStr?: string).");
+        logger.error("Invalid 'date' at addMinutesToDate(date: Date, minutesToAdd: number, dateTimeStr?: string).");
         return;
     }
     ;
@@ -495,7 +427,7 @@ function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
     newDate.setMinutes(newDate.getMinutes() + minutesToAdd);
     return newDate;
 }
-function parseDate(dateStr, fallbackToToday) {
+export function parseDate(dateStr, fallbackToToday) {
     try {
         if (typeof dateStr !== 'string')
             return null;
@@ -515,7 +447,7 @@ function parseDate(dateStr, fallbackToToday) {
         }
     }
     catch (error) {
-        _1.logger.devError(error);
+        logger.devError(error);
     }
     finally {
         if (fallbackToToday) {
@@ -526,14 +458,14 @@ function parseDate(dateStr, fallbackToToday) {
         }
     }
 }
-function dateToTime24h(date) {
-    if (!_typesValidation_1.validate.date(date))
+export function dateToTime24h(date) {
+    if (!validate.date(date))
         return null;
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
 }
-function dateToTime12h(date) {
+export function dateToTime12h(date) {
     if (!(date instanceof Date) || isNaN(date.getTime()))
         return null;
     let hours = date.getHours();
@@ -543,7 +475,7 @@ function dateToTime12h(date) {
     hours = hours === 0 ? 12 : hours;
     return `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 }
-function URLGetParam(paramName, url = window.location.href) {
+export function URLGetParam(paramName, url = window.location.href) {
     try {
         const parsedUrl = new URL(url);
         return parsedUrl.searchParams.get(paramName);
@@ -552,22 +484,22 @@ function URLGetParam(paramName, url = window.location.href) {
         return null;
     }
 }
-function isSameMonth(date1, date2) {
-    if (!_typesValidation_1.validate.date(date1) || !_typesValidation_1.validate.date(date2)) {
-        _1.logger.devError("One or more dates are invalid at isSameMonth(date1: Date, date2: Date)");
+export function isSameMonth(date1, date2) {
+    if (!validate.date(date1) || !validate.date(date2)) {
+        logger.devError("One or more dates are invalid at isSameMonth(date1: Date, date2: Date)");
         return false;
     }
     return (date1.getFullYear() === date2.getFullYear() &&
         date1.getMonth() === date2.getMonth());
 }
-function isSameYear(date1, date2) {
+export function isSameYear(date1, date2) {
     if (!(date1 instanceof Date) || isNaN(date1.getTime()))
         return false;
     if (!(date2 instanceof Date) || isNaN(date2.getTime()))
         return false;
     return date1.getFullYear() === date2.getFullYear();
 }
-function getMidpointDate(date1, date2) {
+export function getMidpointDate(date1, date2) {
     if (!(date1 instanceof Date) || isNaN(date1.getTime()) ||
         !(date2 instanceof Date) || isNaN(date2.getTime())) {
         throw new Error('Invalid date');
@@ -577,14 +509,14 @@ function getMidpointDate(date1, date2) {
     const midpoint = (time1 + time2) / 2;
     return new Date(midpoint);
 }
-function getYearBounds(date) {
+export function getYearBounds(date) {
     const d = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
     const year = d.getFullYear();
     const start = new Date(year, 0, 1, 0, 0, 0, 0);
     const end = new Date(year, 11, 31, 23, 59, 59, 999);
     return { start, end };
 }
-function callerName(level = 2) {
+export function callerName(level = 2) {
     const err = new Error();
     const stack = err.stack?.split('\n');
     if (stack && stack.length > level) {
@@ -593,7 +525,7 @@ function callerName(level = 2) {
     }
     return '<unknown>';
 }
-function arrayGetByKey(array, value, key = 'id') {
+export function arrayGetByKey(array, value, key = 'id') {
     if (!value)
         return [];
     if (!key)
@@ -602,7 +534,7 @@ function arrayGetByKey(array, value, key = 'id') {
         return [];
     return array.filter(item => item[key] === value);
 }
-function checkFileSize(files, maxSizeMB) {
+export function checkFileSize(files, maxSizeMB) {
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
     let iterable = Array.from(files);
     for (const file of iterable) {
@@ -615,7 +547,7 @@ function checkFileSize(files, maxSizeMB) {
     }
     return { valid: true };
 }
-function getMatchScore(text, term) {
+export function getMatchScore(text, term) {
     if (text === term)
         return 100;
     if (text.startsWith(term))
@@ -626,12 +558,11 @@ function getMatchScore(text, term) {
         return 40;
     return 0;
 }
-const componentCallbackDispatcher = (callback, data) => {
+export const componentCallbackDispatcher = (callback, data) => {
     if (callback)
         callback(data);
 };
-exports.componentCallbackDispatcher = componentCallbackDispatcher;
-function objectsDiffer(a, b, strict = false) {
+export function objectsDiffer(a, b, strict = false) {
     const clean = (obj) => {
         try {
             return structuredClone(obj);
@@ -669,10 +600,10 @@ function deepCompare(a, b, strict) {
     }
     return false;
 }
-function removeNullish(obj) {
+export function removeNullish(obj) {
     return Object.fromEntries(Object.entries(obj).filter(([_, value]) => value != null));
 }
-function flattenObject(obj, options = {}) {
+export function flattenObject(obj, options = {}) {
     return _flattenObject(obj, options, '', {}, new Set());
 }
 function _flattenObject(obj, options, _parentKey, _result, _seen) {
@@ -703,7 +634,7 @@ function _flattenObject(obj, options, _parentKey, _result, _seen) {
     _seen.delete(obj);
     return _result;
 }
-function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
+export function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
     const center = new Date(midpoint);
     const start = new Date(center);
     const end = new Date(center);
@@ -747,7 +678,7 @@ function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
     }
     return { start, end };
 }
-function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
+export function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
     const { locale = 'en-US', excludeStart = false, excludeEnd = false, descending = false } = options || {};
     let startDate = new Date(start);
     let endDate = new Date(end);
@@ -786,25 +717,25 @@ function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
     }
     return descending ? months.reverse() : months;
 }
-function getMonthBoundsByYearMonthString(monthKey) {
+export function getMonthBoundsByYearMonthString(monthKey) {
     const [year, month] = monthKey.split("-").map(Number);
     const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
     const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
     return { start, end };
 }
-function getYearMonthStringFromDate(date) {
+export function getYearMonthStringFromDate(date) {
     const year = date.getUTCFullYear();
     const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
     return `${year}-${month}`;
 }
-function getMonthBounds(date) {
+export function getMonthBounds(date) {
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth();
     const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
     const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
     return { start, end };
 }
-function mergeByKey(original, updates, key = "id") {
+export function mergeByKey(original, updates, key = "id") {
     const map = new Map();
     for (const item of original) {
         map.set(item[key], item);
@@ -814,12 +745,12 @@ function mergeByKey(original, updates, key = "id") {
     }
     return Array.from(map.values());
 }
-function removeFromArrayByKey(array, value, key = "id") {
-    if (!_typesValidation_1.validate.array(array))
+export function removeFromArrayByKey(array, value, key = "id") {
+    if (!validate.array(array))
         throw new Error("Invalid array");
     return array.filter(item => item[key] !== value);
 }
-function hexToRgb(hexString) {
+export function hexToRgb(hexString) {
     const hex = hexString || "#000000";
     const cleaned = hex.replace(/^#/, '');
     if (![3, 6].includes(cleaned.length))
@@ -830,21 +761,21 @@ function hexToRgb(hexString) {
     const num = parseInt(fullHex, 16);
     return (`(${((num >> 16) & 255) || 0},${((num >> 8) & 255) || 0},${(num & 255) || 0})`);
 }
-async function copyToClipboard(text, callback) {
+export async function copyToClipboard(text, callback) {
     try {
         await navigator.clipboard.writeText(text);
-        _1.logger.log('Text copied to clipboard');
+        logger.log('Text copied to clipboard');
         if (callback)
             callback();
     }
     catch (err) {
-        _1.logger.error('Failed to copy text: ', err);
+        logger.error('Failed to copy text: ', err);
     }
 }
-function URLReload(newParams, anchor) {
+export function URLReload(newParams, anchor) {
     const current = new URLSearchParams(window.location.search);
     let changed = false;
-    if (!_typesValidation_1.validate.object(newParams)) {
+    if (!validate.object(newParams)) {
         const hash = anchor ? `#${anchor}` : '';
         location.replace(`${window.location.pathname}${window.location.search}${hash}`);
         return location.reload();
@@ -861,13 +792,13 @@ function URLReload(newParams, anchor) {
     window.location.replace(newUrl);
     return location.reload();
 }
-function flagEmojiToCountryCode(flag) {
+export function flagEmojiToCountryCode(flag) {
     const countryCode = [...flag]
         .map(char => String.fromCharCode(char.codePointAt(0) - 0x1F1E6 + 0x61))
         .join('');
     return countryCode.trim().toLowerCase();
 }
-const wait = (timeout = 100, callback) => {
+export const wait = (timeout = 100, callback) => {
     return new Promise((resolve) => {
         setTimeout(() => {
             callback?.();
@@ -875,12 +806,11 @@ const wait = (timeout = 100, callback) => {
         }, timeout);
     });
 };
-exports.wait = wait;
-const dropdownOptionsFromStrings = (strings) => {
+export const dropdownOptionsFromStrings = (strings) => {
     const options = [];
     const optionsIds = [];
     for (const str of strings) {
-        if (!(str.trim()) || !_typesValidation_1.validate.nonEmptyString(str))
+        if (!(str.trim()) || !validate.nonEmptyString(str))
             continue;
         const sluggifiedStr = ((str.trim())?.replaceAll(" ", "_")).toLowerCase();
         if (optionsIds?.includes(sluggifiedStr))
@@ -895,4 +825,3 @@ const dropdownOptionsFromStrings = (strings) => {
     }
     return options || [];
 };
-exports.dropdownOptionsFromStrings = dropdownOptionsFromStrings;

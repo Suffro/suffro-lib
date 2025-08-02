@@ -7,4 +7,3 @@ export * from "./appConfig";
 export * from "./_idb";
 export * from "./_pageStore";
 export * from "./firebase";
-//# sourceMappingURL=index.d.ts.map

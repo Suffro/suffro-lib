@@ -21,4 +21,3 @@ export type AuthState = {
     logged(): boolean;
     get(): Auth;
 };
-//# sourceMappingURL=_types.d.ts.map

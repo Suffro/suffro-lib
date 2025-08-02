@@ -74,4 +74,3 @@ export interface AppConfig {
     };
     [custom: string]: any;
 }
-//# sourceMappingURL=_types.d.ts.map

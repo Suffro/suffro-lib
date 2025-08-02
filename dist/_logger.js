@@ -1,35 +1,32 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.logger = void 0;
-const _pageStore_1 = require("./_pageStore");
-const _utils_1 = require("./_utils");
-const dev = (0, _utils_1.isDev)();
+import { pageStore } from "./_pageStore";
+import { callerName, isDev } from "./_utils";
+const dev = isDev();
 const noop = () => { };
-exports.logger = {
+export const logger = {
     log: dev ? console.log.bind(console) : noop,
     warn: dev ? console.warn.bind(console) : noop,
     error: console.error.bind(console),
     devError: dev ? console.error.bind(console) : noop,
     logCaller: dev
         ? (...args) => {
-            const name = (0, _utils_1.callerName)(3);
+            const name = callerName(3);
             console.log(`${name}()`, ...args);
         }
         : noop,
     page: dev
         ? () => {
-            console.log("Page:", (0, _pageStore_1.pageStore)().get());
+            console.log("Page:", pageStore().get());
         }
         : noop,
     prod: {
         log: console.log.bind(console),
         warn: console.warn.bind(console),
         logCaller: (...args) => {
-            const name = (0, _utils_1.callerName)(3);
+            const name = callerName(3);
             console.log(`${name}()`, ...args);
         },
         page: () => {
-            console.log("Page:", (0, _pageStore_1.pageStore)().get());
+            console.log("Page:", pageStore().get());
         }
     }
 };

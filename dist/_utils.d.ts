@@ -103,4 +103,3 @@ export declare function flagEmojiToCountryCode(flag: string): string;
 export declare const wait: (timeout?: number, callback?: VoidFunction) => Promise<void>;
 export declare const dropdownOptionsFromStrings: (strings: string[]) => DropdownOption[];
 export {};
-//# sourceMappingURL=_utils.d.ts.map

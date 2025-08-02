@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "description": "La mia libreria TypeScript personale",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     }
   },
@@ -17,10 +15,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:types",
-    "build:cjs": "tsc -p tsconfig.build.json",
-    "build:esm": "tsc -p tsconfig.build.json --module esnext --outDir dist/esm",
-    "build:types": "tsc -p tsconfig.build.json --declaration --emitDeclarationOnly --outDir dist",
+    "build": "npm run clean && npm run build:esm && npm run build:types",
+    "build:esm": "tsc -p tsconfig.build.json",
+    "build:types": "tsc -p tsconfig.build.json --declaration --emitDeclarationOnly",
     "clean": "rimraf dist",
     "dev": "tsc --watch",
     "test": "jest",
@@ -30,7 +27,7 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": ["typescript", "firebase", "utils"],
-  "author": "Lorenzo",
+  "author": "Lorenzo Suffritti",
   "license": "none",
   "dependencies": {
     "firebase": "^12.0.0",

@@ -19,4 +19,3 @@ export interface Validate {
     function(v: any): v is Function;
 }
 export declare const validate: Validate;
-//# sourceMappingURL=_typesValidation.d.ts.map

@@ -21,4 +21,3 @@ export declare function pageStore(): {
     get: () => PageInfo;
 };
 export {};
-//# sourceMappingURL=_pageStore.d.ts.map

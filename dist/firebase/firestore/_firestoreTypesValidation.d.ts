@@ -6,4 +6,3 @@ export interface FirestoreValidate {
     fieldValue(v: any): v is FieldValue;
 }
 export declare const _firestoreValidate: FirestoreValidate;
-//# sourceMappingURL=_firestoreTypesValidation.d.ts.map

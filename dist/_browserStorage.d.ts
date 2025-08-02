@@ -20,4 +20,3 @@ interface _BrowserStorageAPI {
 }
 export declare function browserStorage(type: BrowserStorageType, namespace?: string): _BrowserStorageAPI;
 export {};
-//# sourceMappingURL=_browserStorage.d.ts.map

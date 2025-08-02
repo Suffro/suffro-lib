@@ -5,4 +5,3 @@ export type StorageMethodsInterface = {
     getFileUrl: (fileName: string, folderSegments: string[]) => Promise<string>;
     listFiles: (folderSegments: string[]) => Promise<string[]>;
 };
-//# sourceMappingURL=_types.d.ts.map
