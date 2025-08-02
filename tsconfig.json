@@ -5,7 +5,7 @@
     //
     // → Emuliamo il comportamento di Node 18+ ESM,  
     //   così TS emette import “./_types.js” anziché “./_types”
-    "module": "es2022",
+    "module": "preserve",
     "moduleResolution": "bundler",
 
     "declaration": true,
