@@ -1,14 +1,7 @@
-/**
- * Crea uno store reattivo che fornisce informazioni aggiornate sulla pagina corrente.
- * Si comporta in modo simile allo store `$page` di SvelteKit ma in ambiente JS puro.
- * Reagisce a popstate, hashchange, pushState e replaceState.
- *
- * @returns Un oggetto con due metodi:
- *  - `subscribe(callback)`: riceve aggiornamenti quando cambia l’URL
- *  - `get()`: restituisce lo stato corrente della pagina
- *  - Utilizza come 'const page=pageStore()' e poi 'page.get()' o 'page.subscribe((info)=>{})'
- */
-export function pageStore() {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.pageStore = pageStore;
+function pageStore() {
     let listeners = [];
     function getPage() {
         const url = new URL(window.location.href);
@@ -24,7 +17,7 @@ export function pageStore() {
             query: Object.fromEntries(url.searchParams.entries()),
             search: url.search,
             hash: url.hash,
-            params: {}, // da riempire se implementi parsing tipo /user/:id
+            params: {},
             referrer: document.referrer,
             userAgent: navigator.userAgent,
             timestamp: Date.now()
@@ -37,7 +30,6 @@ export function pageStore() {
     }
     window.addEventListener('popstate', notify);
     window.addEventListener('hashchange', notify);
-    // intercetta push/replaceState
     for (const method of ['pushState', 'replaceState']) {
         const original = history[method];
         history[method] = function (...args) {
@@ -56,4 +48,3 @@ export function pageStore() {
         get: getPage
     };
 }
-//# sourceMappingURL=_pageStore.js.map

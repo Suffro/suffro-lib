@@ -1,6 +1,9 @@
-import { logger } from "./";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.browserStorage = browserStorage;
+const _1 = require("./");
 const _isBrowser = typeof window !== "undefined" && typeof document !== "undefined";
-export function browserStorage(type, namespace) {
+function browserStorage(type, namespace) {
     const _storage = _isBrowser
         ? type === "local"
             ? localStorage
@@ -36,7 +39,7 @@ export function browserStorage(type, namespace) {
             const fullKey = _storage?.key(i);
             if (!fullKey || (_prefix && !fullKey.startsWith(_prefix)))
                 continue;
-            const key = fullKey.slice(_prefix.length); // rimuove il namespace
+            const key = fullKey.slice(_prefix.length);
             const raw = _storage?.getItem(fullKey);
             if (!raw)
                 continue;
@@ -47,7 +50,6 @@ export function browserStorage(type, namespace) {
                 items.push({ key, value: parsed.value });
             }
             catch {
-                // ignora valori corrotti
             }
         }
         return items;
@@ -68,7 +70,6 @@ export function browserStorage(type, namespace) {
                 items.push({ key, value: parsed.value });
             }
             catch {
-                // ignora valori corrotti
             }
         }
         return items;
@@ -84,7 +85,7 @@ export function browserStorage(type, namespace) {
             _storage?.setItem(_fullKey(key), JSON.stringify(payload));
         }
         catch (err) {
-            logger.warn(`[browserStorage] Failed to set key "${key}"`, err);
+            _1.logger.warn(`[browserStorage] Failed to set key "${key}"`, err);
         }
     }
     function removeItem(key) {
@@ -111,7 +112,6 @@ export function browserStorage(type, namespace) {
                 }
             }
             catch {
-                // ignore
             }
         });
     }
@@ -144,4 +144,3 @@ export function browserStorage(type, namespace) {
         keysList,
     };
 }
-//# sourceMappingURL=_browserStorage.js.map

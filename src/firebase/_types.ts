@@ -1,11 +1,11 @@
 import type { Auth, User } from 'firebase/auth';
-import type { Firestore, Timestamp, WhereFilterOp } from 'firebase/firestore';
+import type { Firestore, Timestamp } from 'firebase/firestore';
 import type { FirebaseAuthMethods } from './auth/_types';
 import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import type { FirebaseStorage } from 'firebase/storage';
-import { FStore, FStoreDoc, FStoreUser } from './firestore/_types';
+import { FStoreDoc, FStoreUser } from './firestore/_types';
 import { StorageMethodsInterface } from './storage';
-import { Functions, HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
+import { HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
 export {type AuthState} from "./auth"
 
 /**

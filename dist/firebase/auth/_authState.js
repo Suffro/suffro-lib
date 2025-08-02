@@ -1,14 +1,10 @@
-import { onAuthStateChanged } from 'firebase/auth';
-import { validate } from '../../_typesValidation';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authStateObsverver = authStateObsverver;
+const auth_1 = require("firebase/auth");
+const _typesValidation_1 = require("../../_typesValidation");
 let observer = null;
-/**
- * Store reattivo per l’utente Firebase.
- * - subscribe(cb): si registra per ricevere aggiornamenti (via onAuthStateChanged)
- * - user(): restituisce lo stato corrente dell’utente (User | null)
- * - logged(): restituisce true se l'utente è loggato altrimenti false
- * - get(): Returns app auth instance
- */
-export function authStateObsverver(appAuth) {
+function authStateObsverver(appAuth) {
     if (observer) {
         console.warn("authStateObsverver() already initialized, returning active instance");
         return observer;
@@ -21,15 +17,10 @@ export function authStateObsverver(appAuth) {
         for (const cb of listeners)
             cb(user);
     }
-    // Avvia il listener Firebase una sola volta
-    onAuthStateChanged(appAuth, (user) => {
+    (0, auth_1.onAuthStateChanged)(appAuth, (user) => {
         notify(user);
     });
     const _observer = {
-        /**
-         * callback: (user) => void
-         * restituisce un unsubscribe
-         */
         subscribe(callback) {
             listeners.push(callback);
             callback(current);
@@ -37,16 +28,13 @@ export function authStateObsverver(appAuth) {
                 listeners = listeners.filter((cb) => cb !== callback);
             };
         },
-        /** sincrono: leggi l’ultimo valore noto */
         user() {
             return current;
         },
-        /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
         logged() {
             const uid = current?.uid;
-            return validate.nonEmptyString(uid);
+            return _typesValidation_1.validate.nonEmptyString(uid);
         },
-        /** sincrono: leggi l’ultimo valore noto e se risulta loggato restituisci true altrimenti false */
         get() {
             return appAuth;
         }
@@ -54,4 +42,3 @@ export function authStateObsverver(appAuth) {
     observer = _observer;
     return _observer;
 }
-//# sourceMappingURL=_authState.js.map

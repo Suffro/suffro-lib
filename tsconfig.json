@@ -1,26 +1,22 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "lib": ["DOM", "ES2021"],
-    //
-    // → Emuliamo il comportamento di Node 18+ ESM,  
-    //   così TS emette import “./_types.js” anziché “./_types”
-    "module": "preserve",
-    "moduleResolution": "bundler",
-
-    "declaration": true,
-    "declarationDir": "dist/types",
-    
-    "outDir": "dist",
-    "rootDir": "src",
-
-    "esModuleInterop": true,
+    "module": "CommonJS",
+    "lib": ["ES2021", "DOM"],
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
     "resolveJsonModule": true,
-    "sourceMap": true
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "tests"]
 }
-
