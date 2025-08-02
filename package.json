@@ -15,15 +15,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build:esm && npm run build:types",
-    "build:esm": "tsc -p tsconfig.build.json",
-    "build:types": "tsc -p tsconfig.build.json --declaration --emitDeclarationOnly",
+    "build": "npm run clean && npm ci && tsc",
     "clean": "rimraf dist",
     "dev": "tsc --watch",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix",
     "prepublishOnly": "npm run build"
   },
   "keywords": ["typescript", "firebase", "utils"],

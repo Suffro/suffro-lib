@@ -32,6 +32,40 @@ const callFirebaseCallableFunction = async (app, functionName, data, region, opt
     const res = await callable(data);
     return res;
 };
+/**
+ * Initializes and returns a fully configured Firebase instance.
+ *
+ * This utility function ensures that Firebase is initialized only once,
+ * using the provided configuration. It returns the core Firebase services:
+ * - Firebase App
+ * - Authentication
+ * - Firestore (with persistent multi-tab cache)
+ * - Firebase Storage (only if a storageBucket is defined)
+ * - 'callableFunction' (method that calls a Firebase "callable function" and returns the result)
+ *
+ * The function also includes optional console logs to help with debugging.
+ *
+ * @param configuration The Firebase configuration object (FirebaseOptions) plus Firebase region or your custom domain.
+ * @param configuration.regionOrCustomDomain one of: a) The region the callable functions are located in (ex: us-central1) b) A custom domain hosting the callable functions (ex: https://mydomain.com) (optional but strongly recommended if it wasn't set with Firebase Context)
+ * @param logs If true, logs each initialization step to the console (default: false).
+ * @returns An object containing `app`, `auth`, `firestore`, and (optionally) `storage`.
+ *
+ * @throws If configuration is missing or Firebase was already initialized.
+ *
+ * @example
+ * const firebaseContext = initializeFirebaseContext({
+ *   apiKey: '...',
+ *   authDomain: '...',
+ *   projectId: '...',
+ *   storageBucket: '...',
+ *   regionOrCustomDomain: '...'
+ * }, true);
+ *
+ * const auth = firebaseContext.auth;
+ * const db = firebaseContext.firestore;
+ *
+ * const res = await firebaseContext.callableFunction(...);
+ */
 export const initializeFirebaseContext = (configuration, logs) => {
     if (!configuration)
         throw new Error("Missing Firebase configuration");
@@ -51,6 +85,7 @@ export const initializeFirebaseContext = (configuration, logs) => {
     const dev = isDev();
     if (logs && dev)
         console.log("Initializing Firebase instances...");
+    // Initialize Firebase
     const app = alreadyInitialized
         ? getApp()
         : initializeApp(configuration);
@@ -90,6 +125,13 @@ export const initializeFirebaseContext = (configuration, logs) => {
         console.log("Firebase functions initialization completed.");
     if (!_functions && logs && dev)
         console.warn("Couldn't initialize Firebase functions.");
+    /**
+     * Method that calls a Firebase "callable function" and returns the result.
+     * @param name The name of the Firebase "callable function" to call
+     * @param data Data to be passed to the Firebase "callable function" (optional)
+     * @param regionOrCustomDomain one of: a) The region the callable functions are located in (ex: us-central1) b) A custom domain hosting the callable functions (ex: https://mydomain.com) (optional but strongly recommended if it wasn't set with Firebase Context)
+     * @returns The result of the Firebase "callable function"
+     */
     const callableFunction = async (name, data, regionOrCustomDomain, options) => {
         const res = await callFirebaseCallableFunction(app, name, data, regionOrCustomDomain, options);
         return res;

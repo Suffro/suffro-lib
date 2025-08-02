@@ -22,11 +22,14 @@ export async function _getDoc(db, collectionName, id) {
         return null;
     return { id: snap.id, ...snap.data() };
 }
+/**
+ * @returns Restituisce l'id del documento creato
+ */
 export async function create(auth, db, collectionName, data) {
     logger.logCaller();
     _userCollectionRestriction(collectionName);
     const date = new Date();
-    const preRef = doc(collection(db, collectionName));
+    const preRef = doc(collection(db, collectionName)); // genera un nuovo doc ID dentro la collection
     await setDoc(preRef, {
         id: preRef.id,
         locale: navigator?.language || (await appUserGet(auth, db))?.locale,
@@ -35,6 +38,9 @@ export async function create(auth, db, collectionName, data) {
     });
     return preRef.id;
 }
+/**
+ * @returns Restituisce l'id del documento
+ */
 export async function update(db, collectionName, id, data) {
     logger.logCaller();
     _userCollectionRestriction(collectionName);
@@ -46,6 +52,9 @@ export async function update(db, collectionName, id, data) {
     });
     return id;
 }
+/**
+ * @returns Restituisce l'id del documento
+ */
 export async function set(db, collectionName, id, data) {
     _userCollectionRestriction(collectionName);
     if (!validate.string(id))
@@ -57,6 +66,11 @@ export async function set(db, collectionName, id, data) {
     });
     return id;
 }
+/**
+ * @param collectionName Il nome della collection del documento
+ * @param id L'id del documento
+ * @returns Restituisce i dati del documento se esiste, altrimenti null
+ */
 export async function get(db, collectionName, id) {
     logger.logCaller();
     _userCollectionRestriction(collectionName);
@@ -78,6 +92,7 @@ export async function removeWhere(db, collectionName, conditions) {
     await Promise.all(deletions);
     return snapshot.docs.map((docSnap) => docSnap.id);
 }
+///////////// users collection functions /////////////
 export async function appUserSet(auth, db, data, opts = { merge: true }) {
     logger.logCaller();
     const user = _getFsUser(auth);
@@ -100,6 +115,7 @@ export async function appUserGet(auth, db) {
         logger.warn("⚠️ No user document found.");
     return userData;
 }
+///////////// firestore user functions /////////////
 export function userGet(auth) {
     logger.logCaller();
     const user = _getFsUser(auth);
@@ -110,6 +126,7 @@ export async function userProfileSet(auth, data) {
     const user = _getFsUser(auth);
     await updateProfile(user, data);
 }
+// --- Update Phone Number (requires verification) ---
 export async function updateUserPhoneNumber(auth, db, phoneNumber) {
     logger.logCaller();
     const user = _getFsUser(auth);
@@ -119,6 +136,7 @@ export async function updateUserPhoneNumber(auth, db, phoneNumber) {
     logger.log("reCapthca verifier retreived");
     const verificationId = await provider.verifyPhoneNumber(phoneNumber, recaptchaVerifier);
     logger.log("Verification ID retreived");
+    // Prompt user to enter the verification code sent to their phone
     logger.log("Prompting verification code input");
     const verificationCode = window.prompt("Inserisci il codice di verifica inviato al tuo numero:");
     if (!verificationCode) {
@@ -130,6 +148,53 @@ export async function updateUserPhoneNumber(auth, db, phoneNumber) {
     await linkWithCredential(user, credential);
     await appUserSet(auth, db, { phoneNumber });
 }
+/**
+ * DISABLED
+ *
+export const initUserDoc = async (auth: Auth, user: User) => {
+  return;
+    logger.logCaller();
+    const userDoc = await appUserGet(auth);
+    if(userDoc) return logger.log("✔️ User doc already initiated");
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const uid: string = user.uid;
+    await appUserSet(
+        {
+            role: 'standard',
+            enabled: true,
+            id: uid,
+            displayName: user.displayName,
+            phoneNumber: user.phoneNumber,
+            email: user.email,
+            createdAt: serverTimestamp(),
+            locale: navigator.language,
+            timeZone
+        } as AppUser,
+        { id: uid }
+    );
+    logger.log('✅ User doc initiated');
+}
+*/
+// const firestoreDocs = {create,update,set,get,remove,removeWhere};
+// const _fstore: FStore = {
+//   doc: {
+//     ...firestoreDocs
+//   },
+//   user: {
+//     doc: {
+//       set: appUserSet,
+//       get: appUserGet
+//     },
+//     set: {
+//       profile: userProfileSet,
+//       phoneNumber: updateUserPhoneNumber
+//     },
+//     get: userGet,
+//     reauthenticate: reauthenticateUser,
+//     changeEmail: updateUserEmail,
+//     changePassword: updateUserPassword
+//   }
+// }
 export const initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
     create: async function _create(collectionName, data) {
         return await create(auth, db, collectionName, data);

@@ -12,13 +12,33 @@ export const isDev = () => {
     const nodeEnv = process?.env?.NODE_ENV;
     return ((nodeEnv !== 'production') || isLocalhost);
 };
+/**
+ * Estrae il sottodominio da un URL o dal dominio corrente (es. builder.bubbledesk.app → "builder").
+ *
+ * ⚠️ Restituisce `null` se non è presente alcun sottodominio (es. bubbledesk.app o localhost).
+ *
+ * @param url - (opzionale) Una stringa URL da cui estrarre il sottodominio. Se non fornita, usa `window.location.hostname`.
+ * @returns Il sottodominio come stringa, oppure `null` se non rilevabile.
+ *
+ * @example
+ * getSubdomain("https://auth.bubbledesk.app"); // "auth"
+ * getSubdomain(); // se eseguito su builder.bubbledesk.app → "builder"
+ * getSubdomain("https://bubbledesk.app"); // null
+ * getSubdomain("http://localhost:5173"); // null
+ */
 export const getSubdomain = (url) => {
     const hostname = url ? new URL(url).hostname : window.location.hostname;
     const parts = hostname.split('.');
+    // Gestisce casi tipo: "builder.bubbledesk.app"
+    // Evita problemi su "localhost" o "bubbledesk.app"
     if (parts.length >= 3)
         return parts[0];
     return null;
 };
+/**
+ *
+ * @param options.reload If true, redirect url and related logic will be ignored
+ */
 export const redirectOrReload = (options) => {
     if (options?.reload)
         window.location.reload();
@@ -42,15 +62,15 @@ export function checkPasswordStrength(password) {
         return { text: 'very weak', score: 0 };
     let score = 0;
     if (/[a-z]/.test(password))
-        score++;
+        score++; // lettere minuscole
     if (/[A-Z]/.test(password))
-        score++;
+        score++; // lettere maiuscole
     if (/\d/.test(password))
-        score++;
+        score++; // numeri
     if (/[^A-Za-z0-9]/.test(password))
-        score++;
+        score++; // simboli
     if (password.length >= 12)
-        score++;
+        score++; // lunghezza
     switch (score) {
         case 0:
         case 1:
@@ -290,14 +310,14 @@ export function toHtmlId(str) {
     return str
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9\-_]/g, '')
-        .replace(/^-+|-+$/g, '');
+        .replace(/\s+/g, '-') // replace spaces with hyphens
+        .replace(/[^a-z0-9\-_]/g, '') // remove invalid characters
+        .replace(/^-+|-+$/g, ''); // remove leading/trailing hyphens
 }
 export function toggleArrayItem(array, item) {
     return array.includes(item)
-        ? array.filter(i => i !== item)
-        : [...array, item];
+        ? array.filter(i => i !== item) // remove if exists
+        : [...array, item]; // add if not present
 }
 export function updateUniqueArray(array, item, action) {
     if (action === 'add') {
@@ -325,14 +345,18 @@ export function updateArrayByKey(array, item, action, key) {
     throw new Error(`Unknown action: ${action}`);
 }
 export function toCamelCase(input) {
+    // Normalize separators to space
     const normalized = input.replace(/[_\-\s]+/g, ' ').trim();
+    // Split by space first
     const roughWords = normalized.split(' ');
     const words = [];
     for (const segment of roughWords) {
+        // Split segment by camel case and acronym boundaries
         const parts = segment.match(/([A-Z]+(?=[A-Z][a-z]))|([A-Z]?[a-z]+)|([A-Z]+)|(\d+)/g);
         if (parts)
             words.push(...parts);
     }
+    // Rebuild into camelCase
     return words
         .map((word, i) => i === 0
         ? word.toLowerCase()
@@ -340,10 +364,13 @@ export function toCamelCase(input) {
         .join('');
 }
 export function toSnakeCase(input) {
+    // Normalize separators to space
     const normalized = input.replace(/[_\-\s]+/g, ' ').trim();
+    // Split by space
     const roughWords = normalized.split(' ');
     const words = [];
     for (const segment of roughWords) {
+        // Split segment by camelCase / PascalCase / acronym transitions
         const parts = segment.match(/([A-Z]+(?=[A-Z][a-z]))|([A-Z]?[a-z]+)|([A-Z]+)|(\d+)/g);
         if (parts)
             words.push(...parts);
@@ -385,7 +412,7 @@ export function formatDateForInput(date) {
     }
     ;
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // mesi 0-indexed
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
@@ -397,20 +424,24 @@ export function addMinutesToTime(timeStr, minutesToAdd) {
     ;
     const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    date.setMinutes(date.getMinutes() + minutesToAdd);
+    date.setHours(hours, minutes, 0, 0); // set to today, with given time
+    date.setMinutes(date.getMinutes() + minutesToAdd); // add minutes
     const newHours = String(date.getHours()).padStart(2, '0');
     const newMinutes = String(date.getMinutes()).padStart(2, '0');
     return `${newHours}:${newMinutes}`;
 }
 export function setTimeForDate(date, timeStr) {
+    /*if(!isValidDate(date)) {
+        logger.error("Invalid 'date' at setTimeForDate(date: Date, timeStr: string).")
+        return;
+    };*/
     if (!isValidTimeStr(timeStr)) {
         logger.error("Invalid 'timeStr' at setTimeForDate(date: Date, timeStr: string).");
         return date;
     }
     ;
     const [hours, minutes] = timeStr.split(':').map(Number);
-    const newDate = new Date(date);
+    const newDate = new Date(date); // clone to avoid mutating original
     newDate.setHours(hours, minutes, 0, 0);
     newDate.setMinutes(newDate.getMinutes());
     return newDate;
@@ -421,7 +452,7 @@ export function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
         return;
     }
     ;
-    let newDate = new Date(date);
+    let newDate = new Date(date); // clone to avoid mutating original
     if (dateTimeStr && isValidTimeStr(dateTimeStr))
         newDate = setTimeForDate(newDate, dateTimeStr);
     newDate.setMinutes(newDate.getMinutes() + minutesToAdd);
@@ -431,15 +462,18 @@ export function parseDate(dateStr, fallbackToToday) {
     try {
         if (typeof dateStr !== 'string')
             return null;
+        // ISO 8601 (safe and recommended)
         if (/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2})?)?/.test(dateStr)) {
             const isoDate = new Date(dateStr);
             return isNaN(isoDate.getTime()) ? null : isoDate;
         }
+        // US format MM/DD/YYYY
         if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
             const [month, day, year] = dateStr.split('/').map(Number);
             const date = new Date(year, month - 1, day);
             return isNaN(date.getTime()) ? null : date;
         }
+        // Optional: support DD/MM/YYYY format
         if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
             const [day, month, year] = dateStr.split('-').map(Number);
             const date = new Date(year, month - 1, day);
@@ -454,6 +488,7 @@ export function parseDate(dateStr, fallbackToToday) {
             return (new Date());
         }
         else {
+            // Fallback attempt (not recommended in general)
             return new Date(dateStr);
         }
     }
@@ -472,7 +507,7 @@ export function dateToTime12h(date) {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
-    hours = hours === 0 ? 12 : hours;
+    hours = hours === 0 ? 12 : hours; // 0 => 12
     return `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 }
 export function URLGetParam(paramName, url = window.location.href) {
@@ -481,7 +516,7 @@ export function URLGetParam(paramName, url = window.location.href) {
         return parsedUrl.searchParams.get(paramName);
     }
     catch (e) {
-        return null;
+        return null; // URL malformato
     }
 }
 export function isSameMonth(date1, date2) {
@@ -512,8 +547,8 @@ export function getMidpointDate(date1, date2) {
 export function getYearBounds(date) {
     const d = (date instanceof Date && !isNaN(date.getTime())) ? date : new Date();
     const year = d.getFullYear();
-    const start = new Date(year, 0, 1, 0, 0, 0, 0);
-    const end = new Date(year, 11, 31, 23, 59, 59, 999);
+    const start = new Date(year, 0, 1, 0, 0, 0, 0); // 1 gennaio alle 00:00
+    const end = new Date(year, 11, 31, 23, 59, 59, 999); // 31 dicembre alle 23:59:59.999
     return { start, end };
 }
 export function callerName(level = 2) {
@@ -564,6 +599,7 @@ export const componentCallbackDispatcher = (callback, data) => {
 };
 export function objectsDiffer(a, b, strict = false) {
     const clean = (obj) => {
+        // Rimuove Proxy, getter, reactive wrapper ecc.
         try {
             return structuredClone(obj);
         }
@@ -634,6 +670,9 @@ function _flattenObject(obj, options, _parentKey, _result, _seen) {
     _seen.delete(obj);
     return _result;
 }
+/**
+ * @param normalizeMonthly If true and units is months or years, it will normalize the start and end date to the first and last day of the first and last month.
+ */
 export function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
     const center = new Date(midpoint);
     const start = new Date(center);
@@ -651,24 +690,24 @@ export function getTimeBounds(midpoint, before, after, unit, normalizeMonthly) {
             break;
         case 'months':
             if (normalizeMonthly)
-                start.setDate(1);
+                start.setDate(1); // sicurezza (primo del mese)
             start.setMonth(start.getMonth() - before);
             end.setMonth(end.getMonth() + after);
             if (normalizeMonthly) {
                 start.setDate(1);
-                end.setMonth(end.getMonth() + 1, 0);
+                end.setMonth(end.getMonth() + 1, 0); // ultimo giorno del mese
             }
             start.setHours(0, 0, 0, 0);
             end.setHours(23, 59, 59, 999);
             break;
         case 'years':
             if (normalizeMonthly)
-                start.setMonth(0, 1);
+                start.setMonth(0, 1); // sicurezza (1 gennaio)
             start.setFullYear(start.getFullYear() - before);
             end.setFullYear(end.getFullYear() + after);
             if (normalizeMonthly) {
-                start.setMonth(0, 1);
-                end.setMonth(12, 0);
+                start.setMonth(0, 1); // 1 gennaio
+                end.setMonth(12, 0); // 31 dicembre
             }
             start.setHours(0, 0, 0, 0);
             end.setHours(23, 59, 59, 999);
@@ -685,6 +724,7 @@ export function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
         throw new Error("Invalid start or end date");
     }
+    // Normalizza inizio e fine al primo giorno del mese
     startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
     endDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
     const months = [];
@@ -693,6 +733,7 @@ export function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
         const isStart = current.getTime() === startDate.getTime();
         const isEnd = current.getTime() === endDate.getTime();
         if ((excludeStart && isStart) || (excludeEnd && isEnd)) {
+            // salta questo mese
         }
         else {
             const year = current.getFullYear();
@@ -717,24 +758,41 @@ export function listMonthsInRange(start, end, format = 'YYYY-MM', options) {
     }
     return descending ? months.reverse() : months;
 }
+/**
+ * @param monthKey (deve essere in formato YYYY-MM)
+ * @returns Restituisce un oggetto contente start e end
+ */
 export function getMonthBoundsByYearMonthString(monthKey) {
-    const [year, month] = monthKey.split("-").map(Number);
-    const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
-    const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
+    const [year, month] = monthKey.split("-").map(Number); // es. 2025, 6
+    const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0)); // primo giorno del mese
+    const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999)); // ultimo giorno del mese
     return { start, end };
 }
+/**
+ * @returns The month of the passed date as string in the format YYYY-MM (eg. 2025-05), in UTC
+ */
 export function getYearMonthStringFromDate(date) {
     const year = date.getUTCFullYear();
     const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
     return `${year}-${month}`;
 }
+/**
+* @returns Restituisce un oggetto contente start e end
+*/
 export function getMonthBounds(date) {
     const year = date.getUTCFullYear();
-    const month = date.getUTCMonth();
-    const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
-    const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999));
+    const month = date.getUTCMonth(); // 0-based
+    const start = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0)); // primo giorno del mese
+    const end = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59, 999)); // ultimo giorno del mese
     return { start, end };
 }
+/**
+ * Unisce l'array originale con nuovi oggetti, sovrascrivendo quelli con la stessa chiave.
+ * @param original Array originale
+ * @param updates Nuovi oggetti da aggiungere o aggiornare
+ * @param key Chiave identificativa (default: "id")
+ * @returns Nuovo array aggiornato
+ */
 export function mergeByKey(original, updates, key = "id") {
     const map = new Map();
     for (const item of original) {
@@ -745,6 +803,14 @@ export function mergeByKey(original, updates, key = "id") {
     }
     return Array.from(map.values());
 }
+/**
+ * Rimuove un elemento da un array di oggetti confrontando un campo chiave.
+ *
+ * @param array - L'array di oggetti da cui rimuovere l'elemento
+ * @param value - Il valore da confrontare per la rimozione
+ * @param key - Il campo su cui fare il confronto (default: "id")
+ * @returns Un nuovo array senza l'elemento corrispondente
+ */
 export function removeFromArrayByKey(array, value, key = "id") {
     if (!validate.array(array))
         throw new Error("Invalid array");
@@ -772,6 +838,14 @@ export async function copyToClipboard(text, callback) {
         logger.error('Failed to copy text: ', err);
     }
 }
+/**
+ * Reloads the page with the given query parameters if they are not already present or different.
+ * Prevents infinite loops by comparing current parameters with target ones.
+ * Optionally appends a hash anchor (e.g., #section) for native browser scrolling.
+ *
+ * @param newParams An object containing key-value pairs to be added to the URL.
+ * @param anchor Optional ID of the element to scroll to after reload (e.g. 'comments')
+ */
 export function URLReload(newParams, anchor) {
     const current = new URLSearchParams(window.location.search);
     let changed = false;

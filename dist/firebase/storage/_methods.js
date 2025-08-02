@@ -25,6 +25,12 @@ const getFilePath = (fileName, folderSegments) => {
     };
 };
 export const initStorageMethods = (storage) => ({
+    /**
+     * Carica un file su Firebase Storage in un path dinamico.
+     * @param file - Il file da caricare
+     * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
+     * @returns URL pubblico al file caricato
+     */
     uploadFile: async function _uploadFile(file, fileName, folderSegments) {
         logger.logCaller();
         if (folderSegments.length === 0) {
@@ -36,12 +42,20 @@ export const initStorageMethods = (storage) => ({
         const url = await getDownloadURL(snapshot.ref);
         return url;
     },
+    /**
+     * Elimina un file da Firebase Storage.
+     * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
+     */
     deleteFile: async function _deleteFile(fileName, folderSegments) {
         logger.logCaller();
         const filePath = getFilePath(fileName, folderSegments);
         const fileRef = ref(storage, filePath?.fullPath);
         await deleteObject(fileRef);
     },
+    /**
+     * Elenca tutti i file in una cartella.
+     * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
+     */
     listFiles: async function _listFiles(folderSegments) {
         logger.logCaller();
         const folderPath = getFilePath("", folderSegments)?.folderPath;
@@ -50,12 +64,21 @@ export const initStorageMethods = (storage) => ({
         const urls = await Promise.all(res.items.map((itemRef) => getDownloadURL(itemRef)));
         return urls;
     },
+    /**
+     * Scarica un file come Blob.
+     * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
+     * @returns Un Blob del file
+     */
     downloadFile: async function _downloadFileAsBlob(fileName, folderSegments) {
         logger.logCaller();
         const filePath = getFilePath(fileName, folderSegments);
         const fileRef = ref(storage, filePath?.fullPath);
         return await getBlob(fileRef);
     },
+    /**
+     * Ottiene l'URL pubblico di un file.
+     * @param folderSegments - Array di stringhe che formano il path della cartella dove si trova il file (es. per branding/icons/logo.png dovrai passare ['branding', 'icons'])
+     */
     getFileUrl: async function _getPublicDownloadURL(fileName, folderSegments) {
         logger.logCaller();
         const filePath = getFilePath(fileName, folderSegments);

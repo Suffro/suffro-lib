@@ -2,7 +2,25 @@ import type { AnyObject, DropdownOption, HexColor, PasswordStrength } from "./";
 export declare const isBrowser: () => boolean;
 export declare const isWindowAvailable: () => boolean;
 export declare const isDev: () => boolean;
+/**
+ * Estrae il sottodominio da un URL o dal dominio corrente (es. builder.bubbledesk.app → "builder").
+ *
+ * ⚠️ Restituisce `null` se non è presente alcun sottodominio (es. bubbledesk.app o localhost).
+ *
+ * @param url - (opzionale) Una stringa URL da cui estrarre il sottodominio. Se non fornita, usa `window.location.hostname`.
+ * @returns Il sottodominio come stringa, oppure `null` se non rilevabile.
+ *
+ * @example
+ * getSubdomain("https://auth.bubbledesk.app"); // "auth"
+ * getSubdomain(); // se eseguito su builder.bubbledesk.app → "builder"
+ * getSubdomain("https://bubbledesk.app"); // null
+ * getSubdomain("http://localhost:5173"); // null
+ */
 export declare const getSubdomain: (url?: string) => string | null;
+/**
+ *
+ * @param options.reload If true, redirect url and related logic will be ignored
+ */
 export declare const redirectOrReload: (options?: {
     redirectUrl?: string;
     reload?: boolean;
@@ -75,6 +93,9 @@ type FlattenOptions = {
     useDotNotation?: boolean;
 };
 export declare function flattenObject(obj: Record<string, any>, options?: FlattenOptions): Record<string, any>;
+/**
+ * @param normalizeMonthly If true and units is months or years, it will normalize the start and end date to the first and last day of the first and last month.
+ */
 export declare function getTimeBounds(midpoint: Date | string, before: number, after: number, unit: 'minutes' | 'days' | 'months' | 'years', normalizeMonthly?: boolean): {
     start: Date;
     end: Date;
@@ -85,19 +106,52 @@ export declare function listMonthsInRange(start: Date | string, end: Date | stri
     excludeEnd?: boolean;
     descending?: boolean;
 }): string[];
+/**
+ * @param monthKey (deve essere in formato YYYY-MM)
+ * @returns Restituisce un oggetto contente start e end
+ */
 export declare function getMonthBoundsByYearMonthString(monthKey: string): {
     start: Date;
     end: Date;
 };
+/**
+ * @returns The month of the passed date as string in the format YYYY-MM (eg. 2025-05), in UTC
+ */
 export declare function getYearMonthStringFromDate(date: Date): string;
+/**
+* @returns Restituisce un oggetto contente start e end
+*/
 export declare function getMonthBounds(date: Date): {
     start: Date;
     end: Date;
 };
+/**
+ * Unisce l'array originale con nuovi oggetti, sovrascrivendo quelli con la stessa chiave.
+ * @param original Array originale
+ * @param updates Nuovi oggetti da aggiungere o aggiornare
+ * @param key Chiave identificativa (default: "id")
+ * @returns Nuovo array aggiornato
+ */
 export declare function mergeByKey<T extends AnyObject>(original: T[], updates: T[], key?: keyof T): T[];
+/**
+ * Rimuove un elemento da un array di oggetti confrontando un campo chiave.
+ *
+ * @param array - L'array di oggetti da cui rimuovere l'elemento
+ * @param value - Il valore da confrontare per la rimozione
+ * @param key - Il campo su cui fare il confronto (default: "id")
+ * @returns Un nuovo array senza l'elemento corrispondente
+ */
 export declare function removeFromArrayByKey<T extends Record<string, any>>(array: T[], value: any, key?: string): T[];
 export declare function hexToRgb(hexString?: HexColor): string | "";
 export declare function copyToClipboard(text: string, callback?: Function): Promise<void>;
+/**
+ * Reloads the page with the given query parameters if they are not already present or different.
+ * Prevents infinite loops by comparing current parameters with target ones.
+ * Optionally appends a hash anchor (e.g., #section) for native browser scrolling.
+ *
+ * @param newParams An object containing key-value pairs to be added to the URL.
+ * @param anchor Optional ID of the element to scroll to after reload (e.g. 'comments')
+ */
 export declare function URLReload(newParams?: Record<string, string>, anchor?: string): void;
 export declare function flagEmojiToCountryCode(flag: string): string;
 export declare const wait: (timeout?: number, callback?: VoidFunction) => Promise<void>;

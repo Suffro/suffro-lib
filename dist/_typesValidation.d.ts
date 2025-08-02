@@ -18,4 +18,13 @@ export interface Validate {
     promise<T = any>(v: any): v is Promise<T>;
     function(v: any): v is Function;
 }
+/**
+ * A collection of type guards and validation helpers for core JavaScript types.
+ * Each method returns a boolean and acts as a type guard where applicable.
+ *
+ * Usage example:
+ *   if (validate.date(value)) {
+ *     value.toISOString();
+ *   }
+ */
 export declare const validate: Validate;

@@ -18,7 +18,7 @@ export const initializeFirebaseClient = (services) => {
         },
     };
     if (services?.storage)
-        _client.storage = initStorageMethods(services.storage);
+        _client.storage = initStorageMethods(services.storage); // non dipende da auth (credo)
     const auth = services?.auth;
     if (auth)
         _client["currentUser"] = initAuthMethods(auth);

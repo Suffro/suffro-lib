@@ -1,3 +1,3 @@
 export * from "./_methods";
 export * from "./_authState";
-export * from "./_types";
+export { type AuthState } from "./_types";

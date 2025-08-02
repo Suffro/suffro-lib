@@ -36,7 +36,7 @@ export function browserStorage(type, namespace) {
             const fullKey = _storage?.key(i);
             if (!fullKey || (_prefix && !fullKey.startsWith(_prefix)))
                 continue;
-            const key = fullKey.slice(_prefix.length);
+            const key = fullKey.slice(_prefix.length); // rimuove il namespace
             const raw = _storage?.getItem(fullKey);
             if (!raw)
                 continue;
@@ -47,6 +47,7 @@ export function browserStorage(type, namespace) {
                 items.push({ key, value: parsed.value });
             }
             catch {
+                // ignora valori corrotti
             }
         }
         return items;
@@ -67,6 +68,7 @@ export function browserStorage(type, namespace) {
                 items.push({ key, value: parsed.value });
             }
             catch {
+                // ignora valori corrotti
             }
         }
         return items;
@@ -109,6 +111,7 @@ export function browserStorage(type, namespace) {
                 }
             }
             catch {
+                // ignore
             }
         });
     }
