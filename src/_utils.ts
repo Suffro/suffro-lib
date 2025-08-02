@@ -42,7 +42,7 @@ export const getSubdomain = (url?: string): string | null => {
 	if (parts.length >= 3) return parts[0];
 
 	return null;
-}
+};
 
 
 /**
