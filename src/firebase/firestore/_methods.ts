@@ -171,6 +171,7 @@ export async function createInSubcollection<T>(
   subcollection: string,
   data: T
 ): Promise<string> {
+  logger.logCaller();
   if (!validate.string(parentId)) throw new Error("Missing parent document ID.");
   _userCollectionRestriction(parentCollection);
   const subRef = collection(db, parentCollection, parentId, subcollection);
@@ -189,12 +190,48 @@ export async function setInSubcollection<T>(
   docId: string,
   data: Partial<T>
 ): Promise<string> {
+  logger.logCaller();
   if (!validate.string(parentId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
   _userCollectionRestriction(parentCollection);
   const ref = doc(db, parentCollection, parentId, subcollection, docId);
   await setDoc(ref, { ...data, id: docId }, { merge: true });
   return docId;
+}
+
+export async function getFromSubcollection<T>(
+  db: Firestore,
+  parentCollection: Collections,
+  parentId: string,
+  subcollection: string,
+  docId: string
+): Promise<(T & { id: string }) | null> {
+  logger.logCaller();
+  if (!validate.string(parentId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  _userCollectionRestriction(parentCollection);
+  const ref = doc(db, parentCollection, parentId, subcollection, docId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() } as T & { id: string };
+}
+
+export async function listFromSubcollection<T>(
+  db: Firestore,
+  parentCollection: Collections,
+  parentId: string,
+  subcollection: string
+): Promise<(T & { id: string })[]> {
+  logger.logCaller();
+  if (!validate.string(parentId))
+    throw new Error("Missing parent document ID.");
+  _userCollectionRestriction(parentCollection);
+  const colRef = collection(db, parentCollection, parentId, subcollection);
+  const snapshot = await getDocs(colRef);
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+  })) as (T & { id: string })[];
 }
 
 
@@ -239,8 +276,9 @@ export async function appUserCreateInSubcollection<T>(
   subcollection: string,
   data: T
 ): Promise<string> {
+  logger.logCaller();
   if (!validate.string(userId)) throw new Error("Missing user document ID.");
-  const subRef = collection(db, "user", userId, subcollection);
+  const subRef = collection(db, "users", userId, subcollection);
   const docRef = await addDoc(subRef, {
     ...data,
     createdAt: Timestamp.now(),
@@ -255,11 +293,43 @@ export async function appUserSetInSubcollection<T>(
   docId: string,
   data: Partial<T>
 ): Promise<string> {
+  logger.logCaller();
   if (!validate.string(userId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  const ref = doc(db, "user", userId, subcollection, docId);
+  const ref = doc(db, "users", userId, subcollection, docId);
   await setDoc(ref, { ...data, id: docId }, { merge: true });
   return docId;
+}
+
+export async function appUserGetFromSubcollection<T>(
+  db: Firestore,
+  userId: string,
+  subcollection: string,
+  docId: string
+): Promise<(T & { id: string }) | null> {
+  logger.logCaller();
+  if (!validate.string(userId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  const ref = doc(db, "users", userId, subcollection, docId);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() } as T & { id: string };
+}
+
+export async function appUserListFromSubcollection<T>(
+  db: Firestore,
+  userId: string,
+  subcollection: string
+): Promise<(T & { id: string })[]> {
+  logger.logCaller();
+  if (!validate.string(userId))
+    throw new Error("Missing parent document ID.");
+  const colRef = collection(db, "users", userId, subcollection);
+  const snapshot = await getDocs(colRef);
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+  })) as (T & { id: string })[];
 }
 
 ///////////// firestore user functions /////////////
@@ -416,6 +486,18 @@ export const initFirestoreDocsMethods = (
     set: async function _set(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any): Promise<string> {
       const res = await setInSubcollection(db, parentCollection, parentId, subcollection, docId, data);
       return res;
+    },
+    get: async function _get(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string): Promise<{
+      id: string;
+  } | null> {
+      const res = await getFromSubcollection(db, parentCollection, parentId, subcollection, docId);
+      return res;
+    },
+    list: async function _list(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string): Promise<{
+      id: string;
+    }[]> {
+      const res = await listFromSubcollection(db, parentCollection, parentId, subcollection,);
+      return res;
     }
   },
   users: {
@@ -458,6 +540,18 @@ export const initFirestoreDocsMethods = (
       },
       set: async function _set(db: Firestore, userId: string, subcollection: string, docId: string, data: any): Promise<string> {
         const res = await appUserSetInSubcollection(db, userId, subcollection, docId, data);
+        return res;
+      },
+      get: async function _get(db: Firestore, userId: string, subcollection: string, docId: string): Promise<{
+        id: string;
+    } | null> {
+        const res = await appUserGetFromSubcollection(db, userId, subcollection, docId);
+        return res;
+      },
+      list: async function _list(db: Firestore, userId: string, subcollection: string): Promise<{
+        id: string;
+      }[]> {
+        const res = await appUserListFromSubcollection(db, userId, subcollection);
         return res;
       }
     }

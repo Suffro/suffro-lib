@@ -28,6 +28,12 @@ export type FStoreDoc = {
 	subcollections: {
 		create: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, data: any) => Promise<string>;
 		set: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+		get: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<{
+			id: string;
+		} | null>;
+		list: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string) => Promise<{
+			id: string;
+		}[]>
 	}
 	users: {
 		create: <T>(data: T) => Promise<string>;
@@ -42,7 +48,13 @@ export type FStoreDoc = {
 		) => Promise<string[]>;
 		subcollections: {
 			create: (db: Firestore, userId: string, subcollection: string, data: any) => Promise<string>;
-			set: (db: Firestore, userId: string, subcollection: string, docId: string, data: any) => Promise<string>
+			set: (db: Firestore, userId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+			get: (db: Firestore, userId: string, subcollection: string, docId: string) => Promise<{
+				id: string;
+			} | null>;
+			list: (db: Firestore, userId: string, subcollection: string) => Promise<{
+				id: string;
+			}[]>
 		}
 	}
 };

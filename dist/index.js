@@ -1755,6 +1755,7 @@ async function removeWhere(db, collectionName, conditions) {
   return snapshot.docs.map((docSnap) => docSnap.id);
 }
 async function createInSubcollection(db, parentCollection, parentId, subcollection, data) {
+  logger.logCaller();
   if (!validate.string(parentId)) throw new Error("Missing parent document ID.");
   _userCollectionRestriction(parentCollection);
   const subRef = collection(db, parentCollection, parentId, subcollection);
@@ -1765,12 +1766,35 @@ async function createInSubcollection(db, parentCollection, parentId, subcollecti
   return docRef.id;
 }
 async function setInSubcollection(db, parentCollection, parentId, subcollection, docId, data) {
+  logger.logCaller();
   if (!validate.string(parentId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
   _userCollectionRestriction(parentCollection);
   const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
   await setDoc(ref2, { ...data, id: docId }, { merge: true });
   return docId;
+}
+async function getFromSubcollection(db, parentCollection, parentId, subcollection, docId) {
+  logger.logCaller();
+  if (!validate.string(parentId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  _userCollectionRestriction(parentCollection);
+  const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
+  const snap = await getDoc(ref2);
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() };
+}
+async function listFromSubcollection(db, parentCollection, parentId, subcollection) {
+  logger.logCaller();
+  if (!validate.string(parentId))
+    throw new Error("Missing parent document ID.");
+  _userCollectionRestriction(parentCollection);
+  const colRef = collection(db, parentCollection, parentId, subcollection);
+  const snapshot = await getDocs(colRef);
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
 }
 async function appUserSet(auth, db, data, opts = { merge: true }) {
   logger.logCaller();
@@ -1798,8 +1822,9 @@ async function appUserGet(auth, db) {
   return userData;
 }
 async function appUserCreateInSubcollection(db, userId, subcollection, data) {
+  logger.logCaller();
   if (!validate.string(userId)) throw new Error("Missing user document ID.");
-  const subRef = collection(db, "user", userId, subcollection);
+  const subRef = collection(db, "users", userId, subcollection);
   const docRef = await addDoc(subRef, {
     ...data,
     createdAt: Timestamp.now()
@@ -1807,11 +1832,32 @@ async function appUserCreateInSubcollection(db, userId, subcollection, data) {
   return docRef.id;
 }
 async function appUserSetInSubcollection(db, userId, subcollection, docId, data) {
+  logger.logCaller();
   if (!validate.string(userId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  const ref2 = doc(db, "user", userId, subcollection, docId);
+  const ref2 = doc(db, "users", userId, subcollection, docId);
   await setDoc(ref2, { ...data, id: docId }, { merge: true });
   return docId;
+}
+async function appUserGetFromSubcollection(db, userId, subcollection, docId) {
+  logger.logCaller();
+  if (!validate.string(userId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  const ref2 = doc(db, "users", userId, subcollection, docId);
+  const snap = await getDoc(ref2);
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() };
+}
+async function appUserListFromSubcollection(db, userId, subcollection) {
+  logger.logCaller();
+  if (!validate.string(userId))
+    throw new Error("Missing parent document ID.");
+  const colRef = collection(db, "users", userId, subcollection);
+  const snapshot = await getDocs(colRef);
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
 }
 var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
   create: async function _create(collectionName, data) {
@@ -1839,6 +1885,14 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
     },
     set: async function _set(db2, parentCollection, parentId, subcollection, docId, data) {
       const res = await setInSubcollection(db2, parentCollection, parentId, subcollection, docId, data);
+      return res;
+    },
+    get: async function _get(db2, parentCollection, parentId, subcollection, docId) {
+      const res = await getFromSubcollection(db2, parentCollection, parentId, subcollection, docId);
+      return res;
+    },
+    list: async function _list(db2, parentCollection, parentId, subcollection) {
+      const res = await listFromSubcollection(db2, parentCollection, parentId, subcollection);
       return res;
     }
   },
@@ -1868,6 +1922,14 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
       },
       set: async function _set(db2, userId, subcollection, docId, data) {
         const res = await appUserSetInSubcollection(db2, userId, subcollection, docId, data);
+        return res;
+      },
+      get: async function _get(db2, userId, subcollection, docId) {
+        const res = await appUserGetFromSubcollection(db2, userId, subcollection, docId);
+        return res;
+      },
+      list: async function _list(db2, userId, subcollection) {
+        const res = await appUserListFromSubcollection(db2, userId, subcollection);
         return res;
       }
     }
