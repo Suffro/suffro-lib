@@ -1674,7 +1674,8 @@ import {
   collection,
   query,
   where,
-  getDocs
+  getDocs,
+  addDoc
 } from "firebase/firestore";
 import {
   PhoneAuthProvider,
@@ -1727,7 +1728,7 @@ async function set(db, collectionName, id, data) {
   await setDoc(doc(db, collectionName, id), {
     ...data,
     id
-  });
+  }, { merge: true });
   return id;
 }
 async function get(db, collectionName, id) {
@@ -1752,6 +1753,24 @@ async function removeWhere(db, collectionName, conditions) {
   const deletions = snapshot.docs.map((docSnap) => deleteDoc(docSnap.ref));
   await Promise.all(deletions);
   return snapshot.docs.map((docSnap) => docSnap.id);
+}
+async function createInSubcollection(db, parentCollection, parentId, subcollection, data) {
+  if (!validate.string(parentId)) throw new Error("Missing parent document ID.");
+  _userCollectionRestriction(parentCollection);
+  const subRef = collection(db, parentCollection, parentId, subcollection);
+  const docRef = await addDoc(subRef, {
+    ...data,
+    createdAt: Timestamp.now()
+  });
+  return docRef.id;
+}
+async function setInSubcollection(db, parentCollection, parentId, subcollection, docId, data) {
+  if (!validate.string(parentId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  _userCollectionRestriction(parentCollection);
+  const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
+  await setDoc(ref2, { ...data, id: docId }, { merge: true });
+  return docId;
 }
 async function appUserSet(auth, db, data, opts = { merge: true }) {
   logger.logCaller();
@@ -1778,6 +1797,22 @@ async function appUserGet(auth, db) {
   if (!userData) logger.warn("\u26A0\uFE0F No user document found.");
   return userData;
 }
+async function appUserCreateInSubcollection(db, userId, subcollection, data) {
+  if (!validate.string(userId)) throw new Error("Missing user document ID.");
+  const subRef = collection(db, "user", userId, subcollection);
+  const docRef = await addDoc(subRef, {
+    ...data,
+    createdAt: Timestamp.now()
+  });
+  return docRef.id;
+}
+async function appUserSetInSubcollection(db, userId, subcollection, docId, data) {
+  if (!validate.string(userId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  const ref2 = doc(db, "user", userId, subcollection, docId);
+  await setDoc(ref2, { ...data, id: docId }, { merge: true });
+  return docId;
+}
 var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
   create: async function _create(collectionName, data) {
     return await create(auth, db, collectionName, data);
@@ -1797,6 +1832,16 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
   removeWhere: async function _removeWhere(collectionName, conditions) {
     return await removeWhere(db, collectionName, conditions);
   },
+  subcollections: {
+    create: async function _create(db2, parentCollection, parentId, subcollection, data) {
+      const res = await createInSubcollection(db2, parentCollection, parentId, subcollection, data);
+      return res;
+    },
+    set: async function _set(db2, parentCollection, parentId, subcollection, docId, data) {
+      const res = await setInSubcollection(db2, parentCollection, parentId, subcollection, docId, data);
+      return res;
+    }
+  },
   users: {
     create: async function _create(data) {
       return await create(auth, db, usersCollectionName, data);
@@ -1815,6 +1860,16 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
     },
     removeWhere: async function _removeWhere(conditions) {
       return await removeWhere(db, usersCollectionName, conditions);
+    },
+    subcollections: {
+      create: async function _create(db2, userId, subcollection, data) {
+        const res = await appUserCreateInSubcollection(db2, userId, subcollection, data);
+        return res;
+      },
+      set: async function _set(db2, userId, subcollection, docId, data) {
+        const res = await appUserSetInSubcollection(db2, userId, subcollection, docId, data);
+        return res;
+      }
     }
   }
 });

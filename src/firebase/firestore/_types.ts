@@ -25,6 +25,10 @@ export type FStoreDoc = {
 		collectionName: Collections,
 		conditions: [string, WhereFilterOp, any][]
 	) => Promise<string[]>;
+	subcollections: {
+		create: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, data: any) => Promise<string>;
+		set: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+	}
 	users: {
 		create: <T>(data: T) => Promise<string>;
 		update: <T>(id: string, data: Partial<T>) => Promise<string>;
@@ -36,6 +40,10 @@ export type FStoreDoc = {
 		removeWhere: (
 			conditions: [string, WhereFilterOp, any][]
 		) => Promise<string[]>;
+		subcollections: {
+			create: (db: Firestore, userId: string, subcollection: string, data: any) => Promise<string>;
+			set: (db: Firestore, userId: string, subcollection: string, docId: string, data: any) => Promise<string>
+		}
 	}
 };
 

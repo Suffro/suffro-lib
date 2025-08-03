@@ -1,7 +1,7 @@
 import { IDBPDatabase, StoreNames, StoreKey, StoreValue, IndexNames } from 'idb';
 import * as firebase_auth from 'firebase/auth';
 import { User, Auth, RecaptchaVerifier } from 'firebase/auth';
-import { WhereFilterOp, Timestamp, Firestore } from 'firebase/firestore';
+import { WhereFilterOp, Firestore, Timestamp } from 'firebase/firestore';
 import { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { FirebaseStorage } from 'firebase/storage';
 import { HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
@@ -500,6 +500,10 @@ type FStoreDoc = {
     }) | null>;
     remove: (collection: Collections, id: string) => Promise<string>;
     removeWhere: (collectionName: Collections, conditions: [string, WhereFilterOp, any][]) => Promise<string[]>;
+    subcollections: {
+        create: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, data: any) => Promise<string>;
+        set: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+    };
     users: {
         create: <T>(data: T) => Promise<string>;
         update: <T>(id: string, data: Partial<T>) => Promise<string>;
@@ -509,6 +513,10 @@ type FStoreDoc = {
         }) | null>;
         remove: (id: string) => Promise<string>;
         removeWhere: (conditions: [string, WhereFilterOp, any][]) => Promise<string[]>;
+        subcollections: {
+            create: (db: Firestore, userId: string, subcollection: string, data: any) => Promise<string>;
+            set: (db: Firestore, userId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+        };
     };
 };
 

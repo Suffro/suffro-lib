@@ -14,6 +14,7 @@ import {
   type WhereFilterOp,
   serverTimestamp,
   Firestore,
+  addDoc,
 } from "firebase/firestore";
 import {
   getRecaptchaVerifier,
@@ -58,7 +59,8 @@ export async function _getDoc<T>(
   return { id: snap.id, ...snap.data() } as T & { id: string };
 }
 
-/**
+/** 
+ * (set doc senza merge, genera l'id prima di crearlo)
  * @returns Restituisce l'id del documento creato
  */
 export async function create<T>(
@@ -99,6 +101,7 @@ export async function update<T>(
   return id;
 }
 
+
 /**
  * @returns Restituisce l'id del documento
  */
@@ -114,7 +117,7 @@ export async function set<T>(
   await setDoc(doc(db, collectionName, id), {
     ...data,
     id,
-  });
+  }, {merge: true});
   return id;
 }
 
@@ -161,6 +164,40 @@ export async function removeWhere(
   return snapshot.docs.map((docSnap) => docSnap.id);
 }
 
+export async function createInSubcollection<T>(
+  db: Firestore,
+  parentCollection: Collections,
+  parentId: string,
+  subcollection: string,
+  data: T
+): Promise<string> {
+  if (!validate.string(parentId)) throw new Error("Missing parent document ID.");
+  _userCollectionRestriction(parentCollection);
+  const subRef = collection(db, parentCollection, parentId, subcollection);
+  const docRef = await addDoc(subRef, {
+    ...data,
+    createdAt: Timestamp.now(),
+  });
+  return docRef.id;
+}
+
+export async function setInSubcollection<T>(
+  db: Firestore,
+  parentCollection: Collections,
+  parentId: string,
+  subcollection: string,
+  docId: string,
+  data: Partial<T>
+): Promise<string> {
+  if (!validate.string(parentId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  _userCollectionRestriction(parentCollection);
+  const ref = doc(db, parentCollection, parentId, subcollection, docId);
+  await setDoc(ref, { ...data, id: docId }, { merge: true });
+  return docId;
+}
+
+
 ///////////// users collection functions /////////////
 
 export async function appUserSet(
@@ -194,6 +231,35 @@ export async function appUserGet(auth: Auth, db: Firestore): Promise<AppUser> {
   const userData = await _getDoc(db, "users", userId);
   if (!userData) logger.warn("⚠️ No user document found.");
   return userData as AppUser;
+}
+
+export async function appUserCreateInSubcollection<T>(
+  db: Firestore,
+  userId: string,
+  subcollection: string,
+  data: T
+): Promise<string> {
+  if (!validate.string(userId)) throw new Error("Missing user document ID.");
+  const subRef = collection(db, "user", userId, subcollection);
+  const docRef = await addDoc(subRef, {
+    ...data,
+    createdAt: Timestamp.now(),
+  });
+  return docRef.id;
+}
+
+export async function appUserSetInSubcollection<T>(
+  db: Firestore,
+  userId: string,
+  subcollection: string,
+  docId: string,
+  data: Partial<T>
+): Promise<string> {
+  if (!validate.string(userId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  const ref = doc(db, "user", userId, subcollection, docId);
+  await setDoc(ref, { ...data, id: docId }, { merge: true });
+  return docId;
 }
 
 ///////////// firestore user functions /////////////
@@ -342,6 +408,16 @@ export const initFirestoreDocsMethods = (
   ): Promise<string[]> {
     return await removeWhere(db, collectionName, conditions);
   },
+  subcollections: {
+    create: async function _create(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, data: any): Promise<string> {
+      const res = await createInSubcollection(db, parentCollection, parentId, subcollection, data);
+      return res;
+    },
+    set: async function _set(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any): Promise<string> {
+      const res = await setInSubcollection(db, parentCollection, parentId, subcollection, docId, data);
+      return res;
+    }
+  },
   users: {
     create: async function _create(
       data: unknown
@@ -375,6 +451,16 @@ export const initFirestoreDocsMethods = (
     ): Promise<string[]> {
       return await removeWhere(db, usersCollectionName, conditions);
     },
+    subcollections: {
+      create: async function _create(db: Firestore, userId: string, subcollection: string, data: any): Promise<string> {
+        const res = await appUserCreateInSubcollection(db, userId, subcollection, data);
+        return res;
+      },
+      set: async function _set(db: Firestore, userId: string, subcollection: string, docId: string, data: any): Promise<string> {
+        const res = await appUserSetInSubcollection(db, userId, subcollection, docId, data);
+        return res;
+      }
+    }
   },
 });
 
