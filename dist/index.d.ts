@@ -509,6 +509,7 @@ type FStoreDoc = {
         list: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string) => Promise<{
             id: string;
         }[]>;
+        remove: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<string>;
     };
     users: {
         create: <T>(data: T) => Promise<string>;
@@ -528,6 +529,7 @@ type FStoreDoc = {
             list: (db: Firestore, userId: string, subcollection: string) => Promise<{
                 id: string;
             }[]>;
+            remove: (db: Firestore, userId: string, subcollection: string, docId: string) => Promise<string>;
         };
     };
 };

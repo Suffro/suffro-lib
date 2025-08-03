@@ -1796,6 +1796,15 @@ async function listFromSubcollection(db, parentCollection, parentId, subcollecti
     ...docSnap.data()
   }));
 }
+async function removeFromSubcollection(db, parentCollection, parentId, subcollection, docId) {
+  logger.logCaller();
+  if (!validate.string(parentId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  _userCollectionRestriction(parentCollection);
+  const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
+  await deleteDoc(ref2);
+  return docId;
+}
 async function appUserSet(auth, db, data, opts = { merge: true }) {
   logger.logCaller();
   const user = _getFsUser(auth);
@@ -1859,6 +1868,14 @@ async function appUserListFromSubcollection(db, userId, subcollection) {
     ...docSnap.data()
   }));
 }
+async function appUserRemoveFromSubcollection(db, userId, subcollection, docId) {
+  logger.logCaller();
+  if (!validate.string(userId) || !validate.string(docId))
+    throw new Error("Missing parent or subdocument ID.");
+  const ref2 = doc(db, "users", userId, subcollection, docId);
+  await deleteDoc(ref2);
+  return docId;
+}
 var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
   create: async function _create(collectionName, data) {
     return await create(auth, db, collectionName, data);
@@ -1893,6 +1910,10 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
     },
     list: async function _list(db2, parentCollection, parentId, subcollection) {
       const res = await listFromSubcollection(db2, parentCollection, parentId, subcollection);
+      return res;
+    },
+    remove: async function _remove(db2, parentCollection, parentId, subcollection, docId) {
+      const res = await removeFromSubcollection(db2, parentCollection, parentId, subcollection, docId);
       return res;
     }
   },
@@ -1930,6 +1951,10 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
       },
       list: async function _list(db2, userId, subcollection) {
         const res = await appUserListFromSubcollection(db2, userId, subcollection);
+        return res;
+      },
+      remove: async function _remove(db2, userId, subcollection, docId) {
+        const res = await appUserRemoveFromSubcollection(db2, userId, subcollection, docId);
         return res;
       }
     }
