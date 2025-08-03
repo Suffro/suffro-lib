@@ -1674,8 +1674,7 @@ import {
   collection,
   query,
   where,
-  getDocs,
-  addDoc
+  getDocs
 } from "firebase/firestore";
 import {
   PhoneAuthProvider,
@@ -1759,11 +1758,13 @@ async function createInSubcollection(db, parentCollection, parentId, subcollecti
   if (!validate.string(parentId)) throw new Error("Missing parent document ID.");
   _userCollectionRestriction(parentCollection);
   const subRef = collection(db, parentCollection, parentId, subcollection);
-  const docRef = await addDoc(subRef, {
+  const preRef = doc(subRef);
+  await setDoc(preRef, {
     ...data,
+    id: preRef.id,
     createdAt: Timestamp.now()
   });
-  return docRef.id;
+  return preRef.id;
 }
 async function setInSubcollection(db, parentCollection, parentId, subcollection, docId, data) {
   logger.logCaller();
@@ -1834,11 +1835,13 @@ async function appUserCreateInSubcollection(db, userId, subcollection, data) {
   logger.logCaller();
   if (!validate.string(userId)) throw new Error("Missing user document ID.");
   const subRef = collection(db, "users", userId, subcollection);
-  const docRef = await addDoc(subRef, {
+  const preRef = doc(subRef);
+  await setDoc(preRef, {
     ...data,
+    id: preRef.id,
     createdAt: Timestamp.now()
   });
-  return docRef.id;
+  return preRef.id;
 }
 async function appUserSetInSubcollection(db, userId, subcollection, docId, data) {
   logger.logCaller();

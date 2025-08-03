@@ -175,11 +175,13 @@ export async function createInSubcollection<T>(
   if (!validate.string(parentId)) throw new Error("Missing parent document ID.");
   _userCollectionRestriction(parentCollection);
   const subRef = collection(db, parentCollection, parentId, subcollection);
-  const docRef = await addDoc(subRef, {
+  const preRef = doc(subRef);
+  await setDoc(preRef, {
     ...data,
-    createdAt: Timestamp.now(),
+    id: preRef.id,
+    createdAt: Timestamp.now()
   });
-  return docRef.id;
+  return preRef.id;
 }
 
 export async function setInSubcollection<T>(
@@ -296,11 +298,13 @@ export async function appUserCreateInSubcollection<T>(
   logger.logCaller();
   if (!validate.string(userId)) throw new Error("Missing user document ID.");
   const subRef = collection(db, "users", userId, subcollection);
-  const docRef = await addDoc(subRef, {
+  const preRef = doc(subRef);
+  await setDoc(preRef, {
     ...data,
-    createdAt: Timestamp.now(),
+    id: preRef.id,
+    createdAt: Timestamp.now()
   });
-  return docRef.id;
+  return preRef.id;
 }
 
 export async function appUserSetInSubcollection<T>(
