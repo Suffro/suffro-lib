@@ -1681,6 +1681,73 @@ import {
   linkWithCredential,
   updateProfile
 } from "firebase/auth";
+
+// src/_crypto.ts
+async function digestHex(input, algorithm) {
+  const data = new TextEncoder().encode(input);
+  const hash = await crypto.subtle.digest(algorithm, data);
+  return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+async function hmacSha256Hex(key, message) {
+  const enc = new TextEncoder();
+  const keyData = enc.encode(key);
+  const msgData = enc.encode(message);
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    keyData,
+    { name: "HMAC", hash: { name: "SHA-256" } },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", cryptoKey, msgData);
+  return Array.from(new Uint8Array(signature)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+function encodeBase64(input) {
+  const bytes = new TextEncoder().encode(input);
+  return btoa(String.fromCharCode(...bytes));
+}
+function decodeBase64(base64) {
+  const binary = atob(base64);
+  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+function generateRandomInitializationVector() {
+  return crypto.getRandomValues(new Uint8Array(12));
+}
+async function aesGcmEncrypt(plaintext, key, iv) {
+  const encoded = new TextEncoder().encode(plaintext);
+  const ciphertext = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    encoded
+  );
+  return new Uint8Array(ciphertext);
+}
+async function aesGcmDecrypt(ciphertext, key, iv) {
+  const decrypted = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv },
+    key,
+    ciphertext
+  );
+  return new TextDecoder().decode(decrypted);
+}
+var cryptoTools = {
+  digest: {
+    digestHex,
+    hmacSha256Hex
+  },
+  base64: {
+    encode: encodeBase64,
+    decode: decodeBase64
+  },
+  AES: {
+    encode: aesGcmEncrypt,
+    decode: aesGcmDecrypt,
+    randomInitializationVector: generateRandomInitializationVector
+  }
+};
+
+// src/firebase/firestore/_methods.ts
 var _userCollectionRestriction = (collectionName) => {
   if (collectionName === "users")
     throw new Error("Do NOT use this function for the user doc");
@@ -1701,11 +1768,16 @@ async function create(auth, db, collectionName, data) {
   logger.logCaller();
   _userCollectionRestriction(collectionName);
   const date = /* @__PURE__ */ new Date();
+  const createdAt = Timestamp.fromDate(date);
   const preRef = doc(collection(db, collectionName));
+  const raw = `${preRef.id}_${createdAt.toMillis()}`;
+  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
   await setDoc(preRef, {
     id: preRef.id,
+    hash,
     locale: navigator?.language || (await appUserGet(auth, db))?.locale,
-    createdAt: Timestamp.fromDate(date),
+    createdAt,
+    lastModified: createdAt,
     ...data
   });
   return preRef.id;
@@ -1715,8 +1787,14 @@ async function update(db, collectionName, id, data) {
   _userCollectionRestriction(collectionName);
   if (!validate.string(id)) throw new Error("Missing document ID.");
   const date = /* @__PURE__ */ new Date();
+  const lastModified = Timestamp.fromDate(date);
+  const preRef = doc(collection(db, collectionName));
+  const raw = `${id}_${lastModified.toMillis()}`;
+  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
   await updateDoc(doc(db, collectionName, id), {
-    ...data
+    ...data,
+    hash,
+    lastModified
   });
   return id;
 }
@@ -1724,9 +1802,15 @@ async function set(db, collectionName, id, data) {
   _userCollectionRestriction(collectionName);
   if (!validate.string(id)) throw new Error("Missing document ID.");
   const date = /* @__PURE__ */ new Date();
+  const lastModified = Timestamp.fromDate(date);
+  const preRef = doc(collection(db, collectionName));
+  const raw = `${id}_${lastModified.toMillis()}`;
+  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
   await setDoc(doc(db, collectionName, id), {
     ...data,
-    id
+    id,
+    hash,
+    lastModified
   }, { merge: true });
   return id;
 }
@@ -1753,43 +1837,55 @@ async function removeWhere(db, collectionName, conditions) {
   await Promise.all(deletions);
   return snapshot.docs.map((docSnap) => docSnap.id);
 }
-async function createInSubcollection(db, parentCollection, parentId, subcollection, data) {
+async function createInSubcollection(db, parentCollection, parentId, subcollection, data, isUser) {
   logger.logCaller();
   if (!validate.string(parentId)) throw new Error("Missing parent document ID.");
-  _userCollectionRestriction(parentCollection);
+  if (!isUser) _userCollectionRestriction(parentCollection);
   const subRef = collection(db, parentCollection, parentId, subcollection);
   const preRef = doc(subRef);
+  const createdAt = Timestamp.fromDate(/* @__PURE__ */ new Date());
+  const raw = `${preRef.id}_${createdAt.toMillis()}`;
+  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
   await setDoc(preRef, {
     ...data,
     id: preRef.id,
-    createdAt: Timestamp.now()
+    hash,
+    createdAt
   });
   return preRef.id;
 }
-async function setInSubcollection(db, parentCollection, parentId, subcollection, docId, data) {
+async function setInSubcollection(db, parentCollection, parentId, subcollection, docId, data, isUser) {
   logger.logCaller();
   if (!validate.string(parentId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  _userCollectionRestriction(parentCollection);
+  if (!isUser) _userCollectionRestriction(parentCollection);
   const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
-  await setDoc(ref2, { ...data, id: docId }, { merge: true });
+  const lastModified = Timestamp.fromDate(/* @__PURE__ */ new Date());
+  const raw = `${docId}_${lastModified.toMillis()}`;
+  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
+  await setDoc(ref2, {
+    ...data,
+    id: docId,
+    hash,
+    lastModified
+  }, { merge: true });
   return docId;
 }
-async function getFromSubcollection(db, parentCollection, parentId, subcollection, docId) {
+async function getFromSubcollection(db, parentCollection, parentId, subcollection, docId, isUser) {
   logger.logCaller();
   if (!validate.string(parentId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  _userCollectionRestriction(parentCollection);
+  if (!isUser) _userCollectionRestriction(parentCollection);
   const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
   const snap = await getDoc(ref2);
   if (!snap.exists()) return null;
   return { id: snap.id, ...snap.data() };
 }
-async function listFromSubcollection(db, parentCollection, parentId, subcollection) {
+async function listFromSubcollection(db, parentCollection, parentId, subcollection, isUser) {
   logger.logCaller();
   if (!validate.string(parentId))
     throw new Error("Missing parent document ID.");
-  _userCollectionRestriction(parentCollection);
+  if (!isUser) _userCollectionRestriction(parentCollection);
   const colRef = collection(db, parentCollection, parentId, subcollection);
   const snapshot = await getDocs(colRef);
   return snapshot.docs.map((docSnap) => ({
@@ -1797,11 +1893,11 @@ async function listFromSubcollection(db, parentCollection, parentId, subcollecti
     ...docSnap.data()
   }));
 }
-async function removeFromSubcollection(db, parentCollection, parentId, subcollection, docId) {
+async function removeFromSubcollection(db, parentCollection, parentId, subcollection, docId, isUser) {
   logger.logCaller();
   if (!validate.string(parentId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  _userCollectionRestriction(parentCollection);
+  if (!isUser) _userCollectionRestriction(parentCollection);
   const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
   await deleteDoc(ref2);
   return docId;
@@ -1834,49 +1930,35 @@ async function appUserGet(auth, db) {
 async function appUserCreateInSubcollection(db, userId, subcollection, data) {
   logger.logCaller();
   if (!validate.string(userId)) throw new Error("Missing user document ID.");
-  const subRef = collection(db, "users", userId, subcollection);
-  const preRef = doc(subRef);
-  await setDoc(preRef, {
-    ...data,
-    id: preRef.id,
-    createdAt: Timestamp.now()
-  });
-  return preRef.id;
+  const id = await createInSubcollection(db, "users", userId, subcollection, data, true);
+  return id;
 }
 async function appUserSetInSubcollection(db, userId, subcollection, docId, data) {
   logger.logCaller();
   if (!validate.string(userId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  const ref2 = doc(db, "users", userId, subcollection, docId);
-  await setDoc(ref2, { ...data, id: docId }, { merge: true });
+  await setInSubcollection(db, "users", userId, subcollection, docId, data, true);
   return docId;
 }
 async function appUserGetFromSubcollection(db, userId, subcollection, docId) {
   logger.logCaller();
   if (!validate.string(userId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  const ref2 = doc(db, "users", userId, subcollection, docId);
-  const snap = await getDoc(ref2);
-  if (!snap.exists()) return null;
-  return { id: snap.id, ...snap.data() };
+  const res = await getFromSubcollection(db, "users", userId, subcollection, docId, true);
+  return res;
 }
 async function appUserListFromSubcollection(db, userId, subcollection) {
   logger.logCaller();
   if (!validate.string(userId))
     throw new Error("Missing parent document ID.");
-  const colRef = collection(db, "users", userId, subcollection);
-  const snapshot = await getDocs(colRef);
-  return snapshot.docs.map((docSnap) => ({
-    id: docSnap.id,
-    ...docSnap.data()
-  }));
+  const res = await listFromSubcollection(db, "users", userId, subcollection, true);
+  return res;
 }
 async function appUserRemoveFromSubcollection(db, userId, subcollection, docId) {
   logger.logCaller();
   if (!validate.string(userId) || !validate.string(docId))
     throw new Error("Missing parent or subdocument ID.");
-  const ref2 = doc(db, "users", userId, subcollection, docId);
-  await deleteDoc(ref2);
+  await removeFromSubcollection(db, "users", userId, subcollection, docId, true);
   return docId;
 }
 var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
