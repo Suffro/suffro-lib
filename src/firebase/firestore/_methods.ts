@@ -541,27 +541,27 @@ export const initFirestoreDocsMethods = (
     return await removeWhere(db, collectionName, conditions);
   },
   subcollections: {
-    create: async function _create(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, data: any): Promise<string> {
+    create: async function _create(parentCollection: Collections, parentId: string, subcollection: string, data: any): Promise<string> {
       const res = await createInSubcollection(db, parentCollection, parentId, subcollection, data);
       return res;
     },
-    set: async function _set(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any): Promise<string> {
+    set: async function _set(parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any): Promise<string> {
       const res = await setInSubcollection(db, parentCollection, parentId, subcollection, docId, data);
       return res;
     },
-    get: async function _get(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string): Promise<{
+    get: async function _get(parentCollection: Collections, parentId: string, subcollection: string, docId: string): Promise<{
       id: string;
   } | null> {
       const res = await getFromSubcollection(db, parentCollection, parentId, subcollection, docId);
       return res;
     },
-    list: async function _list(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string): Promise<{
+    list: async function _list(parentCollection: Collections, parentId: string, subcollection: string): Promise<{
       id: string;
     }[]> {
       const res = await listFromSubcollection(db, parentCollection, parentId, subcollection,);
       return res;
     },
-    remove: async function _remove(db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string): Promise<string> {
+    remove: async function _remove(parentCollection: Collections, parentId: string, subcollection: string, docId: string): Promise<string> {
       const res = await removeFromSubcollection(db, parentCollection, parentId, subcollection, docId);
       return res;
     }
@@ -600,27 +600,27 @@ export const initFirestoreDocsMethods = (
       return await removeWhere(db, usersCollectionName, conditions);
     },
     subcollections: {
-      create: async function _create(db: Firestore, userId: string, subcollection: string, data: any): Promise<string> {
+      create: async function _create(userId: string, subcollection: string, data: any): Promise<string> {
         const res = await appUserCreateInSubcollection(db, userId, subcollection, data);
         return res;
       },
-      set: async function _set(db: Firestore, userId: string, subcollection: string, docId: string, data: any): Promise<string> {
+      set: async function _set(userId: string, subcollection: string, docId: string, data: any): Promise<string> {
         const res = await appUserSetInSubcollection(db, userId, subcollection, docId, data);
         return res;
       },
-      get: async function _get(db: Firestore, userId: string, subcollection: string, docId: string): Promise<{
+      get: async function _get(userId: string, subcollection: string, docId: string): Promise<{
         id: string;
     } | null> {
         const res = await appUserGetFromSubcollection(db, userId, subcollection, docId);
         return res;
       },
-      list: async function _list(db: Firestore, userId: string, subcollection: string): Promise<{
+      list: async function _list(userId: string, subcollection: string): Promise<{
         id: string;
       }[]> {
         const res = await appUserListFromSubcollection(db, userId, subcollection);
         return res;
       },
-      remove: async function _remove(db: Firestore, userId: string, subcollection: string, docId: string): Promise<string> {
+      remove: async function _remove(userId: string, subcollection: string, docId: string): Promise<string> {
         const res = await appUserRemoveFromSubcollection(db, userId, subcollection, docId);
         return res;
       }

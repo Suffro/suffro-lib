@@ -1,7 +1,7 @@
 import { IDBPDatabase, StoreNames, StoreKey, StoreValue, IndexNames } from 'idb';
 import * as firebase_auth from 'firebase/auth';
 import { User, Auth, RecaptchaVerifier } from 'firebase/auth';
-import { WhereFilterOp, Firestore, Timestamp } from 'firebase/firestore';
+import { WhereFilterOp, Timestamp, Firestore } from 'firebase/firestore';
 import { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { FirebaseStorage } from 'firebase/storage';
 import { HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
@@ -501,15 +501,15 @@ type FStoreDoc = {
     remove: (collection: Collections, id: string) => Promise<string>;
     removeWhere: (collectionName: Collections, conditions: [string, WhereFilterOp, any][]) => Promise<string[]>;
     subcollections: {
-        create: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, data: any) => Promise<string>;
-        set: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any) => Promise<string>;
-        get: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<{
+        create: (parentCollection: Collections, parentId: string, subcollection: string, data: any) => Promise<string>;
+        set: (parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+        get: (parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<{
             id: string;
         } | null>;
-        list: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string) => Promise<{
+        list: (parentCollection: Collections, parentId: string, subcollection: string) => Promise<{
             id: string;
         }[]>;
-        remove: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<string>;
+        remove: (parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<string>;
     };
     users: {
         create: <T>(data: T) => Promise<string>;
@@ -521,15 +521,15 @@ type FStoreDoc = {
         remove: (id: string) => Promise<string>;
         removeWhere: (conditions: [string, WhereFilterOp, any][]) => Promise<string[]>;
         subcollections: {
-            create: (db: Firestore, userId: string, subcollection: string, data: any) => Promise<string>;
-            set: (db: Firestore, userId: string, subcollection: string, docId: string, data: any) => Promise<string>;
-            get: (db: Firestore, userId: string, subcollection: string, docId: string) => Promise<{
+            create: (userId: string, subcollection: string, data: any) => Promise<string>;
+            set: (userId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+            get: (userId: string, subcollection: string, docId: string) => Promise<{
                 id: string;
             } | null>;
-            list: (db: Firestore, userId: string, subcollection: string) => Promise<{
+            list: (userId: string, subcollection: string) => Promise<{
                 id: string;
             }[]>;
-            remove: (db: Firestore, userId: string, subcollection: string, docId: string) => Promise<string>;
+            remove: (userId: string, subcollection: string, docId: string) => Promise<string>;
         };
     };
 };
@@ -560,7 +560,7 @@ type Collections = string;
  */
 type DocBlueprint<T> = T & {
     id: string;
-    hash: string;
+    hash?: string;
     createdAt: Timestamp;
     deleted?: boolean;
     [key: string]: unknown;

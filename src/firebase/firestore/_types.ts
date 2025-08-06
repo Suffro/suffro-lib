@@ -26,15 +26,15 @@ export type FStoreDoc = {
 		conditions: [string, WhereFilterOp, any][]
 	) => Promise<string[]>;
 	subcollections: {
-		create: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, data: any) => Promise<string>;
-		set: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any) => Promise<string>;
-		get: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<{
+		create: (parentCollection: Collections, parentId: string, subcollection: string, data: any) => Promise<string>;
+		set: (parentCollection: Collections, parentId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+		get: (parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<{
 			id: string;
 		} | null>;
-		list: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string) => Promise<{
+		list: (parentCollection: Collections, parentId: string, subcollection: string) => Promise<{
 			id: string;
 		}[]>;
-		remove: (db: Firestore, parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<string>;
+		remove: (parentCollection: Collections, parentId: string, subcollection: string, docId: string) => Promise<string>;
 	}
 	users: {
 		create: <T>(data: T) => Promise<string>;
@@ -48,15 +48,15 @@ export type FStoreDoc = {
 			conditions: [string, WhereFilterOp, any][]
 		) => Promise<string[]>;
 		subcollections: {
-			create: (db: Firestore, userId: string, subcollection: string, data: any) => Promise<string>;
-			set: (db: Firestore, userId: string, subcollection: string, docId: string, data: any) => Promise<string>;
-			get: (db: Firestore, userId: string, subcollection: string, docId: string) => Promise<{
+			create: (userId: string, subcollection: string, data: any) => Promise<string>;
+			set: (userId: string, subcollection: string, docId: string, data: any) => Promise<string>;
+			get: (userId: string, subcollection: string, docId: string) => Promise<{
 				id: string;
 			} | null>;
-			list: (db: Firestore, userId: string, subcollection: string) => Promise<{
+			list: (userId: string, subcollection: string) => Promise<{
 				id: string;
 			}[]>;
-			remove: (db: Firestore, userId: string, subcollection: string, docId: string) => Promise<string>;
+			remove: (userId: string, subcollection: string, docId: string) => Promise<string>;
 		}
 	}
 };

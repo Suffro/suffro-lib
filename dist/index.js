@@ -1981,24 +1981,24 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
     return await removeWhere(db, collectionName, conditions);
   },
   subcollections: {
-    create: async function _create(db2, parentCollection, parentId, subcollection, data) {
-      const res = await createInSubcollection(db2, parentCollection, parentId, subcollection, data);
+    create: async function _create(parentCollection, parentId, subcollection, data) {
+      const res = await createInSubcollection(db, parentCollection, parentId, subcollection, data);
       return res;
     },
-    set: async function _set(db2, parentCollection, parentId, subcollection, docId, data) {
-      const res = await setInSubcollection(db2, parentCollection, parentId, subcollection, docId, data);
+    set: async function _set(parentCollection, parentId, subcollection, docId, data) {
+      const res = await setInSubcollection(db, parentCollection, parentId, subcollection, docId, data);
       return res;
     },
-    get: async function _get(db2, parentCollection, parentId, subcollection, docId) {
-      const res = await getFromSubcollection(db2, parentCollection, parentId, subcollection, docId);
+    get: async function _get(parentCollection, parentId, subcollection, docId) {
+      const res = await getFromSubcollection(db, parentCollection, parentId, subcollection, docId);
       return res;
     },
-    list: async function _list(db2, parentCollection, parentId, subcollection) {
-      const res = await listFromSubcollection(db2, parentCollection, parentId, subcollection);
+    list: async function _list(parentCollection, parentId, subcollection) {
+      const res = await listFromSubcollection(db, parentCollection, parentId, subcollection);
       return res;
     },
-    remove: async function _remove(db2, parentCollection, parentId, subcollection, docId) {
-      const res = await removeFromSubcollection(db2, parentCollection, parentId, subcollection, docId);
+    remove: async function _remove(parentCollection, parentId, subcollection, docId) {
+      const res = await removeFromSubcollection(db, parentCollection, parentId, subcollection, docId);
       return res;
     }
   },
@@ -2022,24 +2022,24 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
       return await removeWhere(db, usersCollectionName, conditions);
     },
     subcollections: {
-      create: async function _create(db2, userId, subcollection, data) {
-        const res = await appUserCreateInSubcollection(db2, userId, subcollection, data);
+      create: async function _create(userId, subcollection, data) {
+        const res = await appUserCreateInSubcollection(db, userId, subcollection, data);
         return res;
       },
-      set: async function _set(db2, userId, subcollection, docId, data) {
-        const res = await appUserSetInSubcollection(db2, userId, subcollection, docId, data);
+      set: async function _set(userId, subcollection, docId, data) {
+        const res = await appUserSetInSubcollection(db, userId, subcollection, docId, data);
         return res;
       },
-      get: async function _get(db2, userId, subcollection, docId) {
-        const res = await appUserGetFromSubcollection(db2, userId, subcollection, docId);
+      get: async function _get(userId, subcollection, docId) {
+        const res = await appUserGetFromSubcollection(db, userId, subcollection, docId);
         return res;
       },
-      list: async function _list(db2, userId, subcollection) {
-        const res = await appUserListFromSubcollection(db2, userId, subcollection);
+      list: async function _list(userId, subcollection) {
+        const res = await appUserListFromSubcollection(db, userId, subcollection);
         return res;
       },
-      remove: async function _remove(db2, userId, subcollection, docId) {
-        const res = await appUserRemoveFromSubcollection(db2, userId, subcollection, docId);
+      remove: async function _remove(userId, subcollection, docId) {
+        const res = await appUserRemoveFromSubcollection(db, userId, subcollection, docId);
         return res;
       }
     }
