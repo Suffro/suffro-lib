@@ -18,7 +18,7 @@ export type Collections = string;
  */
 export type DocBlueprint<T> = T & {
 	id: string;
-	hash: string; //changes on every document change and is a hash of the doc id and lastModified fields
+	hash?: string; //changes on every document change and is a hash of the doc id and lastModified fields
 	createdAt: Timestamp;
 	deleted?: boolean;
 	[key: string]: unknown;
