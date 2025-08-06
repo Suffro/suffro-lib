@@ -77,7 +77,7 @@ export async function create<T>(
   const preRef = doc(collection(db, collectionName)); // genera un nuovo doc ID dentro la collection
   const raw = `${preRef.id}_${createdAt.toMillis()}`;
   // Calcola hash SHA256
-  const hash = cryptoTools.digest.digestHex(raw,"SHA-256");
+  const hash: string = await cryptoTools.digest.digestHex(raw,"SHA-256") || "";
 
   await setDoc(preRef, {
     id: preRef.id,
@@ -107,7 +107,7 @@ export async function update<T>(
   const preRef = doc(collection(db, collectionName)); // genera un nuovo doc ID dentro la collection
   const raw = `${id}_${lastModified.toMillis()}`;
   // Calcola hash SHA256
-  const hash = cryptoTools.digest.digestHex(raw,"SHA-256");
+  const hash: string = await cryptoTools.digest.digestHex(raw,"SHA-256") || "";
   await updateDoc(doc(db, collectionName, id), {
     ...data,
     hash,
@@ -133,7 +133,7 @@ export async function set<T>(
   const preRef = doc(collection(db, collectionName)); // genera un nuovo doc ID dentro la collection
   const raw = `${id}_${lastModified.toMillis()}`;
   // Calcola hash SHA256
-  const hash = cryptoTools.digest.digestHex(raw,"SHA-256");
+  const hash: string = await cryptoTools.digest.digestHex(raw,"SHA-256") || "";
   await setDoc(doc(db, collectionName, id), {
     ...data,
     id,
@@ -202,7 +202,7 @@ export async function createInSubcollection<T>(
   const createdAt = Timestamp.fromDate(new Date());
   const raw = `${preRef.id}_${createdAt.toMillis()}`;
   // Calcola hash SHA256
-  const hash = cryptoTools.digest.digestHex(raw,"SHA-256");
+  const hash: string = await cryptoTools.digest.digestHex(raw,"SHA-256") || "";
   await setDoc(preRef, {
     ...data,
     id: preRef.id,
@@ -229,7 +229,7 @@ export async function setInSubcollection<T>(
   const lastModified = Timestamp.fromDate(new Date());
   const raw = `${docId}_${lastModified.toMillis()}`;
   // Calcola hash SHA256
-  const hash = cryptoTools.digest.digestHex(raw,"SHA-256");
+  const hash: string = await cryptoTools.digest.digestHex(raw,"SHA-256") || "";
   await setDoc(ref, {
     ...data,
     id: docId,

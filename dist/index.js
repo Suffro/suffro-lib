@@ -1771,7 +1771,7 @@ async function create(auth, db, collectionName, data) {
   const createdAt = Timestamp.fromDate(date);
   const preRef = doc(collection(db, collectionName));
   const raw = `${preRef.id}_${createdAt.toMillis()}`;
-  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
+  const hash = await cryptoTools.digest.digestHex(raw, "SHA-256") || "";
   await setDoc(preRef, {
     id: preRef.id,
     hash,
@@ -1790,7 +1790,7 @@ async function update(db, collectionName, id, data) {
   const lastModified = Timestamp.fromDate(date);
   const preRef = doc(collection(db, collectionName));
   const raw = `${id}_${lastModified.toMillis()}`;
-  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
+  const hash = await cryptoTools.digest.digestHex(raw, "SHA-256") || "";
   await updateDoc(doc(db, collectionName, id), {
     ...data,
     hash,
@@ -1805,7 +1805,7 @@ async function set(db, collectionName, id, data) {
   const lastModified = Timestamp.fromDate(date);
   const preRef = doc(collection(db, collectionName));
   const raw = `${id}_${lastModified.toMillis()}`;
-  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
+  const hash = await cryptoTools.digest.digestHex(raw, "SHA-256") || "";
   await setDoc(doc(db, collectionName, id), {
     ...data,
     id,
@@ -1845,7 +1845,7 @@ async function createInSubcollection(db, parentCollection, parentId, subcollecti
   const preRef = doc(subRef);
   const createdAt = Timestamp.fromDate(/* @__PURE__ */ new Date());
   const raw = `${preRef.id}_${createdAt.toMillis()}`;
-  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
+  const hash = await cryptoTools.digest.digestHex(raw, "SHA-256") || "";
   await setDoc(preRef, {
     ...data,
     id: preRef.id,
@@ -1862,7 +1862,7 @@ async function setInSubcollection(db, parentCollection, parentId, subcollection,
   const ref2 = doc(db, parentCollection, parentId, subcollection, docId);
   const lastModified = Timestamp.fromDate(/* @__PURE__ */ new Date());
   const raw = `${docId}_${lastModified.toMillis()}`;
-  const hash = cryptoTools.digest.digestHex(raw, "SHA-256");
+  const hash = await cryptoTools.digest.digestHex(raw, "SHA-256") || "";
   await setDoc(ref2, {
     ...data,
     id: docId,
