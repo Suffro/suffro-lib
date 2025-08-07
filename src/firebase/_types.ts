@@ -29,6 +29,14 @@ export type DocBlueprint<T> = T & CoreDocFields & {
 };
 
 /**
+ * Custom fields common to all NON user documents
+ */
+export type SubcolelctionDocBlueprint<T> = T & CoreDocFields & {
+	parentId?: string;
+	[key: string]: unknown;
+};
+
+/**
  * This is only the custom user document
  */
 export type AppUserDoc = {
