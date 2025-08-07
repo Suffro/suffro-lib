@@ -1819,6 +1819,20 @@ async function get(db, collectionName, id) {
   _userCollectionRestriction(collectionName);
   return await _getDoc(db, collectionName, id);
 }
+async function listOwnedByUser(auth, db, collectionName) {
+  logger.logCaller();
+  _userCollectionRestriction(collectionName);
+  const user = _getFsUser(auth);
+  const q = query(
+    collection(db, collectionName),
+    where("ownerId", "==", user.uid)
+  );
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+}
 async function remove(db, collection2, id) {
   logger.logCaller();
   if (!validate.string(id)) throw new Error("Missing document ID.");
@@ -2014,6 +2028,9 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
     },
     get: async function _get(id) {
       return await get(db, usersCollectionName, id);
+    },
+    listOwnedDocs: async function _list(collectionName) {
+      return await listOwnedByUser(auth, db, collectionName);
     },
     remove: async function _remove(id) {
       return await remove(db, usersCollectionName, id);

@@ -158,6 +158,27 @@ export async function get<T>(
   return await _getDoc(db, collectionName, id);
 }
 
+export async function listOwnedByUser<T>(
+  auth: Auth,
+  db: Firestore,
+  collectionName: Collections
+): Promise<(T & { id: string })[]> {
+  logger.logCaller();
+  _userCollectionRestriction(collectionName);
+
+  const user = _getFsUser(auth);
+  const q = query(
+    collection(db, collectionName),
+    where("ownerId", "==", user.uid)
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  })) as (T & { id: string })[];
+}
+
 export async function remove(
   db: Firestore,
   collection: Collections,
@@ -447,55 +468,6 @@ export async function updateUserPhoneNumber(
   await appUserSet(auth, db, { phoneNumber });
 }
 
-/**
- * DISABLED
- *
-export const initUserDoc = async (auth: Auth, user: User) => {
-  return;
-	logger.logCaller();
-	const userDoc = await appUserGet(auth);
-	if(userDoc) return logger.log("✔️ User doc already initiated");
-	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-	const uid: string = user.uid;
-	await appUserSet(
-		{
-			role: 'standard',
-			enabled: true,
-			id: uid,
-			displayName: user.displayName,
-			phoneNumber: user.phoneNumber,
-			email: user.email,
-			createdAt: serverTimestamp(),
-			locale: navigator.language,
-			timeZone
-		} as AppUser,
-		{ id: uid }
-	);
-	logger.log('✅ User doc initiated');
-}
-*/
-
-// const firestoreDocs = {create,update,set,get,remove,removeWhere};
-
-// const _fstore: FStore = {
-//   doc: {
-//     ...firestoreDocs
-//   },
-//   user: {
-//     doc: {
-//       set: appUserSet,
-//       get: appUserGet
-//     },
-//     set: {
-//       profile: userProfileSet,
-//       phoneNumber: updateUserPhoneNumber
-//     },
-//     get: userGet,
-//     reauthenticate: reauthenticateUser,
-//     changeEmail: updateUserEmail,
-//     changePassword: updateUserPassword
-//   }
-// }
 
 export const initFirestoreDocsMethods = (
   auth: Auth,
@@ -589,6 +561,9 @@ export const initFirestoreDocsMethods = (
     ): Promise<(string & { id: string }) | null> {
       return await get(db, usersCollectionName, id);
     },
+    listOwnedDocs: async function _list(collectionName: Collections): Promise<any[]>{
+        return await listOwnedByUser(auth, db, collectionName);
+    },
     remove: async function _remove(
       id: string
     ): Promise<string> {
@@ -642,3 +617,55 @@ export const initFirestoreCurrentUserDocMethods = (
     return await appUserGet(auth, db);
   },
 });
+
+
+
+/**
+ * DISABLED
+ *
+export const initUserDoc = async (auth: Auth, user: User) => {
+  return;
+	logger.logCaller();
+	const userDoc = await appUserGet(auth);
+	if(userDoc) return logger.log("✔️ User doc already initiated");
+	const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	const uid: string = user.uid;
+	await appUserSet(
+		{
+			role: 'standard',
+			enabled: true,
+			id: uid,
+			displayName: user.displayName,
+			phoneNumber: user.phoneNumber,
+			email: user.email,
+			createdAt: serverTimestamp(),
+			locale: navigator.language,
+			timeZone
+		} as AppUser,
+		{ id: uid }
+	);
+	logger.log('✅ User doc initiated');
+}
+*/
+
+// const firestoreDocs = {create,update,set,get,remove,removeWhere};
+
+// const _fstore: FStore = {
+//   doc: {
+//     ...firestoreDocs
+//   },
+//   user: {
+//     doc: {
+//       set: appUserSet,
+//       get: appUserGet
+//     },
+//     set: {
+//       profile: userProfileSet,
+//       phoneNumber: updateUserPhoneNumber
+//     },
+//     get: userGet,
+//     reauthenticate: reauthenticateUser,
+//     changeEmail: updateUserEmail,
+//     changePassword: updateUserPassword
+//   }
+// }
