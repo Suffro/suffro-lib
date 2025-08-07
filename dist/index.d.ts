@@ -566,7 +566,8 @@ type CoreDocFields = {
  * Custom fields common to all NON user documents
  */
 type DocBlueprint<T> = T & CoreDocFields & {
-    ownerId: string;
+    ownerId?: string;
+    createdBy?: string;
     [key: string]: unknown;
 };
 /**
