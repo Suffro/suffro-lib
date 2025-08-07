@@ -13,14 +13,18 @@ export {type AuthState} from "./auth"
  */
 export type Collections = string;
 
-/**
- * Custom fields common to all documents
- */
-export type DocBlueprint<T> = T & {
+type CoreDocFields = {
 	id: string;
 	hash?: string; //changes on every document change and is a hash of the doc id and lastModified fields
 	createdAt: Timestamp;
 	deleted?: boolean;
+}
+
+/**
+ * Custom fields common to all NON user documents
+ */
+export type DocBlueprint<T> = T & CoreDocFields & {
+	ownerId: string;
 	[key: string]: unknown;
 };
 
@@ -31,16 +35,16 @@ export type AppUserDoc = {
 	locale: string;
 	timeZone: string;
 	email: string;
-	availableBuilds: number;
 	enabled: boolean;
 	displayName?: string;
 	role: 'standard' | 'admin';
+	[key: string]: unknown;
 };
 
 /**
  * This is the complete user with fields from the custom user document, the built in Firebase user and the custom fields common to all documents
  */
-export type AppUser = DocBlueprint<User & AppUserDoc>;
+export type AppUser = CoreDocFields & User & AppUserDoc;
 
 
 export type MetadataSubDocStatus = {

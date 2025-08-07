@@ -555,14 +555,17 @@ declare function authStateObsverver(appAuth: ReturnType<typeof firebase_auth.get
  * The collection names in your firestore
  */
 type Collections = string;
-/**
- * Custom fields common to all documents
- */
-type DocBlueprint<T> = T & {
+type CoreDocFields = {
     id: string;
     hash?: string;
     createdAt: Timestamp;
     deleted?: boolean;
+};
+/**
+ * Custom fields common to all NON user documents
+ */
+type DocBlueprint<T> = T & CoreDocFields & {
+    ownerId: string;
     [key: string]: unknown;
 };
 /**
@@ -572,15 +575,15 @@ type AppUserDoc = {
     locale: string;
     timeZone: string;
     email: string;
-    availableBuilds: number;
     enabled: boolean;
     displayName?: string;
     role: 'standard' | 'admin';
+    [key: string]: unknown;
 };
 /**
  * This is the complete user with fields from the custom user document, the built in Firebase user and the custom fields common to all documents
  */
-type AppUser = DocBlueprint<User & AppUserDoc>;
+type AppUser = CoreDocFields & User & AppUserDoc;
 type MetadataSubDocStatus = {
     lastModified?: Timestamp;
     hash: string;
