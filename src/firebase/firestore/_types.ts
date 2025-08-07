@@ -20,7 +20,7 @@ export type FStoreDoc = {
 	get: <T>(collectionName: Collections, id: string) => Promise<(string & {
 		id: string;
 	}) | null>;
-	listDocs: (collectionName: Collections, conditions: [string, WhereFilterOp, any]) => Promise<any[]>;
+	list: (collectionName: Collections, conditions?: [string, WhereFilterOp, any]) => Promise<any[]>;
 	remove: (collection: Collections, id: string) => Promise<string>;
 	removeWhere: (
 		collectionName: Collections,

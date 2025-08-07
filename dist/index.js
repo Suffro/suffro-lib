@@ -1821,10 +1821,15 @@ async function get(db, collectionName, id) {
 }
 async function listDocs(db, collectionName, conditions) {
   logger.logCaller();
-  const q = query(
-    collection(db, collectionName),
-    ...conditions.map(([field, op, value]) => where(field, op, value))
-  );
+  let q;
+  if (conditions && conditions?.length > 0) {
+    q = query(
+      collection(db, collectionName),
+      ...conditions.map(([field, op, value]) => where(field, op, value))
+    );
+  } else {
+    q = collection(db, collectionName);
+  }
   const snapshot = await getDocs(q);
   return snapshot.docs.map((docSnap) => ({
     id: docSnap.id,
@@ -1986,8 +1991,9 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
   get: async function _get(collectionName, id) {
     return await get(db, collectionName, id);
   },
-  listDocs: async function _list(collectionName, conditions) {
-    return await listDocs(db, collectionName, conditions);
+  list: async function _list(collectionName, conditions) {
+    if (conditions && conditions?.length > 0) return await listDocs(db, collectionName, conditions);
+    else return await listDocs(db, collectionName);
   },
   remove: async function _remove(collectionName, id) {
     return await remove(db, collectionName, id);

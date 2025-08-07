@@ -15,6 +15,7 @@ import {
   serverTimestamp,
   Firestore,
   addDoc,
+  Query,
 } from "firebase/firestore";
 import {
   getRecaptchaVerifier,
@@ -161,14 +162,19 @@ export async function get<T>(
 export async function listDocs<T>(
   db: Firestore,
   collectionName: Collections,
-  conditions: [string, WhereFilterOp, any]
+  conditions?: [string, WhereFilterOp, any]
 ): Promise<(T & { id: string })[]> {
   logger.logCaller();
-  
-  const q = query(
-    collection(db, collectionName),
-    ...conditions.map(([field, op, value]) => where(field, op, value))
-  );
+  let q: Query<DocumentData, DocumentData>;
+
+  if(conditions && conditions?.length>0){
+    q = query(
+      collection(db, collectionName),
+      ...conditions.map(([field, op, value]) => where(field, op, value))
+    );
+  } else {
+    q = collection(db, collectionName);
+  }
 
   const snapshot = await getDocs(q);
   return snapshot.docs.map((docSnap) => ({
@@ -498,8 +504,10 @@ export const initFirestoreDocsMethods = (
   ): Promise<(string & { id: string }) | null> {
     return await get(db, collectionName, id);
   },
-  listDocs: async function _list(collectionName: Collections, conditions: [string, WhereFilterOp, any]): Promise<any[]>{
-      return await listDocs(db, collectionName, conditions);
+  list: async function _list(collectionName: Collections, conditions?: [string, WhereFilterOp, any]): Promise<any[]>{
+    if(conditions && conditions?.length>0) return await listDocs(db, collectionName, conditions);
+    else return await listDocs(db, collectionName);
+    
   },
   remove: async function _remove(
     collectionName: Collections,
