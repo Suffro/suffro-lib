@@ -498,6 +498,7 @@ type FStoreDoc = {
     get: <T>(collectionName: Collections, id: string) => Promise<(string & {
         id: string;
     }) | null>;
+    listDocs: (collectionName: Collections, conditions: [string, WhereFilterOp, any]) => Promise<any[]>;
     remove: (collection: Collections, id: string) => Promise<string>;
     removeWhere: (collectionName: Collections, conditions: [string, WhereFilterOp, any][]) => Promise<string[]>;
     subcollections: {
@@ -518,7 +519,6 @@ type FStoreDoc = {
         get: <T>(id: string) => Promise<(string & {
             id: string;
         }) | null>;
-        listOwnedDocs: (userId: string, collectionName: Collections) => Promise<any[]>;
         remove: (id: string) => Promise<string>;
         removeWhere: (conditions: [string, WhereFilterOp, any][]) => Promise<string[]>;
         subcollections: {

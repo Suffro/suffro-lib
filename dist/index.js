@@ -1819,11 +1819,11 @@ async function get(db, collectionName, id) {
   _userCollectionRestriction(collectionName);
   return await _getDoc(db, collectionName, id);
 }
-async function listOwnedByUser(db, userId, collectionName) {
+async function listDocs(db, collectionName, conditions) {
   logger.logCaller();
   const q = query(
     collection(db, collectionName),
-    where("ownerId", "==", userId)
+    ...conditions.map(([field, op, value]) => where(field, op, value))
   );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((docSnap) => ({
@@ -1986,6 +1986,9 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
   get: async function _get(collectionName, id) {
     return await get(db, collectionName, id);
   },
+  listDocs: async function _list(collectionName, conditions) {
+    return await listDocs(db, collectionName, conditions);
+  },
   remove: async function _remove(collectionName, id) {
     return await remove(db, collectionName, id);
   },
@@ -2026,9 +2029,6 @@ var initFirestoreDocsMethods = (auth, db, usersCollectionName = "users") => ({
     },
     get: async function _get(id) {
       return await get(db, usersCollectionName, id);
-    },
-    listOwnedDocs: async function _list(userId, collectionName) {
-      return await listOwnedByUser(db, userId, collectionName);
     },
     remove: async function _remove(id) {
       return await remove(db, usersCollectionName, id);

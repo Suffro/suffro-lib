@@ -158,16 +158,16 @@ export async function get<T>(
   return await _getDoc(db, collectionName, id);
 }
 
-export async function listOwnedByUser<T>(
+export async function listDocs<T>(
   db: Firestore,
-  userId: string,
-  collectionName: Collections
+  collectionName: Collections,
+  conditions: [string, WhereFilterOp, any]
 ): Promise<(T & { id: string })[]> {
   logger.logCaller();
   
   const q = query(
     collection(db, collectionName),
-    where("ownerId", "==", userId)
+    ...conditions.map(([field, op, value]) => where(field, op, value))
   );
 
   const snapshot = await getDocs(q);
@@ -498,6 +498,9 @@ export const initFirestoreDocsMethods = (
   ): Promise<(string & { id: string }) | null> {
     return await get(db, collectionName, id);
   },
+  listDocs: async function _list(collectionName: Collections, conditions: [string, WhereFilterOp, any]): Promise<any[]>{
+      return await listDocs(db, collectionName, conditions);
+  },
   remove: async function _remove(
     collectionName: Collections,
     id: string
@@ -558,9 +561,6 @@ export const initFirestoreDocsMethods = (
       id: string
     ): Promise<(string & { id: string }) | null> {
       return await get(db, usersCollectionName, id);
-    },
-    listOwnedDocs: async function _list(userId: string, collectionName: Collections): Promise<any[]>{
-        return await listOwnedByUser(db, userId, collectionName);
     },
     remove: async function _remove(
       id: string
