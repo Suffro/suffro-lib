@@ -19,6 +19,13 @@ export const isDev = (): boolean => {
 	return ((nodeEnv !== 'production') || isLocalhost);
 };
 
+export function stringStartsWith(input: string, prefix: string, caseSensitive = false): boolean {
+	if (!caseSensitive) {
+	  return input.toLowerCase().startsWith(prefix.toLowerCase());
+	}
+	return input.startsWith(prefix);
+  }
+  
 
 export function clearUrl(input: string): string | null {
 	if (!validate.url(input)) {
@@ -28,11 +35,11 @@ export function clearUrl(input: string): string | null {
   
 	// Rimuove spazi iniziali/finali
 	let url = input.trim();
+
+	if (stringStartsWith(input,"http://")) url = url?.replace("http://","https://");
   
 	// Se manca lo schema, aggiunge "https://"
-	if (!/^https?:\/\//i.test(url)) {
-	  url = "https://" + url;
-	}
+	if (!stringStartsWith(input,"https://")) url = "https://" + url;
   
 	try {
 	  const parsed = new URL(url);

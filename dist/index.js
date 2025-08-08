@@ -60,6 +60,12 @@ var isDev = () => {
   const nodeEnv = process?.env?.NODE_ENV;
   return nodeEnv !== "production" || isLocalhost2;
 };
+function stringStartsWith(input, prefix, caseSensitive = false) {
+  if (!caseSensitive) {
+    return input.toLowerCase().startsWith(prefix.toLowerCase());
+  }
+  return input.startsWith(prefix);
+}
 function clearUrl(input) {
   if (!validate.url(input)) {
     console.error(`[invalid url] ${input}`);
@@ -67,9 +73,8 @@ function clearUrl(input) {
   }
   ;
   let url = input.trim();
-  if (!/^https?:\/\//i.test(url)) {
-    url = "https://" + url;
-  }
+  if (stringStartsWith(input, "http://")) url = url?.replace("http://", "https://");
+  if (!stringStartsWith(input, "https://")) url = "https://" + url;
   try {
     const parsed = new URL(url);
     parsed.protocol = parsed.protocol.toLowerCase();
@@ -2302,6 +2307,7 @@ export {
   setHiddenStatus,
   setTimeForDate,
   sleep,
+  stringStartsWith,
   toCamelCase,
   toHtmlId,
   toSnakeCase,
