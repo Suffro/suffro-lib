@@ -74,7 +74,7 @@ declare const isBrowser: () => boolean;
 declare const isWindowAvailable: () => boolean;
 declare const isDev: () => boolean;
 declare function stringStartsWith(input: string, prefix: string, caseSensitive?: boolean): boolean;
-declare function clearUrl(input: string): string | null;
+declare function clearUrl(input: string, domainOnly?: boolean): string | null;
 /**
  * Estrae il sottodominio da un URL o dal dominio corrente (es. builder.bubbledesk.app → "builder").
  *

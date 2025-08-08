@@ -27,7 +27,7 @@ export function stringStartsWith(input: string, prefix: string, caseSensitive = 
   }
   
 
-export function clearUrl(input: string): string | null {
+export function clearUrl(input: string, domainOnly: boolean = false): string | null {
 	if (!validate.nonEmptyString(input)) {
 		console.error(`[invalid url string] ${input}`);
 		return null;
@@ -53,8 +53,9 @@ export function clearUrl(input: string): string | null {
 	  if (parsed.pathname.endsWith("/") && parsed.pathname !== "/") {
 		parsed.pathname = parsed.pathname.slice(0, -1);
 	  }
-  
-	  return parsed.toString();
+	  const urlParsed: string = parsed.toString();
+	  if(!domainOnly) return urlParsed;
+	  else return urlParsed?.replace("https://","");
 	} catch {
 	  console.error(`[invalid url] ${input}`);
 	  return null; // URL non valido

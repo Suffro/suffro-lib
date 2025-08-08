@@ -66,7 +66,7 @@ function stringStartsWith(input, prefix, caseSensitive = false) {
   }
   return input.startsWith(prefix);
 }
-function clearUrl(input) {
+function clearUrl(input, domainOnly = false) {
   if (!validate.nonEmptyString(input)) {
     console.error(`[invalid url string] ${input}`);
     return null;
@@ -83,7 +83,9 @@ function clearUrl(input) {
     if (parsed.pathname.endsWith("/") && parsed.pathname !== "/") {
       parsed.pathname = parsed.pathname.slice(0, -1);
     }
-    return parsed.toString();
+    const urlParsed = parsed.toString();
+    if (!domainOnly) return urlParsed;
+    else return urlParsed?.replace("https://", "");
   } catch {
     console.error(`[invalid url] ${input}`);
     return null;
