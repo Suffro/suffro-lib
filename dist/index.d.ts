@@ -128,7 +128,7 @@ declare const setHiddenStatus: (element: string | HTMLElement, hidden: boolean) 
 declare const toggleHiddenStatus: (element: string | HTMLElement) => void;
 declare function toHtmlId(str: string): string;
 declare function toggleArrayItem<T>(array: T[], item: T): T[];
-declare function updateUniqueArray<T>(array: T[], item: T, action: 'add' | 'remove'): T[];
+declare function updateUniqueArray<T>(array: T[], item: T, action: "add" | "remove"): T[];
 declare function updateArrayByKey<T, K extends keyof T>(array: T[], item: T, action: "add" | "remove", key?: K): T[];
 declare function toCamelCase(input: string): string;
 declare function toSnakeCase(input: string): string;
@@ -169,11 +169,11 @@ declare function flattenObject(obj: Record<string, any>, options?: FlattenOption
 /**
  * @param normalizeMonthly If true and units is months or years, it will normalize the start and end date to the first and last day of the first and last month.
  */
-declare function getTimeBounds(midpoint: Date | string, before: number, after: number, unit: 'minutes' | 'days' | 'months' | 'years', normalizeMonthly?: boolean): {
+declare function getTimeBounds(midpoint: Date | string, before: number, after: number, unit: "minutes" | "days" | "months" | "years", normalizeMonthly?: boolean): {
     start: Date;
     end: Date;
 };
-declare function listMonthsInRange(start: Date | string, end: Date | string, format?: 'YYYY-MM' | 'YYYY-MMM' | 'YYYY-MMMM', options?: {
+declare function listMonthsInRange(start: Date | string, end: Date | string, format?: "YYYY-MM" | "YYYY-MMM" | "YYYY-MMMM", options?: {
     locale?: string;
     excludeStart?: boolean;
     excludeEnd?: boolean;
@@ -192,8 +192,8 @@ declare function getMonthBoundsByYearMonthString(monthKey: string): {
  */
 declare function getYearMonthStringFromDate(date: Date): string;
 /**
-* @returns Restituisce un oggetto contente start e end
-*/
+ * @returns Restituisce un oggetto contente start e end
+ */
 declare function getMonthBounds(date: Date): {
     start: Date;
     end: Date;

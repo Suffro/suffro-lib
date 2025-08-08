@@ -71,10 +71,10 @@ function clearUrl(input, domainOnly = false) {
     console.error(`[invalid url string] ${input}`);
     return null;
   }
-  ;
   let url = input.trim();
-  if (stringStartsWith(input, "http://")) url = url?.replace("http://", "https://");
-  if (!stringStartsWith(input, "https://")) url = "https://" + url;
+  if (stringStartsWith(url, "http://"))
+    url = url?.replace("http://", "https://");
+  if (!stringStartsWith(url, "https://")) url = "https://" + url;
   try {
     logger.log(`[url to clear] ${url}`);
     const parsed = new URL(url);
@@ -111,7 +111,6 @@ var redirectOrReload = (options) => {
           break;
       }
     }
-    ;
   }
 };
 function checkPasswordStrength(password) {
@@ -148,9 +147,7 @@ function formSubmit(callback) {
   };
 }
 function capitalizeEachWord(input) {
-  return input.toLowerCase().split(" ").map(
-    (word) => word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(" ");
+  return input.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 }
 function parseCookie(header) {
   return Object.fromEntries(header.split("; ").map((c) => c.split("=")));
@@ -306,7 +303,6 @@ var setHiddenStatus = (element, hidden) => {
       el.focus();
     }, 100);
   }
-  ;
 };
 var toggleHiddenStatus = (element) => {
   let el;
@@ -329,7 +325,6 @@ var toggleHiddenStatus = (element) => {
       el.focus();
     }, 100);
   }
-  ;
 };
 function toHtmlId(str) {
   return str.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9\-_]/g, "").replace(/^-+|-+$/g, "");
@@ -346,7 +341,9 @@ function updateUniqueArray(array, item, action) {
 }
 function updateArrayByKey(array, item, action, key) {
   const referenceKey = key || "id";
-  const index = array.findIndex((el) => el[referenceKey] === item[referenceKey]);
+  const index = array.findIndex(
+    (el) => el[referenceKey] === item[referenceKey]
+  );
   if (action === "add") {
     if (index === -1) {
       return [...array, item];
@@ -366,7 +363,9 @@ function toCamelCase(input) {
   const roughWords = normalized.split(" ");
   const words = [];
   for (const segment of roughWords) {
-    const parts = segment.match(/([A-Z]+(?=[A-Z][a-z]))|([A-Z]?[a-z]+)|([A-Z]+)|(\d+)/g);
+    const parts = segment.match(
+      /([A-Z]+(?=[A-Z][a-z]))|([A-Z]?[a-z]+)|([A-Z]+)|(\d+)/g
+    );
     if (parts) words.push(...parts);
   }
   return words.map(
@@ -378,7 +377,9 @@ function toSnakeCase(input) {
   const roughWords = normalized.split(" ");
   const words = [];
   for (const segment of roughWords) {
-    const parts = segment.match(/([A-Z]+(?=[A-Z][a-z]))|([A-Z]?[a-z]+)|([A-Z]+)|(\d+)/g);
+    const parts = segment.match(
+      /([A-Z]+(?=[A-Z][a-z]))|([A-Z]?[a-z]+)|([A-Z]+)|(\d+)/g
+    );
     if (parts) words.push(...parts);
   }
   return words.map((w) => w.toLowerCase()).join("_");
@@ -412,7 +413,6 @@ function formatDateForInput(date) {
     logger.warn("Invalid 'date' in function 'formatDateForInput(date: Date)'");
     return;
   }
-  ;
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
@@ -420,10 +420,11 @@ function formatDateForInput(date) {
 }
 function addMinutesToTime(timeStr, minutesToAdd) {
   if (!isValidTimeStr(timeStr)) {
-    logger.error("Invalid 'timeStr' at ddMinutesToTime(timeStr: string, minutesToAdd: number).");
+    logger.error(
+      "Invalid 'timeStr' at ddMinutesToTime(timeStr: string, minutesToAdd: number)."
+    );
     return;
   }
-  ;
   const [hours, minutes] = timeStr.split(":").map(Number);
   const date = /* @__PURE__ */ new Date();
   date.setHours(hours, minutes, 0, 0);
@@ -434,10 +435,11 @@ function addMinutesToTime(timeStr, minutesToAdd) {
 }
 function setTimeForDate(date, timeStr) {
   if (!isValidTimeStr(timeStr)) {
-    logger.error("Invalid 'timeStr' at setTimeForDate(date: Date, timeStr: string).");
+    logger.error(
+      "Invalid 'timeStr' at setTimeForDate(date: Date, timeStr: string)."
+    );
     return date;
   }
-  ;
   const [hours, minutes] = timeStr.split(":").map(Number);
   const newDate = new Date(date);
   newDate.setHours(hours, minutes, 0, 0);
@@ -446,12 +448,14 @@ function setTimeForDate(date, timeStr) {
 }
 function addMinutesToDate(date, minutesToAdd, dateTimeStr) {
   if (!isValidDate(date)) {
-    logger.error("Invalid 'date' at addMinutesToDate(date: Date, minutesToAdd: number, dateTimeStr?: string).");
+    logger.error(
+      "Invalid 'date' at addMinutesToDate(date: Date, minutesToAdd: number, dateTimeStr?: string)."
+    );
     return;
   }
-  ;
   let newDate = new Date(date);
-  if (dateTimeStr && isValidTimeStr(dateTimeStr)) newDate = setTimeForDate(newDate, dateTimeStr);
+  if (dateTimeStr && isValidTimeStr(dateTimeStr))
+    newDate = setTimeForDate(newDate, dateTimeStr);
   newDate.setMinutes(newDate.getMinutes() + minutesToAdd);
   return newDate;
 }
@@ -507,7 +511,9 @@ function URLGetParam(paramName, url = window.location.href) {
 }
 function isSameMonth(date1, date2) {
   if (!validate.date(date1) || !validate.date(date2)) {
-    logger.devError("One or more dates are invalid at isSameMonth(date1: Date, date2: Date)");
+    logger.devError(
+      "One or more dates are invalid at isSameMonth(date1: Date, date2: Date)"
+    );
     return false;
   }
   return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth();
@@ -703,10 +709,14 @@ function listMonthsInRange(start, end, format = "YYYY-MM", options) {
           formatted = `${year}-${String(month + 1).padStart(2, "0")}`;
           break;
         case "YYYY-MMM":
-          formatted = `${year}-${current.toLocaleString(locale, { month: "short" })}`;
+          formatted = `${year}-${current.toLocaleString(locale, {
+            month: "short"
+          })}`;
           break;
         case "YYYY-MMMM":
-          formatted = `${year}-${current.toLocaleString(locale, { month: "long" })}`;
+          formatted = `${year}-${current.toLocaleString(locale, {
+            month: "long"
+          })}`;
           break;
         default:
           throw new Error(`Unsupported format: ${format}`);
@@ -771,7 +781,9 @@ function URLReload(newParams, anchor) {
   let changed = false;
   if (!validate.object(newParams)) {
     const hash2 = anchor ? `#${anchor}` : "";
-    location.replace(`${window.location.pathname}${window.location.search}${hash2}`);
+    location.replace(
+      `${window.location.pathname}${window.location.search}${hash2}`
+    );
     return location.reload();
   }
   for (const [key, value] of Object.entries(newParams)) {
@@ -803,7 +815,7 @@ var dropdownOptionsFromStrings = (strings) => {
   const optionsIds = [];
   for (const str of strings) {
     if (!str.trim() || !validate.nonEmptyString(str)) continue;
-    const sluggifiedStr = (str.trim()?.replaceAll(" ", "_")).toLowerCase();
+    const sluggifiedStr = str.trim()?.replaceAll(" ", "_").toLowerCase();
     if (optionsIds?.includes(sluggifiedStr)) continue;
     optionsIds.push(sluggifiedStr);
     const option = {
