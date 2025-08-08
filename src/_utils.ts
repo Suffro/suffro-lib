@@ -28,8 +28,8 @@ export function stringStartsWith(input: string, prefix: string, caseSensitive = 
   
 
 export function clearUrl(input: string): string | null {
-	if (!validate.url(input)) {
-		console.error(`[invalid url] ${input}`);
+	if (!validate.nonEmptyString(input)) {
+		console.error(`[invalid url string] ${input}`);
 		return null;
 	};
   
@@ -42,6 +42,7 @@ export function clearUrl(input: string): string | null {
 	if (!stringStartsWith(input,"https://")) url = "https://" + url;
   
 	try {
+		logger.log(`[url to clear] ${url}`);
 	  const parsed = new URL(url);
   
 	  // Facoltativo: normalizza schema e host in lowercase

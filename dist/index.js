@@ -67,8 +67,8 @@ function stringStartsWith(input, prefix, caseSensitive = false) {
   return input.startsWith(prefix);
 }
 function clearUrl(input) {
-  if (!validate.url(input)) {
-    console.error(`[invalid url] ${input}`);
+  if (!validate.nonEmptyString(input)) {
+    console.error(`[invalid url string] ${input}`);
     return null;
   }
   ;
@@ -76,6 +76,7 @@ function clearUrl(input) {
   if (stringStartsWith(input, "http://")) url = url?.replace("http://", "https://");
   if (!stringStartsWith(input, "https://")) url = "https://" + url;
   try {
+    logger.log(`[url to clear] ${url}`);
     const parsed = new URL(url);
     parsed.protocol = parsed.protocol.toLowerCase();
     parsed.hostname = parsed.hostname.toLowerCase();
