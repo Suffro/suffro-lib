@@ -1,7 +1,17 @@
 // src/_typesValidation.ts
+function validateUrl(input) {
+  if (!input || typeof input !== "string" || input?.trim().length > 0) return false;
+  try {
+    new URL(input);
+    return true;
+  } catch {
+    return false;
+  }
+}
 var validate = {
   /** Checks if the value is a string. */
   string: (v) => typeof v === "string",
+  url: (v) => validateUrl(v),
   /** Checks if the value is a non-empty string (after trimming whitespace). */
   nonEmptyString: (v) => typeof v === "string" && v.trim().length > 0,
   /** Checks if the value is a number and not NaN. */
@@ -2276,6 +2286,7 @@ export {
   updateArrayByKey,
   updateUniqueArray,
   validate,
+  validateUrl,
   wait
 };
 //# sourceMappingURL=index.js.map

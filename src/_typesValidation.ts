@@ -2,6 +2,7 @@
 
 export interface Validate {
   string(v: any): v is string;
+  url(v: any): v is string;
   nonEmptyString(v: any): v is string;
   number(v: any): v is number;
   integer(v: any): v is number;
@@ -23,6 +24,17 @@ export interface Validate {
   function(v: any): v is Function;
 }
 
+export function validateUrl(input: string): boolean {
+  if (!input || typeof input !== "string" || input?.trim().length > 0) return false;
+  try {
+    new URL(input);
+    return true;
+  } catch {
+    return false; // URL non valido
+  }
+}
+
+
 /**
  * A collection of type guards and validation helpers for core JavaScript types.
  * Each method returns a boolean and acts as a type guard where applicable.
@@ -35,6 +47,8 @@ export interface Validate {
 export const validate: Validate = {
   /** Checks if the value is a string. */
   string: (v): v is string => typeof v === 'string',
+
+  url: (v): v is string => validateUrl(v),
 
   /** Checks if the value is a non-empty string (after trimming whitespace). */
   nonEmptyString: (v): v is string => typeof v === 'string' && v.trim().length > 0,
