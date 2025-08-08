@@ -380,6 +380,29 @@ declare function pageStore(): {
     get: () => PageInfo;
 };
 
+declare function digestHex(input: string, algorithm: "SHA-1" | "SHA-256" | "SHA-512"): Promise<string>;
+declare function hmacSha256Hex(key: string, message: string): Promise<string>;
+declare function encodeBase64(input: string): string;
+declare function decodeBase64(base64: string): string;
+declare function generateRandomInitializationVector(): Uint8Array;
+declare function aesGcmEncrypt(plaintext: string, key: CryptoKey, iv: BufferSource): Promise<Uint8Array>;
+declare function aesGcmDecrypt(ciphertext: BufferSource, key: CryptoKey, iv: BufferSource): Promise<string>;
+declare const cryptoTools: {
+    digest: {
+        digestHex: typeof digestHex;
+        hmacSha256Hex: typeof hmacSha256Hex;
+    };
+    base64: {
+        encode: typeof encodeBase64;
+        decode: typeof decodeBase64;
+    };
+    AES: {
+        encode: typeof aesGcmEncrypt;
+        decode: typeof aesGcmDecrypt;
+        randomInitializationVector: typeof generateRandomInitializationVector;
+    };
+};
+
 interface AppBranding {
     logoUrl: string;
     logoAlt: string;
@@ -713,4 +736,4 @@ declare const initializeFirebaseClient: (services?: FirebaseServiceIstances) => 
  */
 declare const initializeFirebaseContext: (configuration: ExtendedFirebaseOptions, logs?: boolean) => FirebaseInitializationContext;
 
-export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type IDBApi, type MetadataSubDocStatus, type PageInfo, type PasswordStrength, type RgbColor, type RgbaColor, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, URLGetParam, URLReload, type Validate, type VoidFunction$1 as VoidFunction, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, dateToTime12h, dateToTime24h, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, getAppConfig, getCurrentPath, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, validateUrl, wait };
+export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type IDBApi, type MetadataSubDocStatus, type PageInfo, type PasswordStrength, type RgbColor, type RgbaColor, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, URLGetParam, URLReload, type Validate, type VoidFunction$1 as VoidFunction, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, cryptoTools, dateToTime12h, dateToTime24h, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, getAppConfig, getCurrentPath, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, validateUrl, wait };
