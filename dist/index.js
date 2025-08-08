@@ -60,6 +60,29 @@ var isDev = () => {
   const nodeEnv = process?.env?.NODE_ENV;
   return nodeEnv !== "production" || isLocalhost2;
 };
+function clearUrl(input) {
+  if (!validate.url(input)) {
+    console.error(`[invalid url] ${input}`);
+    return null;
+  }
+  ;
+  let url = input.trim();
+  if (!/^https?:\/\//i.test(url)) {
+    url = "https://" + url;
+  }
+  try {
+    const parsed = new URL(url);
+    parsed.protocol = parsed.protocol.toLowerCase();
+    parsed.hostname = parsed.hostname.toLowerCase();
+    if (parsed.pathname.endsWith("/") && parsed.pathname !== "/") {
+      parsed.pathname = parsed.pathname.slice(0, -1);
+    }
+    return parsed.toString();
+  } catch {
+    console.error(`[invalid url] ${input}`);
+    return null;
+  }
+}
 var getSubdomain = (url) => {
   const hostname = url ? new URL(url).hostname : window.location.hostname;
   const parts = hostname.split(".");
@@ -2222,6 +2245,7 @@ export {
   capitalizeEachWord,
   checkFileSize,
   checkPasswordStrength,
+  clearUrl,
   clickOutside,
   componentCallbackDispatcher,
   copyToClipboard,

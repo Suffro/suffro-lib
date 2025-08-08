@@ -19,6 +19,40 @@ export const isDev = (): boolean => {
 	return ((nodeEnv !== 'production') || isLocalhost);
 };
 
+export function clearUrl(input: string): string | null {
+	if (!validate.url(input)) {
+		console.error(`[invalid url] ${input}`);
+		return null;
+	};
+  
+	// Rimuove spazi iniziali/finali
+	let url = input.trim();
+  
+	// Se manca lo schema, aggiunge "https://"
+	if (!/^https?:\/\//i.test(url)) {
+	  url = "https://" + url;
+	}
+  
+	try {
+	  const parsed = new URL(url);
+  
+	  // Facoltativo: normalizza schema e host in lowercase
+	  parsed.protocol = parsed.protocol.toLowerCase();
+	  parsed.hostname = parsed.hostname.toLowerCase();
+  
+	  // Rimuove slash finale superfluo
+	  if (parsed.pathname.endsWith("/") && parsed.pathname !== "/") {
+		parsed.pathname = parsed.pathname.slice(0, -1);
+	  }
+  
+	  return parsed.toString();
+	} catch {
+	  console.error(`[invalid url] ${input}`);
+	  return null; // URL non valido
+	}
+  }
+  
+
 /**
  * Estrae il sottodominio da un URL o dal dominio corrente (es. builder.bubbledesk.app → "builder").
  *
