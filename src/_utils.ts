@@ -19,6 +19,7 @@ export const isDev = (): boolean => {
 	return ((nodeEnv !== 'production') || isLocalhost);
 };
 
+
 export function clearUrl(input: string): string | null {
 	if (!validate.url(input)) {
 		console.error(`[invalid url] ${input}`);
