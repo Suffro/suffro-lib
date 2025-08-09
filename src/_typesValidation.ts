@@ -1,107 +1,93 @@
-
-
-export interface Validate {
-  string(v: any): v is string;
-  url(v: any): v is string;
-  nonEmptyString(v: any): v is string;
-  number(v: any): v is number;
-  integer(v: any): v is number;
-  boolean(v: any): v is boolean;
-  numeric(v: any): boolean;
-  finiteNumber(v: any): v is number;
-
-  null(v: any): v is null;
-  undefined(v: any): v is undefined;
-  defined<T>(v: T | null | undefined): v is T;
-  nan(v: any): v is number
-
-  object(v: any): v is Record<string, any>;
-  array<T = unknown>(v: any): v is T[];
-  nonEmptyArray<T = unknown>(v: any): v is T[];
-  date(v: any): v is Date;
-  regexp(v: any): v is RegExp;
-  promise<T = any>(v: any): v is Promise<T>;
-  function(v: any): v is Function;
-}
-
-export function validateUrl(input: string): boolean {
-  if (!input || typeof input !== "string" || input?.trim().length > 0) return false;
+// ---- helpers ----
+function validateUrl(input: string): boolean {
+  if (typeof input !== "string") return false;
+  const s = input.trim();
+  if (s.length === 0) return false;
   try {
-    new URL(input);
+    // Richiede schema esplicito (es. https://)
+    new URL(s);
     return true;
   } catch {
-    return false; // URL non valido
+    return false;
   }
 }
 
+function isValidDateString(value: string): boolean {
+  if (typeof value !== "string") return false;
+  const d = new Date(value);
+  return !Number.isNaN(d.getTime());
+}
 
-/**
- * A collection of type guards and validation helpers for core JavaScript types.
- * Each method returns a boolean and acts as a type guard where applicable.
- *
- * Usage example:
- *   if (validate.date(value)) {
- *     value.toISOString();
- *   }
- */
+function isValidDate(value: unknown): value is Date {
+  return value instanceof Date && !Number.isNaN(value.getTime());
+}
+
+// ---- interface ----
+interface Validate {
+  string(v: unknown): v is string;
+  url(v: unknown): v is string;
+  nonEmptyString(v: unknown): v is string;
+
+  number(v: unknown): v is number;
+  integer(v: unknown): v is number;
+  boolean(v: unknown): v is boolean;
+  numeric(v: unknown): boolean;
+  finiteNumber(v: unknown): v is number;
+
+  dateString(v: unknown): v is string;
+  date(v: unknown): v is Date;
+
+  null(v: unknown): v is null;
+  undefined(v: unknown): v is undefined;
+  defined<T>(v: T | null | undefined): v is T;
+  nan(v: unknown): v is number;
+
+  object(v: unknown): v is Record<string, unknown>;
+  plainObject(v: unknown): v is Record<string, unknown>;
+  array<T = unknown>(v: unknown): v is T[];
+  nonEmptyArray<T = unknown>(v: unknown): v is T[];
+
+  regexp(v: unknown): v is RegExp;
+  promise<T = unknown>(v: unknown): v is Promise<T>;
+  function(v: unknown): v is (...args: any[]) => any;
+}
+
+// ---- implementation ----
 export const validate: Validate = {
-  /** Checks if the value is a string. */
-  string: (v): v is string => typeof v === 'string',
+  string: (v): v is string => typeof v === "string",
+  url: (v): v is string => typeof v === "string" && validateUrl(v),
+  nonEmptyString: (v): v is string => typeof v === "string" && v.trim().length > 0,
 
-  url: (v): v is string => validateUrl(v),
+  number: (v): v is number => typeof v === "number" && !Number.isNaN(v),
+  integer: (v): v is number => typeof v === "number" && Number.isInteger(v),
+  boolean: (v): v is boolean => typeof v === "boolean",
+  numeric: (v): boolean => typeof v === "number" ? !Number.isNaN(v) : !Number.isNaN(Number(v)),
+  finiteNumber: (v): v is number => typeof v === "number" && Number.isFinite(v),
 
-  /** Checks if the value is a non-empty string (after trimming whitespace). */
-  nonEmptyString: (v): v is string => typeof v === 'string' && v.trim().length > 0,
+  dateString: (v): v is string => typeof v === "string" && isValidDateString(v),
+  date: (v): v is Date => isValidDate(v),
 
-  /** Checks if the value is a number and not NaN. */
-  number: (v): v is number => typeof v === 'number' && !isNaN(v),
-
-  /** Checks if the value is an integer. */
-  integer: (v): v is number => Number.isInteger(v),
-
-  /** Checks if the value is a boolean. */
-  boolean: (v): v is boolean => typeof v === 'boolean',
-
-  /** Checks if the value is numeric (number or numeric string). */
-  numeric: (v: any): boolean => typeof v === 'number' ? !isNaN(v) : !isNaN(Number(v)),
-
-  /** Checks if the value is a finite number (excludes NaN and Infinity). */
-  finiteNumber: (v: any): v is number => typeof v === 'number' && Number.isFinite(v),
-
-  /** Checks if the value is exactly null. */
   null: (v): v is null => v === null,
-
-  /** Checks if the value is undefined. */
-  undefined: (v): v is undefined => typeof v === 'undefined',
-
-  /** Checks if the value is not null or undefined. */
+  undefined: (v): v is undefined => typeof v === "undefined",
   defined: <T>(v: T | null | undefined): v is T => v !== null && v !== undefined,
+  nan: (v): v is number => typeof v === "number" && Number.isNaN(v),
 
-  /** Checks if the value is NaN (Not-a-Number). */
-  nan: (v): v is number => typeof v === 'number' && Number.isNaN(v),
+  object: (v): v is Record<string, unknown> =>
+    v !== null && typeof v === "object",
 
-  /** Checks if the value is a plain object (excluding arrays and null). */
-  object: (v): v is Record<string, any> =>
-    v !== null && typeof v === 'object' && !Array.isArray(v),
+  // solo plain objects (no array, no class instances)
+  plainObject: (v): v is Record<string, unknown> => {
+    if (v === null || typeof v !== "object" || Array.isArray(v)) return false;
+    const proto = Object.getPrototypeOf(v);
+    return proto === Object.prototype || proto === null;
+  },
 
-  /** Checks if the value is an array. */
-  array: <T = unknown>(v: any): v is T[] => Array.isArray(v),
-
-  /** Checks if the value is a non-empty array. */
-  nonEmptyArray: <T = unknown>(v: any): v is T[] =>
+  array: <T = unknown>(v: unknown): v is T[] => Array.isArray(v),
+  nonEmptyArray: <T = unknown>(v: unknown): v is T[] =>
     Array.isArray(v) && v.length > 0,
 
-  /** Checks if the value is a valid Date instance (not Invalid Date). */
-  date: (v): v is Date => v instanceof Date && !isNaN(v.getTime()),
-
-  /** Checks if the value is a RegExp instance. */
   regexp: (v): v is RegExp => v instanceof RegExp,
-
-  /** Checks if the value is a Promise-like object (has a .then function). */
-  promise: <T = any>(v: any): v is Promise<T> =>
-    !!v && typeof v.then === 'function',
-
-  /** Checks if the value is a function. */
-  function: (v): v is Function => typeof v === 'function'
+  promise: <T = unknown>(v: unknown): v is Promise<T> =>
+    !!v && (typeof (v as any).then === "function"),
+  function: (v): v is (...args: any[]) => any => typeof v === "function",
 };
-
