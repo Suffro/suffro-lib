@@ -1,51 +1,105 @@
 // src/_typesValidation.ts
 function validateUrl(input) {
-  if (!input || typeof input !== "string" || input?.trim().length > 0) return false;
+  if (typeof input !== "string") return false;
+  const s = input.trim();
+  if (s.length === 0) return false;
   try {
-    new URL(input);
+    new URL(s);
     return true;
   } catch {
     return false;
   }
 }
+function isValidDateString(value) {
+  if (typeof value !== "string") return false;
+  const d = new Date(value);
+  return !Number.isNaN(d.getTime());
+}
+function isValidDateObject(value) {
+  return value instanceof Date && !Number.isNaN(value.getTime());
+}
+var ISO_DATE_RE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+var ISO_DATETIME_RE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d)(\.\d{1,3})?)?(Z|[+\-](?:[01]\d|2[0-3]):?[0-5]\d)$/;
+function isIsoDateString(value) {
+  if (typeof value !== "string" || !ISO_DATE_RE.test(value)) return false;
+  const [y, m, d] = value.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+function isIsoDateTimeString(value) {
+  if (typeof value !== "string" || !ISO_DATETIME_RE.test(value)) return false;
+  const dt = new Date(value);
+  return !Number.isNaN(dt.getTime());
+}
+var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var HEX_COLOR_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+var IPV4_RE = /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}$/;
+var IPV6_RE = /^(([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(([0-9A-Fa-f]{1,4}:){1,7}:)|(([0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,5}(:[0-9A-Fa-f]{1,4}){1,2})|(([0-9A-Fa-f]{1,4}:){1,4}(:[0-9A-Fa-f]{1,4}){1,3})|(([0-9A-Fa-f]{1,4}:){1,3}(:[0-9A-Fa-f]{1,4}){1,4})|(([0-9A-Fa-f]{1,4}:){1,2}(:[0-9A-Fa-f]{1,4}){1,5})|([0-9A-Fa-f]{1,4}:((:[0-9A-Fa-f]{1,4}){1,6}))|(:((:[0-9A-Fa-f]{1,4}){1,7}|:)))(%[0-9A-Za-z]{1,})?$/;
 var validate = {
-  /** Checks if the value is a string. */
+  // base
   string: (v) => typeof v === "string",
-  url: (v) => validateUrl(v),
-  /** Checks if the value is a non-empty string (after trimming whitespace). */
+  url: (v) => typeof v === "string" && validateUrl(v),
   nonEmptyString: (v) => typeof v === "string" && v.trim().length > 0,
-  /** Checks if the value is a number and not NaN. */
-  number: (v) => typeof v === "number" && !isNaN(v),
-  /** Checks if the value is an integer. */
-  integer: (v) => Number.isInteger(v),
-  /** Checks if the value is a boolean. */
+  number: (v) => typeof v === "number" && !Number.isNaN(v),
+  integer: (v) => typeof v === "number" && Number.isInteger(v),
   boolean: (v) => typeof v === "boolean",
-  /** Checks if the value is numeric (number or numeric string). */
-  numeric: (v) => typeof v === "number" ? !isNaN(v) : !isNaN(Number(v)),
-  /** Checks if the value is a finite number (excludes NaN and Infinity). */
+  bigint: (v) => typeof v === "bigint",
+  symbol: (v) => typeof v === "symbol",
+  numeric: (v) => typeof v === "number" ? !Number.isNaN(v) : !Number.isNaN(Number(v)),
   finiteNumber: (v) => typeof v === "number" && Number.isFinite(v),
-  /** Checks if the value is exactly null. */
+  // date
+  dateString: (v) => typeof v === "string" && isValidDateString(v),
+  date: (v) => isValidDateObject(v),
+  isoDateString: (v) => typeof v === "string" && isIsoDateString(v),
+  isoDateTimeString: (v) => typeof v === "string" && isIsoDateTimeString(v),
+  // null/undefined
   null: (v) => v === null,
-  /** Checks if the value is undefined. */
   undefined: (v) => typeof v === "undefined",
-  /** Checks if the value is not null or undefined. */
   defined: (v) => v !== null && v !== void 0,
-  /** Checks if the value is NaN (Not-a-Number). */
   nan: (v) => typeof v === "number" && Number.isNaN(v),
-  /** Checks if the value is a plain object (excluding arrays and null). */
-  object: (v) => v !== null && typeof v === "object" && !Array.isArray(v),
-  /** Checks if the value is an array. */
+  // oggetti/collezioni
+  object: (v) => v !== null && typeof v === "object",
+  plainObject: (v) => {
+    if (v === null || typeof v !== "object" || Array.isArray(v)) return false;
+    const proto = Object.getPrototypeOf(v);
+    return proto === Object.prototype || proto === null;
+  },
+  emptyObject: (v) => v !== null && typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 0,
   array: (v) => Array.isArray(v),
-  /** Checks if the value is a non-empty array. */
   nonEmptyArray: (v) => Array.isArray(v) && v.length > 0,
-  /** Checks if the value is a valid Date instance (not Invalid Date). */
-  date: (v) => v instanceof Date && !isNaN(v.getTime()),
-  /** Checks if the value is a RegExp instance. */
+  set: (v) => v instanceof Set,
+  map: (v) => v instanceof Map,
+  weakSet: (v) => v instanceof WeakSet,
+  weakMap: (v) => v instanceof WeakMap,
+  // binari / typed arrays
+  arrayBuffer: (v) => v instanceof ArrayBuffer,
+  dataView: (v) => v instanceof DataView,
+  typedArray: (v) => ArrayBuffer.isView(v) && !(v instanceof DataView),
+  // regex / promise / function
   regexp: (v) => v instanceof RegExp,
-  /** Checks if the value is a Promise-like object (has a .then function). */
   promise: (v) => !!v && typeof v.then === "function",
-  /** Checks if the value is a function. */
-  function: (v) => typeof v === "function"
+  function: (v) => typeof v === "function",
+  asyncFunction: (v) => typeof v === "function" && v.constructor?.name === "AsyncFunction",
+  generatorFunction: (v) => typeof v === "function" && v.constructor?.name === "GeneratorFunction",
+  // stringhe con pattern
+  email: (v) => typeof v === "string" && EMAIL_RE.test(v),
+  uuid: (v) => typeof v === "string" && UUID_RE.test(v),
+  hexColor: (v) => typeof v === "string" && HEX_COLOR_RE.test(v),
+  ipv4: (v) => typeof v === "string" && IPV4_RE.test(v),
+  ipv6: (v) => typeof v === "string" && IPV6_RE.test(v),
+  jsonString: (v) => {
+    if (typeof v !== "string") return false;
+    try {
+      JSON.parse(v);
+      return true;
+    } catch {
+      return false;
+    }
+  },
+  // truthiness
+  truthy: (v) => !!v,
+  falsy: (v) => !v
 };
 
 // src/_utils.ts
@@ -2330,7 +2384,6 @@ export {
   updateArrayByKey,
   updateUniqueArray,
   validate,
-  validateUrl,
   wait
 };
 //# sourceMappingURL=index.js.map

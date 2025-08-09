@@ -261,37 +261,54 @@ declare const logger: {
     };
 };
 
+type AnyFunc = (...args: any[]) => any;
+type AsyncFunc = (...args: any[]) => Promise<any>;
+type GenFunc = (...args: any[]) => Generator<any, any, any>;
 interface Validate {
-    string(v: any): v is string;
-    url(v: any): v is string;
-    nonEmptyString(v: any): v is string;
-    number(v: any): v is number;
-    integer(v: any): v is number;
-    boolean(v: any): v is boolean;
-    numeric(v: any): boolean;
-    finiteNumber(v: any): v is number;
-    null(v: any): v is null;
-    undefined(v: any): v is undefined;
+    string(v: unknown): v is string;
+    url(v: unknown): v is string;
+    nonEmptyString(v: unknown): v is string;
+    number(v: unknown): v is number;
+    integer(v: unknown): v is number;
+    boolean(v: unknown): v is boolean;
+    bigint(v: unknown): v is bigint;
+    symbol(v: unknown): v is symbol;
+    numeric(v: unknown): boolean;
+    finiteNumber(v: unknown): v is number;
+    dateString(v: unknown): v is string;
+    date(v: unknown): v is Date;
+    isoDateString(v: unknown): v is string;
+    isoDateTimeString(v: unknown): v is string;
+    null(v: unknown): v is null;
+    undefined(v: unknown): v is undefined;
     defined<T>(v: T | null | undefined): v is T;
-    nan(v: any): v is number;
-    object(v: any): v is Record<string, any>;
-    array<T = unknown>(v: any): v is T[];
-    nonEmptyArray<T = unknown>(v: any): v is T[];
-    date(v: any): v is Date;
-    regexp(v: any): v is RegExp;
-    promise<T = any>(v: any): v is Promise<T>;
-    function(v: any): v is Function;
+    nan(v: unknown): v is number;
+    object(v: unknown): v is Record<string, unknown>;
+    plainObject(v: unknown): v is Record<string, unknown>;
+    emptyObject(v: unknown): v is Record<string, never>;
+    array<T = unknown>(v: unknown): v is T[];
+    nonEmptyArray<T = unknown>(v: unknown): v is T[];
+    set<T = unknown>(v: unknown): v is Set<T>;
+    map<K = unknown, V = unknown>(v: unknown): v is Map<K, V>;
+    weakSet<T extends object = object>(v: unknown): v is WeakSet<T>;
+    weakMap<K extends object = object, V = unknown>(v: unknown): v is WeakMap<K, V>;
+    arrayBuffer(v: unknown): v is ArrayBuffer;
+    dataView(v: unknown): v is DataView;
+    typedArray(v: unknown): v is Exclude<ArrayBufferView, DataView>;
+    regexp(v: unknown): v is RegExp;
+    promise<T = unknown>(v: unknown): v is Promise<T>;
+    function(v: unknown): v is AnyFunc;
+    asyncFunction(v: unknown): v is AsyncFunc;
+    generatorFunction(v: unknown): v is GenFunc;
+    email(v: unknown): v is string;
+    uuid(v: unknown): v is string;
+    hexColor(v: unknown): v is string;
+    ipv4(v: unknown): v is string;
+    ipv6(v: unknown): v is string;
+    jsonString(v: unknown): v is string;
+    truthy(v: unknown): boolean;
+    falsy(v: unknown): boolean;
 }
-declare function validateUrl(input: string): boolean;
-/**
- * A collection of type guards and validation helpers for core JavaScript types.
- * Each method returns a boolean and acts as a type guard where applicable.
- *
- * Usage example:
- *   if (validate.date(value)) {
- *     value.toISOString();
- *   }
- */
 declare const validate: Validate;
 
 type BrowserStorageType = "local" | "session";
@@ -736,4 +753,4 @@ declare const initializeFirebaseClient: (services?: FirebaseServiceIstances) => 
  */
 declare const initializeFirebaseContext: (configuration: ExtendedFirebaseOptions, logs?: boolean) => FirebaseInitializationContext;
 
-export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type IDBApi, type MetadataSubDocStatus, type PageInfo, type PasswordStrength, type RgbColor, type RgbaColor, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, URLGetParam, URLReload, type Validate, type VoidFunction$1 as VoidFunction, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, cryptoTools, dateToTime12h, dateToTime24h, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, getAppConfig, getCurrentPath, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, validateUrl, wait };
+export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type IDBApi, type MetadataSubDocStatus, type PageInfo, type PasswordStrength, type RgbColor, type RgbaColor, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, URLGetParam, URLReload, type VoidFunction$1 as VoidFunction, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, cryptoTools, dateToTime12h, dateToTime24h, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, getAppConfig, getCurrentPath, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, wait };
