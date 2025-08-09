@@ -99,3 +99,10 @@ export type CssNamedColor =
   | 'springgreen' | 'steelblue' | 'tan' | 'teal' | 'thistle'
   | 'tomato' | 'turquoise' | 'violet' | 'wheat' | 'white'
   | 'whitesmoke' | 'yellow' | 'yellowgreen';
+
+export type StringLiteralJoin<T extends string[], Sep extends string = ''> =
+T extends [infer F extends string, ...infer R extends string[]]
+    ? R['length'] extends 0
+        ? F
+        : `${F}${Sep}${StringLiteralJoin<R, Sep>}`
+    : '';
