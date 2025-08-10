@@ -29,6 +29,47 @@ export function stringStartsWith(
   return input.startsWith(prefix);
 }
 
+type FileValidationResult = {
+  valid: boolean;
+  error?: string;
+};
+
+/**
+ * Validates a file by checking its MIME type and maximum size.
+ * @param file - The file to validate (can be null or undefined).
+ * @param maxSizeMB - Maximum allowed size in MB (default: 2).
+ * @param allowedTypes - Allowed MIME types (default: empty = all types allowed).
+ * @returns Validation result object.
+ */
+export function validateFile(
+  file: File | Blob | null | undefined,
+  maxSizeMB: number = 2,
+  allowedTypes: string[] = []
+): FileValidationResult {
+  if (!file) {
+    return { valid: false, error: "No file provided." };
+  }
+
+  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+  // MIME type check (only if allowedTypes is not empty)
+  if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: `Invalid file type. Allowed types: ${allowedTypes.join(", ")}.`
+    };
+  }
+
+  // File size check
+  if (file.size > maxSizeBytes) {
+    return { valid: false, error: `File is too large. Max ${maxSizeMB} MB allowed.` };
+  }
+
+  return { valid: true };
+}
+
+
+
 export function clearUrl(input: string, domainOnly = false): string | null {
   if (!validate.nonEmptyString(input)) {
     console.error(`[invalid url string] ${input}`);

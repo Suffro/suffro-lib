@@ -120,6 +120,22 @@ function stringStartsWith(input, prefix, caseSensitive = false) {
   }
   return input.startsWith(prefix);
 }
+function validateFile(file, maxSizeMB = 2, allowedTypes = []) {
+  if (!file) {
+    return { valid: false, error: "No file provided." };
+  }
+  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+  if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: `Invalid file type. Allowed types: ${allowedTypes.join(", ")}.`
+    };
+  }
+  if (file.size > maxSizeBytes) {
+    return { valid: false, error: `File is too large. Max ${maxSizeMB} MB allowed.` };
+  }
+  return { valid: true };
+}
 function clearUrl(input, domainOnly = false) {
   if (!validate.nonEmptyString(input)) {
     console.error(`[invalid url string] ${input}`);
@@ -2382,6 +2398,7 @@ export {
   updateArrayByKey,
   updateUniqueArray,
   validate,
+  validateFile,
   wait
 };
 //# sourceMappingURL=index.js.map
