@@ -137,8 +137,8 @@ export const initializeFirebaseContext = (
   if(_functions && logs && dev) console.log("Firebase functions initialization completed.");
   if(!_functions && logs && dev) console.warn("Couldn't initialize Firebase functions.");
 
-  const callableFunction = (functionName: string, data?: any, region?: string, options?: HttpsCallableOptions): HttpsCallable<unknown, unknown, unknown> | null => {
-    if(!_functions) initFunctions(app, region);
+  const callableFunction = (functionName: string, options?: HttpsCallableOptions): HttpsCallable<unknown, unknown, unknown> | null => {
+    if(!_functions) initFunctions(app);
     if(!_functions) return null;
     const callable = httpsCallable(_functions, functionName, options);
     return callable;

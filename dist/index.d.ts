@@ -714,7 +714,7 @@ type FirebaseInitializationContext = {
     client: FirebaseClient;
     functions: {
         get: () => Functions | null | undefined;
-        callable: (functionName: string, data?: any, region?: string, options?: HttpsCallableOptions) => HttpsCallable<unknown, unknown, unknown> | null;
+        callable: (functionName: string, options?: HttpsCallableOptions) => HttpsCallable<unknown, unknown, unknown> | null;
     };
 };
 
