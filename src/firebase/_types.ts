@@ -5,7 +5,7 @@ import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import type { FirebaseStorage } from 'firebase/storage';
 import { FStoreDoc, FStoreUser } from './firestore/_types';
 import { StorageMethodsInterface } from './storage';
-import { HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
+import { Functions, HttpsCallable, HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
 export {type AuthState} from "./auth"
 
 /**
@@ -132,5 +132,8 @@ export type FirebaseInitializationContext = {
 	firestore: Firestore;
 	storage?: FirebaseStorage;
 	client: FirebaseClient;
-	callableFunction?: (name: string, data?: any, regionOrCustomDomain?: string, options?: HttpsCallableOptions) => Promise<HttpsCallableResult<unknown> | null>;
+	functions: {
+		get: () => Functions | null | undefined;
+		callable: (functionName: string, data?: any, region?: string, options?: HttpsCallableOptions) => HttpsCallable<unknown, unknown, unknown> | null;
+	}
   };

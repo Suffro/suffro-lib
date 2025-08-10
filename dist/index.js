@@ -2241,13 +2241,6 @@ var initFunctions = (app, region) => {
     return;
   }
 };
-var callFirebaseCallableFunction = async (app, functionName, data, region, options) => {
-  if (!_functions) initFunctions(app, region);
-  if (!_functions) return null;
-  const callable = httpsCallable(_functions, functionName, options);
-  const res = await callable(data);
-  return res;
-};
 var initializeFirebaseContext = (configuration, logs) => {
   if (!configuration) throw new Error("Missing Firebase configuration");
   if (_context) {
@@ -2286,9 +2279,11 @@ var initializeFirebaseContext = (configuration, logs) => {
   if (!_functions) initFunctions(app, configuration?.regionOrCustomDomain);
   if (_functions && logs && dev2) console.log("Firebase functions initialization completed.");
   if (!_functions && logs && dev2) console.warn("Couldn't initialize Firebase functions.");
-  const callableFunction = async (name, data, regionOrCustomDomain, options) => {
-    const res = await callFirebaseCallableFunction(app, name, data, regionOrCustomDomain, options);
-    return res;
+  const callableFunction = (functionName, data, region, options) => {
+    if (!_functions) initFunctions(app, region);
+    if (!_functions) return null;
+    const callable = httpsCallable(_functions, functionName, options);
+    return callable;
   };
   const context = {
     app,
@@ -2296,7 +2291,10 @@ var initializeFirebaseContext = (configuration, logs) => {
     firestore,
     storage,
     client: client2,
-    callableFunction
+    functions: {
+      get: () => _functions,
+      callable: callableFunction
+    }
   };
   if (logs && dev2) console.log("Created Firebase context");
   _context = context;

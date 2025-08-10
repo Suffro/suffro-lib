@@ -4,7 +4,7 @@ import { User, Auth, RecaptchaVerifier } from 'firebase/auth';
 import { WhereFilterOp, Timestamp, Firestore } from 'firebase/firestore';
 import { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { FirebaseStorage } from 'firebase/storage';
-import { HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
+import { Functions, HttpsCallableOptions, HttpsCallable } from 'firebase/functions';
 
 type ColorInfo = {
     HEX: string;
@@ -712,7 +712,10 @@ type FirebaseInitializationContext = {
     firestore: Firestore;
     storage?: FirebaseStorage;
     client: FirebaseClient;
-    callableFunction?: (name: string, data?: any, regionOrCustomDomain?: string, options?: HttpsCallableOptions) => Promise<HttpsCallableResult<unknown> | null>;
+    functions: {
+        get: () => Functions | null | undefined;
+        callable: (functionName: string, data?: any, region?: string, options?: HttpsCallableOptions) => HttpsCallable<unknown, unknown, unknown> | null;
+    };
 };
 
 declare function getRecaptchaVerifier(auth: Auth): Promise<RecaptchaVerifier>;
