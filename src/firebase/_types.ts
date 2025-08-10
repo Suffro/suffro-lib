@@ -13,7 +13,7 @@ export {type AuthState} from "./auth"
  */
 export type Collections = string;
 
-type CoreDocFields<T> = T & {
+export type CoreDocFields<T> = T & {
 	id: string;
 	hash?: string; //changes on every document change and is a hash of the doc id and lastModified fields
 	createdAt: Timestamp;
