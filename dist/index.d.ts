@@ -604,31 +604,32 @@ declare function authStateObsverver(appAuth: ReturnType<typeof firebase_auth.get
  * The collection names in your firestore
  */
 type Collections = string;
-type CoreDocFields = {
+type CoreDocFields<T> = T & {
     id: string;
     hash?: string;
     createdAt: Timestamp;
     deleted?: boolean;
+    ttlAt?: Timestamp;
 };
 /**
  * Custom fields common to all NON user documents
  */
-type DocBlueprint<T> = T & CoreDocFields & {
+type DocBlueprint<T> = T & CoreDocFields<{
     ownerId?: string;
     createdBy?: string;
     [key: string]: unknown;
-};
+}>;
 /**
  * Custom fields common to all NON user documents
  */
-type SubcolelctionDocBlueprint<T> = T & CoreDocFields & {
+type SubcolelctionDocBlueprint<T> = T & CoreDocFields<{
     parentId?: string;
     [key: string]: unknown;
-};
+}>;
 /**
  * This is only the custom user document
  */
-type AppUserDoc = {
+type AppUserDoc = CoreDocFields<{
     locale: string;
     timeZone: string;
     email: string;
@@ -636,16 +637,16 @@ type AppUserDoc = {
     displayName?: string;
     role: 'standard' | 'admin';
     [key: string]: unknown;
-};
+}>;
 /**
  * This is the complete user with fields from the custom user document, the built in Firebase user and the custom fields common to all documents
  */
-type AppUser = CoreDocFields & User & AppUserDoc;
-type MetadataSubDocStatus = {
+type AppUser = User & AppUserDoc;
+type MetadataSubDocStatus = CoreDocFields<{
     lastModified?: Timestamp;
     hash: string;
     [key: string]: unknown;
-};
+}>;
 /**
  * This is an utility type that holds various public fields present in the built in Firebase user
  */

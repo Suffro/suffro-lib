@@ -13,34 +13,35 @@ export {type AuthState} from "./auth"
  */
 export type Collections = string;
 
-type CoreDocFields = {
+type CoreDocFields<T> = T & {
 	id: string;
 	hash?: string; //changes on every document change and is a hash of the doc id and lastModified fields
 	createdAt: Timestamp;
 	deleted?: boolean;
+	ttlAt?: Timestamp;
 }
 
 /**
  * Custom fields common to all NON user documents
  */
-export type DocBlueprint<T> = T & CoreDocFields & {
+export type DocBlueprint<T> = T & CoreDocFields<{
 	ownerId?: string;
 	createdBy?: string;
 	[key: string]: unknown;
-};
+}>;
 
 /**
  * Custom fields common to all NON user documents
  */
-export type SubcolelctionDocBlueprint<T> = T & CoreDocFields & {
+export type SubcolelctionDocBlueprint<T> = T & CoreDocFields<{
 	parentId?: string;
 	[key: string]: unknown;
-};
+}>;
 
 /**
  * This is only the custom user document
  */
-export type AppUserDoc = {
+export type AppUserDoc = CoreDocFields<{
 	locale: string;
 	timeZone: string;
 	email: string;
@@ -48,19 +49,19 @@ export type AppUserDoc = {
 	displayName?: string;
 	role: 'standard' | 'admin';
 	[key: string]: unknown;
-};
+}>;
 
 /**
  * This is the complete user with fields from the custom user document, the built in Firebase user and the custom fields common to all documents
  */
-export type AppUser = CoreDocFields & User & AppUserDoc;
+export type AppUser = User & AppUserDoc;
 
 
-export type MetadataSubDocStatus = {
+export type MetadataSubDocStatus = CoreDocFields<{
 	lastModified?: Timestamp;
 	hash: string; //changes on every document change and is a hash of the doc id and lastModified fields
 	[key: string]: unknown;
-}
+}>
 
 
 /**
