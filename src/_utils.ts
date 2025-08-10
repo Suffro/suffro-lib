@@ -69,6 +69,18 @@ export function validateFile(
 }
 
 
+export function imageExistsAtURL(url: string, bustCache = true): Promise<boolean> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.referrerPolicy = "no-referrer";
+    img.src = bustCache
+      ? `${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`
+      : url;
+  });
+}
+
 
 export function clearUrl(input: string, domainOnly = false): string | null {
   if (!validate.nonEmptyString(input)) {

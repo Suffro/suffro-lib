@@ -136,6 +136,15 @@ function validateFile(file, maxSizeMB = 2, allowedTypes = []) {
   }
   return { valid: true };
 }
+function imageExistsAtURL(url, bustCache = true) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.referrerPolicy = "no-referrer";
+    img.src = bustCache ? `${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}` : url;
+  });
+}
 function clearUrl(input, domainOnly = false) {
   if (!validate.nonEmptyString(input)) {
     console.error(`[invalid url string] ${input}`);
@@ -2361,6 +2370,7 @@ export {
   getYearMonthStringFromDate,
   hexToRgb,
   idb,
+  imageExistsAtURL,
   initAppConfig,
   initializeFirebaseClient,
   initializeFirebaseContext,
