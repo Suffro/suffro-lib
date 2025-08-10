@@ -605,7 +605,7 @@ declare function authStateObsverver(appAuth: ReturnType<typeof firebase_auth.get
  */
 type Collections = string;
 type CoreDocFields<T> = T & {
-    id: string;
+    id?: string;
     hash?: string;
     createdAt: Timestamp;
     deleted?: boolean;

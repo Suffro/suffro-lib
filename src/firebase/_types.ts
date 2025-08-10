@@ -14,7 +14,7 @@ export {type AuthState} from "./auth"
 export type Collections = string;
 
 export type CoreDocFields<T> = T & {
-	id: string;
+	id?: string;
 	hash?: string; //changes on every document change and is a hash of the doc id and lastModified fields
 	createdAt: Timestamp;
 	deleted?: boolean;
