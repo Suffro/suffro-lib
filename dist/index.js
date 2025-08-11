@@ -2325,14 +2325,32 @@ var initializeFirebaseContext = (configuration, logs) => {
   _context = context;
   return context;
 };
+
+// src/_jitter.ts
+var backoffNoJitter = (attempt, baseMin = 15, capMin = 240) => Math.min(capMin, baseMin * Math.pow(2, Math.max(0, attempt - 1)));
+var addJitter = (minutes, ratio = 0.1) => {
+  const min = minutes * (1 - ratio);
+  const max = minutes * (1 + ratio);
+  return Math.round(min + Math.random() * (max - min));
+};
+var fullJitter = (attempt, baseMin = 15, capMin = 240) => {
+  const d = backoffNoJitter(attempt, baseMin, capMin);
+  return Math.round(Math.random() * d);
+};
+var decorrelatedJitter = (prevMin, baseMin = 15, capMin = 240) => {
+  const next = Math.min(capMin, Math.max(baseMin, Math.random() * (prevMin * 3)));
+  return Math.round(next);
+};
 export {
   URLGetParam,
   URLReload,
+  addJitter,
   addMinutesToDate,
   addMinutesToTime,
   arrayGetByKey,
   arrrayGetLast,
   authStateObsverver,
+  backoffNoJitter,
   browserStorage,
   buildPath,
   callerName,
@@ -2347,12 +2365,14 @@ export {
   cryptoTools,
   dateToTime12h,
   dateToTime24h,
+  decorrelatedJitter,
   detectAnalysisFileType,
   dropdownOptionsFromStrings,
   flagEmojiToCountryCode,
   flattenObject,
   formSubmit,
   formatDateForInput,
+  fullJitter,
   getAppConfig,
   getCurrentPath,
   getMatchScore,
