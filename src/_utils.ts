@@ -1,5 +1,6 @@
 import type { AnyObject, DropdownOption, HexColor, PasswordStrength } from "./";
 import { logger } from "./";
+import { RE_AUTH, RE_AWS_ACCESS_KEY, RE_EMAIL, RE_IPV4_NOLB, RE_JWT, RE_LONG_DIGITS, RE_PATH_SECRET, RE_PEM_BLOCK, RE_QUERY_SENSITIVE, RE_SECRET40, RE_WS } from "./_regexPatterns";
 import { validate } from "./_typesValidation";
 
 export const isBrowser = (): boolean => {
@@ -1248,3 +1249,98 @@ export const dropdownOptionsFromStrings = (
 
   return options || [];
 };
+
+
+
+/** Redact likely-sensitive data and normalize message */
+export function sanitizeMessageSensitiveData(msg: string, maxLen = 300): string {
+  let s = typeof msg === "string" ? msg : String(msg);
+
+  // Normalize whitespace (flattens multi-line content)
+  s = s.replace(RE_WS, " ").trim();
+
+  // Redactions
+  s = s.replace(RE_EMAIL, "[EMAIL]");
+  s = s.replace(RE_QUERY_SENSITIVE, (_m, sep, k) => `${sep}${k}=[REDACTED]`);
+  s = s.replace(RE_AUTH, (_m, k) => `${k} [REDACTED]`);
+  s = s.replace(RE_AWS_ACCESS_KEY, "[AWS_ACCESS_KEY]");
+  s = s.replace(RE_SECRET40, "[SECRET_40]");
+  s = s.replace(RE_JWT, "[JWT]");
+  s = s.replace(RE_LONG_DIGITS, "[NUMBER]");
+  s = s.replace(RE_PEM_BLOCK, "[PEM]");
+  // IPv4 without lookbehind: keep the prefix char (group 1) intact
+  s = s.replace(RE_IPV4_NOLB, (_m, pre) => `${pre}[IP]`);
+  // Secrets in URL path segments
+  s = s.replace(RE_PATH_SECRET, (m) => {
+    const i = m.lastIndexOf("/");
+    return m.slice(0, i + 1) + "[REDACTED]";
+  });
+
+  // Truncate
+  if (s.length > maxLen) s = s.slice(0, maxLen) + "… (truncated)";
+
+  return s;
+}
+// Typescript: extract only message and optional code, never stack
+type ErrorInfo = { message: string; code?: string | number };
+
+/**
+ * 
+ * @param err The error to extract message and code from
+ * @param sanitize Wether to sanitize the error message, removing potential sensitive data
+ * @returns Error info in the format of { message, code}
+ */
+export function getErrorInfo(err: unknown, sanitize:boolean=true): ErrorInfo {
+  let message: string | undefined;
+  let code: string | number | undefined;
+
+  const pull = (e: any, depth = 0) => {
+    if (!e || depth > 3) return;
+
+    // Message from common spots (never use String(e) here)
+    if (!message && typeof e.message === "string") message = e.message;
+
+    // Common code fields across runtimes/libs
+    if (code == null) {
+      code =
+        e.code ??
+        e.status ??
+        e.statusCode ??
+        e.errorCode ??
+        e.response?.status ??
+        e.body?.status;
+    }
+
+    // HTTP/API payload shapes
+    if (!message) {
+      const m =
+        e.response?.data?.message ??
+        e.response?.data?.error?.message ??
+        e.data?.message ??
+        e.error?.message ??
+        e.body?.message;
+      if (typeof m === "string") message = m;
+    }
+
+    // Aggregate/cause chains
+    if (!message && Array.isArray(e.errors) && e.errors.length) pull(e.errors[0], depth + 1);
+    if (!message && e.cause) pull(e.cause, depth + 1);
+  };
+
+  if (err instanceof Error || (typeof err === "object" && err !== null)) {
+    pull(err as any);
+  } else if (typeof err === "string") {
+    // Only case where we accept String(err): it's already a string.
+    message = err;
+  }
+
+  // Final fallback: never fabricate by stringifying (could include stack).
+  if (!message) message = "Unknown error";
+
+  let finalMessage: string = "";
+
+  if(sanitize) finalMessage = sanitizeMessageSensitiveData(message);
+  else finalMessage = message;
+
+  return code != null ? { message: finalMessage, code } : { message: finalMessage };
+}

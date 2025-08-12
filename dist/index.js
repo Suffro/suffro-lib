@@ -1,3 +1,16 @@
+// src/_regexPatterns.ts
+var RE_WS = /\s+/g;
+var RE_QUERY_SENSITIVE = /([?&])(token|api[_-]?key|key|signature|password|pass|pwd|code|secret|client[_-]?secret|access[_-]?token)=([^&#\s]+)/gi;
+var RE_AUTH = /\b(authorization|bearer|basic)\b[: ]+\S+/gi;
+var RE_AWS_ACCESS_KEY = /\bAKIA[0-9A-Z]{16}\b/g;
+var RE_SECRET40 = /\b[A-Za-z0-9/+]{40}\b/g;
+var RE_LONG_DIGITS = /\b(?:\d[ -]?){13,19}\b/g;
+var RE_IPV4_NOLB = /(^|[^0-9])((?:\d{1,3}\.){3}\d{1,3})(?!\d)/g;
+var RE_PATH_SECRET = /\/(token|key|secret|signature|passwd|password|code)\/[^\/?#\s]+/gi;
+var RE_PEM_BLOCK = /-----BEGIN [A-Z ]+-----[\s\S]*?-----END [A-Z ]+-----/g;
+var RE_EMAIL = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi;
+var RE_JWT = /\b([A-Za-z0-9-_]{10,})\.([A-Za-z0-9-_]{10,})(?:\.([A-Za-z0-9-_]{5,}))?\b/g;
+
 // src/_typesValidation.ts
 function validateUrl(input) {
   if (typeof input !== "string") return false;
@@ -906,6 +919,52 @@ var dropdownOptionsFromStrings = (strings) => {
   }
   return options || [];
 };
+function sanitizeMessageSensitiveData(msg, maxLen = 300) {
+  let s = typeof msg === "string" ? msg : String(msg);
+  s = s.replace(RE_WS, " ").trim();
+  s = s.replace(RE_EMAIL, "[EMAIL]");
+  s = s.replace(RE_QUERY_SENSITIVE, (_m, sep, k) => `${sep}${k}=[REDACTED]`);
+  s = s.replace(RE_AUTH, (_m, k) => `${k} [REDACTED]`);
+  s = s.replace(RE_AWS_ACCESS_KEY, "[AWS_ACCESS_KEY]");
+  s = s.replace(RE_SECRET40, "[SECRET_40]");
+  s = s.replace(RE_JWT, "[JWT]");
+  s = s.replace(RE_LONG_DIGITS, "[NUMBER]");
+  s = s.replace(RE_PEM_BLOCK, "[PEM]");
+  s = s.replace(RE_IPV4_NOLB, (_m, pre) => `${pre}[IP]`);
+  s = s.replace(RE_PATH_SECRET, (m) => {
+    const i = m.lastIndexOf("/");
+    return m.slice(0, i + 1) + "[REDACTED]";
+  });
+  if (s.length > maxLen) s = s.slice(0, maxLen) + "\u2026 (truncated)";
+  return s;
+}
+function getErrorInfo(err, sanitize = true) {
+  let message;
+  let code;
+  const pull = (e, depth = 0) => {
+    if (!e || depth > 3) return;
+    if (!message && typeof e.message === "string") message = e.message;
+    if (code == null) {
+      code = e.code ?? e.status ?? e.statusCode ?? e.errorCode ?? e.response?.status ?? e.body?.status;
+    }
+    if (!message) {
+      const m = e.response?.data?.message ?? e.response?.data?.error?.message ?? e.data?.message ?? e.error?.message ?? e.body?.message;
+      if (typeof m === "string") message = m;
+    }
+    if (!message && Array.isArray(e.errors) && e.errors.length) pull(e.errors[0], depth + 1);
+    if (!message && e.cause) pull(e.cause, depth + 1);
+  };
+  if (err instanceof Error || typeof err === "object" && err !== null) {
+    pull(err);
+  } else if (typeof err === "string") {
+    message = err;
+  }
+  if (!message) message = "Unknown error";
+  let finalMessage = "";
+  if (sanitize) finalMessage = sanitizeMessageSensitiveData(message);
+  else finalMessage = message;
+  return code != null ? { message: finalMessage, code } : { message: finalMessage };
+}
 
 // src/_pageStore.ts
 function pageStore() {
@@ -2375,6 +2434,7 @@ export {
   fullJitter,
   getAppConfig,
   getCurrentPath,
+  getErrorInfo,
   getMatchScore,
   getMidpointDate,
   getMonthBounds,
@@ -2415,6 +2475,7 @@ export {
   removeFromArrayByKey,
   removeNullish,
   removeWWW,
+  sanitizeMessageSensitiveData,
   scrollToElement,
   setHiddenStatus,
   setTimeForDate,
