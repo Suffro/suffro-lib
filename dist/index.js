@@ -2502,7 +2502,73 @@ var decorrelatedJitter = (prevMin, baseMin = 15, capMin = 240) => {
   const next = Math.min(capMin, Math.max(baseMin, Math.random() * (prevMin * 3)));
   return Math.round(next);
 };
+
+// src/_integerUtils.ts
+function isIntegerInRange(v, min, max) {
+  return typeof v === "number" && Number.isInteger(v) && v >= min && v <= max;
+}
+function isF32Runtime(v) {
+  return typeof v === "number" && Math.fround(v) === v;
+}
+var Pred = {
+  // Unsigned
+  isU8: (v) => isIntegerInRange(v, 0, 255),
+  isU16: (v) => isIntegerInRange(v, 0, 65535),
+  isU32: (v) => isIntegerInRange(v, 0, 4294967295),
+  isU64: (v) => isIntegerInRange(v, 0, Number.MAX_SAFE_INTEGER),
+  // Signed
+  isI8: (v) => isIntegerInRange(v, -128, 127),
+  isI16: (v) => isIntegerInRange(v, -32768, 32767),
+  isI32: (v) => isIntegerInRange(v, -2147483648, 2147483647),
+  isI64: (v) => typeof v === "number" && Number.isInteger(v) && v >= Number.MIN_SAFE_INTEGER && v <= Number.MAX_SAFE_INTEGER,
+  // Floats
+  isF32: (v) => isF32Runtime(v),
+  isF64: (v) => typeof v === "number"
+};
+function makeRefinement(tag, isFn) {
+  return {
+    is: (v) => isFn(v),
+    as: (v) => {
+      if (!isFn(v)) throw new TypeError(`Expected ${tag}, got ${String(v)}`);
+      return v;
+    },
+    try: (v) => isFn(v) ? v : null,
+    parse: (s) => {
+      const n = Number(s);
+      if (!Number.isFinite(n) || !isFn(n)) {
+        throw new TypeError(`Invalid ${tag} from "${s}"`);
+      }
+      return n;
+    }
+  };
+}
+var Num = {
+  // Predicates (stile number.is...)
+  isU8: Pred.isU8,
+  isU16: Pred.isU16,
+  isU32: Pred.isU32,
+  isU64: Pred.isU64,
+  isI8: Pred.isI8,
+  isI16: Pred.isI16,
+  isI32: Pred.isI32,
+  isI64: Pred.isI64,
+  isF32: Pred.isF32,
+  isF64: Pred.isF64,
+  // Branded constructors / refiners
+  U8: makeRefinement("u8", Pred.isU8),
+  U16: makeRefinement("u16", Pred.isU16),
+  U32: makeRefinement("u32", Pred.isU32),
+  U64: makeRefinement("u64", Pred.isU64),
+  I8: makeRefinement("i8", Pred.isI8),
+  I16: makeRefinement("i16", Pred.isI16),
+  I32: makeRefinement("i32", Pred.isI32),
+  I64: makeRefinement("i64", Pred.isI64),
+  F32: makeRefinement("f32", Pred.isF32),
+  F64: makeRefinement("f64", Pred.isF64)
+};
 export {
+  Num,
+  Pred,
   RE_AUTH,
   RE_AWS_ACCESS_KEY,
   RE_BASE64,

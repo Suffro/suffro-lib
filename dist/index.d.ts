@@ -903,4 +903,55 @@ declare const RE_SEMVER: RegExp;
 declare const RE_SEMVER_RANGE_SIMPLE: RegExp;
 declare const RE_SEMVER_RANGE_COMPARATORS: RegExp;
 
-export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CoreDocFields, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type IDBApi, type MetadataSubDocStatus, type PageInfo, type PasswordStrength, RE_AUTH, RE_AWS_ACCESS_KEY, RE_BASE64, RE_CAMEL_CASE, RE_CAP_IT, RE_CF_IT_OMOCODIA, RE_CF_IT_STRICT, RE_CREDITCARD_GENERIC, RE_CSV_LINE, RE_CURRENCY_GENERIC, RE_DATETIME_ISO, RE_DATE_DDMMYYYY, RE_DATE_ISO, RE_DATE_MMDDYYYY, RE_DOMAIN, RE_E164_PHONE, RE_EMAIL, RE_EXTENSION, RE_FILENAME_SAFE, RE_FLOAT, RE_GIT_COMMIT, RE_HASHTAG, RE_HEX_COLOR, RE_HEX_PREFIXED, RE_HOSTPORT, RE_HSL, RE_HSLA, RE_HTML_TAG, RE_IBAN_GENERIC, RE_INT, RE_IPV4, RE_IPV4_NOLB, RE_IPV6, RE_IPV6_SIMPLE, RE_JWT, RE_KEBAB_CASE, RE_LAT, RE_LATLON_PAIR, RE_LON, RE_LONG_DIGITS, RE_MAC, RE_MASTERCARD, RE_MENTION, RE_MIME_TYPE, RE_NON_WORD, RE_NUMBER_THOUSANDS, RE_PASCAL_CASE, RE_PASSWORD_STRONG, RE_PATH_SECRET, RE_PEC_GENERIC, RE_PEC_IT_STRICT, RE_PEM_BLOCK, RE_PERCENT, RE_PIVA_IT, RE_POSTCODE_UK_APPROX, RE_QUERY_SENSITIVE, RE_R2_PUBLIC_URL, RE_R2_S3_COMPAT_URL, RE_RGB, RE_RGBA, RE_S3_PATH_URL, RE_S3_URI, RE_S3_VHOST_URL, RE_SECRET40, RE_SEMVER, RE_SEMVER_RANGE_COMPARATORS, RE_SEMVER_RANGE_SIMPLE, RE_SHA1, RE_SHA256, RE_SLUG, RE_SNAKE_CASE, RE_TIME_12H, RE_TIME_24H, RE_TZ_OFFSET, RE_ULID, RE_UNIX_PATH, RE_URL_HTTP, RE_URL_SIMPLE, RE_USERNAME_SIMPLE, RE_UUID_ANY, RE_UUID_V4, RE_VAT_AT, RE_VAT_BE, RE_VAT_BG, RE_VAT_CY, RE_VAT_CZ, RE_VAT_DE, RE_VAT_DK, RE_VAT_EE, RE_VAT_EL, RE_VAT_ES, RE_VAT_FI, RE_VAT_FR, RE_VAT_HR, RE_VAT_HU, RE_VAT_IE, RE_VAT_IT, RE_VAT_LT, RE_VAT_LU, RE_VAT_LV, RE_VAT_MT, RE_VAT_NL, RE_VAT_PL, RE_VAT_PT, RE_VAT_RO, RE_VAT_SE, RE_VAT_SI, RE_VAT_SK, RE_VISA, RE_WHITESPACE, RE_WINDOWS_PATH, RE_WS, RE_ZIP_US, type RgbColor, type RgbaColor, type StringLiteralJoin, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, URLGetParam, URLReload, type VoidFunction$1 as VoidFunction, addJitter, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, backoffNoJitter, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, cryptoTools, dateToTime12h, dateToTime24h, decorrelatedJitter, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, fullJitter, getAppConfig, getCurrentPath, getErrorInfo, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, imageExistsAtURL, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, sanitizeMessageSensitiveData, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, validateFile, wait };
+type Brand<Base, Tag extends string> = Base & {
+    readonly __brand: Tag;
+};
+type U8 = Brand<number, "u8">;
+type U16 = Brand<number, "u16">;
+type U32 = Brand<number, "u32">;
+type U64 = Brand<number, "u64">;
+type I8 = Brand<number, "i8">;
+type I16 = Brand<number, "i16">;
+type I32 = Brand<number, "i32">;
+type I64 = Brand<number, "i64">;
+type F32 = Brand<number, "f32">;
+type F64 = Brand<number, "f64">;
+type NumberPredicate = (v: unknown) => v is number;
+interface NumPredicates {
+    isU8: NumberPredicate;
+    isU16: NumberPredicate;
+    isU32: NumberPredicate;
+    isU64: NumberPredicate;
+    isI8: NumberPredicate;
+    isI16: NumberPredicate;
+    isI32: NumberPredicate;
+    isI64: NumberPredicate;
+    isF32: NumberPredicate;
+    isF64: NumberPredicate;
+}
+interface Refinement<TBrand extends string> {
+    /** Type guard verso il tipo brandizzato */
+    is(v: unknown): v is Brand<number, TBrand>;
+    /** Costruttore che valida e lancia su input invalido */
+    as(v: unknown): Brand<number, TBrand>;
+    /** Costruttore “safe” che restituisce null se non valido */
+    try(v: unknown): Brand<number, TBrand> | null;
+    /** Parser da stringa (usa Number), valida e lancia su input invalido */
+    parse(s: string): Brand<number, TBrand>;
+}
+interface NumAPI extends NumPredicates {
+    U8: Refinement<"u8">;
+    U16: Refinement<"u16">;
+    U32: Refinement<"u32">;
+    U64: Refinement<"u64">;
+    I8: Refinement<"i8">;
+    I16: Refinement<"i16">;
+    I32: Refinement<"i32">;
+    I64: Refinement<"i64">;
+    F32: Refinement<"f32">;
+    F64: Refinement<"f64">;
+}
+declare const Pred: Readonly<NumPredicates>;
+declare const Num: NumAPI;
+
+export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type Brand, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CoreDocFields, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type F32, type F64, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type I16, type I32, type I64, type I8, type IDBApi, type MetadataSubDocStatus, Num, type NumAPI, type NumPredicates, type NumberPredicate, type PageInfo, type PasswordStrength, Pred, RE_AUTH, RE_AWS_ACCESS_KEY, RE_BASE64, RE_CAMEL_CASE, RE_CAP_IT, RE_CF_IT_OMOCODIA, RE_CF_IT_STRICT, RE_CREDITCARD_GENERIC, RE_CSV_LINE, RE_CURRENCY_GENERIC, RE_DATETIME_ISO, RE_DATE_DDMMYYYY, RE_DATE_ISO, RE_DATE_MMDDYYYY, RE_DOMAIN, RE_E164_PHONE, RE_EMAIL, RE_EXTENSION, RE_FILENAME_SAFE, RE_FLOAT, RE_GIT_COMMIT, RE_HASHTAG, RE_HEX_COLOR, RE_HEX_PREFIXED, RE_HOSTPORT, RE_HSL, RE_HSLA, RE_HTML_TAG, RE_IBAN_GENERIC, RE_INT, RE_IPV4, RE_IPV4_NOLB, RE_IPV6, RE_IPV6_SIMPLE, RE_JWT, RE_KEBAB_CASE, RE_LAT, RE_LATLON_PAIR, RE_LON, RE_LONG_DIGITS, RE_MAC, RE_MASTERCARD, RE_MENTION, RE_MIME_TYPE, RE_NON_WORD, RE_NUMBER_THOUSANDS, RE_PASCAL_CASE, RE_PASSWORD_STRONG, RE_PATH_SECRET, RE_PEC_GENERIC, RE_PEC_IT_STRICT, RE_PEM_BLOCK, RE_PERCENT, RE_PIVA_IT, RE_POSTCODE_UK_APPROX, RE_QUERY_SENSITIVE, RE_R2_PUBLIC_URL, RE_R2_S3_COMPAT_URL, RE_RGB, RE_RGBA, RE_S3_PATH_URL, RE_S3_URI, RE_S3_VHOST_URL, RE_SECRET40, RE_SEMVER, RE_SEMVER_RANGE_COMPARATORS, RE_SEMVER_RANGE_SIMPLE, RE_SHA1, RE_SHA256, RE_SLUG, RE_SNAKE_CASE, RE_TIME_12H, RE_TIME_24H, RE_TZ_OFFSET, RE_ULID, RE_UNIX_PATH, RE_URL_HTTP, RE_URL_SIMPLE, RE_USERNAME_SIMPLE, RE_UUID_ANY, RE_UUID_V4, RE_VAT_AT, RE_VAT_BE, RE_VAT_BG, RE_VAT_CY, RE_VAT_CZ, RE_VAT_DE, RE_VAT_DK, RE_VAT_EE, RE_VAT_EL, RE_VAT_ES, RE_VAT_FI, RE_VAT_FR, RE_VAT_HR, RE_VAT_HU, RE_VAT_IE, RE_VAT_IT, RE_VAT_LT, RE_VAT_LU, RE_VAT_LV, RE_VAT_MT, RE_VAT_NL, RE_VAT_PL, RE_VAT_PT, RE_VAT_RO, RE_VAT_SE, RE_VAT_SI, RE_VAT_SK, RE_VISA, RE_WHITESPACE, RE_WINDOWS_PATH, RE_WS, RE_ZIP_US, type Refinement, type RgbColor, type RgbaColor, type StringLiteralJoin, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, type U16, type U32, type U64, type U8, URLGetParam, URLReload, type VoidFunction$1 as VoidFunction, addJitter, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, backoffNoJitter, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, cryptoTools, dateToTime12h, dateToTime24h, decorrelatedJitter, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, fullJitter, getAppConfig, getCurrentPath, getErrorInfo, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, imageExistsAtURL, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, sanitizeMessageSensitiveData, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, validateFile, wait };
