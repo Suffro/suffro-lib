@@ -39,18 +39,26 @@
   // 📦 Base64
   // ==============================
   
-  function encodeBase64(input: string): string {
-    const bytes = new TextEncoder().encode(input);
-    return btoa(String.fromCharCode(...bytes));
+function encodeBase64(input: string): string {
+  const bytes = new TextEncoder().encode(input);
+  let binary = "";
+  const chunkSize = 0x8000; // 32 KB per evitare troppi argomenti a String.fromCharCode
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
   }
-  
+  return btoa(binary);
+}
 
-  function decodeBase64(base64: string): string {
-    const binary = atob(base64);
-    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-    return new TextDecoder().decode(bytes);
+function decodeBase64(base64: string): string {
+  const binary = atob(base64);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i);
   }
-  
+  return new TextDecoder().decode(bytes);
+}
   
   // ==============================
   // 🔐 AES-GCM (reversibile)

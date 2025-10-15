@@ -1648,11 +1648,21 @@ async function hmacSha256Hex(key, message) {
 }
 function encodeBase64(input) {
   const bytes = new TextEncoder().encode(input);
-  return btoa(String.fromCharCode(...bytes));
+  let binary = "";
+  const chunkSize = 32768;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return btoa(binary);
 }
 function decodeBase64(base64) {
   const binary = atob(base64);
-  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
   return new TextDecoder().decode(bytes);
 }
 function generateRandomInitializationVector() {
