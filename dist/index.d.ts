@@ -5,6 +5,7 @@ import { WhereFilterOp, Timestamp, Firestore } from 'firebase/firestore';
 import { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { FirebaseStorage } from 'firebase/storage';
 import { Functions, HttpsCallableOptions, HttpsCallable } from 'firebase/functions';
+import { AnySchema } from 'ajv';
 
 type ColorInfo = {
     HEX: string;
@@ -954,4 +955,67 @@ interface NumAPI extends NumPredicates {
 declare const Pred: Readonly<NumPredicates>;
 declare const Num: NumAPI;
 
-export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type Brand, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CoreDocFields, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type F32, type F64, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type I16, type I32, type I64, type I8, type IDBApi, type MetadataSubDocStatus, Num, type NumAPI, type NumPredicates, type NumberPredicate, type PageInfo, type PasswordStrength, Pred, RE_AUTH, RE_AWS_ACCESS_KEY, RE_BASE64, RE_CAMEL_CASE, RE_CAP_IT, RE_CF_IT_OMOCODIA, RE_CF_IT_STRICT, RE_CREDITCARD_GENERIC, RE_CSV_LINE, RE_CURRENCY_GENERIC, RE_DATETIME_ISO, RE_DATE_DDMMYYYY, RE_DATE_ISO, RE_DATE_MMDDYYYY, RE_DOMAIN, RE_E164_PHONE, RE_EMAIL, RE_EXTENSION, RE_FILENAME_SAFE, RE_FLOAT, RE_GIT_COMMIT, RE_HASHTAG, RE_HEX_COLOR, RE_HEX_PREFIXED, RE_HOSTPORT, RE_HSL, RE_HSLA, RE_HTML_TAG, RE_IBAN_GENERIC, RE_INT, RE_IPV4, RE_IPV4_NOLB, RE_IPV6, RE_IPV6_SIMPLE, RE_JWT, RE_KEBAB_CASE, RE_LAT, RE_LATLON_PAIR, RE_LON, RE_LONG_DIGITS, RE_MAC, RE_MASTERCARD, RE_MENTION, RE_MIME_TYPE, RE_NON_WORD, RE_NUMBER_THOUSANDS, RE_PASCAL_CASE, RE_PASSWORD_STRONG, RE_PATH_SECRET, RE_PEC_GENERIC, RE_PEC_IT_STRICT, RE_PEM_BLOCK, RE_PERCENT, RE_PIVA_IT, RE_POSTCODE_UK_APPROX, RE_QUERY_SENSITIVE, RE_R2_PUBLIC_URL, RE_R2_S3_COMPAT_URL, RE_RGB, RE_RGBA, RE_S3_PATH_URL, RE_S3_URI, RE_S3_VHOST_URL, RE_SECRET40, RE_SEMVER, RE_SEMVER_RANGE_COMPARATORS, RE_SEMVER_RANGE_SIMPLE, RE_SHA1, RE_SHA256, RE_SLUG, RE_SNAKE_CASE, RE_TIME_12H, RE_TIME_24H, RE_TZ_OFFSET, RE_ULID, RE_UNIX_PATH, RE_URL_HTTP, RE_URL_SIMPLE, RE_USERNAME_SIMPLE, RE_UUID_ANY, RE_UUID_V4, RE_VAT_AT, RE_VAT_BE, RE_VAT_BG, RE_VAT_CY, RE_VAT_CZ, RE_VAT_DE, RE_VAT_DK, RE_VAT_EE, RE_VAT_EL, RE_VAT_ES, RE_VAT_FI, RE_VAT_FR, RE_VAT_HR, RE_VAT_HU, RE_VAT_IE, RE_VAT_IT, RE_VAT_LT, RE_VAT_LU, RE_VAT_LV, RE_VAT_MT, RE_VAT_NL, RE_VAT_PL, RE_VAT_PT, RE_VAT_RO, RE_VAT_SE, RE_VAT_SI, RE_VAT_SK, RE_VISA, RE_WHITESPACE, RE_WINDOWS_PATH, RE_WS, RE_ZIP_US, type Refinement, type RgbColor, type RgbaColor, type StringLiteralJoin, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, type U16, type U32, type U64, type U8, URLGetParam, URLReload, type VoidFunction$1 as VoidFunction, addJitter, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, backoffNoJitter, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, cryptoTools, dateToTime12h, dateToTime24h, decorrelatedJitter, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, fullJitter, getAppConfig, getCurrentPath, getErrorInfo, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, imageExistsAtURL, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, sanitizeMessageSensitiveData, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, validateFile, wait };
+/**
+ * Public interface for the jsonTools utility.
+ * Import this if you want to type variables or parameters that expose
+ * the same API surface as `jsonTools`.
+ */
+interface JsonTools {
+    /**
+     * Validate a JSON string against an optional schema.
+     * - If `schema` is omitted: only checks JSON validity and returns the parsed value.
+     * - If `schema` is provided: validates using Ajv (draft-07 friendly).
+     */
+    validate<T = unknown>(jsonStr: string, schema?: AnySchema | string): {
+        ok: true;
+        data: T;
+    } | {
+        ok: false;
+        errors: string[];
+    };
+    /** Safely parse a JSON string without throwing. */
+    parse<T = unknown>(jsonStr: string): {
+        ok: true;
+        data: T;
+    } | {
+        ok: false;
+        error: string;
+    };
+    /** Safely stringify any value to JSON (handles circular refs and never throws). */
+    stringify(value: any, space?: number): string;
+    /** Pretty-print a JSON string with a given indentation (returns original if invalid). */
+    pretty(jsonStr: string, indent?: number): string;
+    /** Minify a JSON string by removing whitespace (returns original if invalid). */
+    compact(jsonStr: string): string;
+    /** Deep structural equality for JSON-compatible values (key-order insensitive for objects). */
+    isEqual(a: unknown, b: unknown): boolean;
+    /** Safely access nested properties via dot-path (supports numeric indices). */
+    get<T = unknown>(obj: any, path: string): T | undefined;
+    /**
+     * Non-mutating deep merge of two objects (arrays are overwritten).
+     * Returns a new object typed as the intersection T & U.
+     */
+    merge<T extends object, U extends object>(target: T, source: U): T & U;
+    /**
+     * Compute a flat diff map of paths to old/new values.
+     * Paths use dot notation; "(root)" indicates the root value.
+     */
+    diff(a: unknown, b: unknown): Record<string, {
+        oldValue: any;
+        newValue: any;
+    }>;
+    /** Summarize a JSON Schema for quick inspection (types, enums, properties). */
+    schemaSummary(schema: AnySchema): string;
+    /** Infer a minimal JSON Schema from an example value. */
+    inferSchema(example: unknown): AnySchema;
+}
+/**
+ * A small toolkit for working with JSON strings.
+ *
+ * @remarks
+ * - The only exported API is this default object `jsonTools`.
+ * - All functions are documented with JSDoc so tooltips are shown in IDEs.
+ */
+declare const jsonTools: JsonTools;
+
+export { type AnyObject, type AppBranding, type AppConfig, type AppFeatures, type AppLegal, type AppMeta, type AppRoute, type AppRoutes, type AppSubdomains, type AppUser, type AppUserDoc, type AuthMode, type AuthState, type Brand, type BrowserStorageType, type CheckboxSetOption, type Collections, type ColorInfo, type ColorString, type ComboboxOption, type CoreDocFields, type CssNamedColor, type DocBlueprint, type DropdownOption, type ExtendedFirebaseOptions, type F32, type F64, type FirebaseClient, type FirebaseInitializationContext, type FirebaseServiceIstances, type FirebaseUserData, type FirebaseUserPublicData, type FirebaseUserSensitiveData, type HexColor, type HslColor, type HslaColor, type I16, type I32, type I64, type I8, type IDBApi, type JsonTools, type MetadataSubDocStatus, Num, type NumAPI, type NumPredicates, type NumberPredicate, type PageInfo, type PasswordStrength, Pred, RE_AUTH, RE_AWS_ACCESS_KEY, RE_BASE64, RE_CAMEL_CASE, RE_CAP_IT, RE_CF_IT_OMOCODIA, RE_CF_IT_STRICT, RE_CREDITCARD_GENERIC, RE_CSV_LINE, RE_CURRENCY_GENERIC, RE_DATETIME_ISO, RE_DATE_DDMMYYYY, RE_DATE_ISO, RE_DATE_MMDDYYYY, RE_DOMAIN, RE_E164_PHONE, RE_EMAIL, RE_EXTENSION, RE_FILENAME_SAFE, RE_FLOAT, RE_GIT_COMMIT, RE_HASHTAG, RE_HEX_COLOR, RE_HEX_PREFIXED, RE_HOSTPORT, RE_HSL, RE_HSLA, RE_HTML_TAG, RE_IBAN_GENERIC, RE_INT, RE_IPV4, RE_IPV4_NOLB, RE_IPV6, RE_IPV6_SIMPLE, RE_JWT, RE_KEBAB_CASE, RE_LAT, RE_LATLON_PAIR, RE_LON, RE_LONG_DIGITS, RE_MAC, RE_MASTERCARD, RE_MENTION, RE_MIME_TYPE, RE_NON_WORD, RE_NUMBER_THOUSANDS, RE_PASCAL_CASE, RE_PASSWORD_STRONG, RE_PATH_SECRET, RE_PEC_GENERIC, RE_PEC_IT_STRICT, RE_PEM_BLOCK, RE_PERCENT, RE_PIVA_IT, RE_POSTCODE_UK_APPROX, RE_QUERY_SENSITIVE, RE_R2_PUBLIC_URL, RE_R2_S3_COMPAT_URL, RE_RGB, RE_RGBA, RE_S3_PATH_URL, RE_S3_URI, RE_S3_VHOST_URL, RE_SECRET40, RE_SEMVER, RE_SEMVER_RANGE_COMPARATORS, RE_SEMVER_RANGE_SIMPLE, RE_SHA1, RE_SHA256, RE_SLUG, RE_SNAKE_CASE, RE_TIME_12H, RE_TIME_24H, RE_TZ_OFFSET, RE_ULID, RE_UNIX_PATH, RE_URL_HTTP, RE_URL_SIMPLE, RE_USERNAME_SIMPLE, RE_UUID_ANY, RE_UUID_V4, RE_VAT_AT, RE_VAT_BE, RE_VAT_BG, RE_VAT_CY, RE_VAT_CZ, RE_VAT_DE, RE_VAT_DK, RE_VAT_EE, RE_VAT_EL, RE_VAT_ES, RE_VAT_FI, RE_VAT_FR, RE_VAT_HR, RE_VAT_HU, RE_VAT_IE, RE_VAT_IT, RE_VAT_LT, RE_VAT_LU, RE_VAT_LV, RE_VAT_MT, RE_VAT_NL, RE_VAT_PL, RE_VAT_PT, RE_VAT_RO, RE_VAT_SE, RE_VAT_SI, RE_VAT_SK, RE_VISA, RE_WHITESPACE, RE_WINDOWS_PATH, RE_WS, RE_ZIP_US, type Refinement, type RgbColor, type RgbaColor, type StringLiteralJoin, type SubcolelctionDocBlueprint, type TableData, type TailwindWidth, type U16, type U32, type U64, type U8, URLGetParam, URLReload, type VoidFunction$1 as VoidFunction, addJitter, addMinutesToDate, addMinutesToTime, arrayGetByKey, arrrayGetLast, authStateObsverver, backoffNoJitter, browserStorage, buildPath, callerName, capitalize, capitalizeEachWord, checkFileSize, checkPasswordStrength, clearUrl, clickOutside, componentCallbackDispatcher, copyToClipboard, cryptoTools, dateToTime12h, dateToTime24h, decorrelatedJitter, detectAnalysisFileType, dropdownOptionsFromStrings, flagEmojiToCountryCode, flattenObject, formSubmit, formatDateForInput, fullJitter, getAppConfig, getCurrentPath, getErrorInfo, getMatchScore, getMidpointDate, getMonthBounds, getMonthBoundsByYearMonthString, getPathList, getRandomNumber, getRandomString, getRecaptchaVerifier, getSubdomain, getTimeBounds, getUrlParam, getYearBounds, getYearMonthStringFromDate, hexToRgb, idb, imageExistsAtURL, initAppConfig, initializeFirebaseClient, initializeFirebaseContext, isBrowser, isDev, isLocalhost, isSameMonth, isSameYear, isValidDate, isValidTimeStr, isWindowAvailable, jsonTools, listMonthsInRange, logger, mapToObject, mergeByKey, objectsDiffer, pageStore, parseCookie, parseDate, portal, redirectOrReload, removeFromArrayByKey, removeNullish, removeWWW, sanitizeMessageSensitiveData, scrollToElement, setHiddenStatus, setTimeForDate, sleep, stringStartsWith, toCamelCase, toHtmlId, toSnakeCase, toggleArrayItem, toggleHiddenStatus, updateArrayByKey, updateUniqueArray, validate, validateFile, wait };
