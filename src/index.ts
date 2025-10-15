@@ -11,3 +11,4 @@ export * from "./firebase";
 export * from "./_jitter";
 export * from "./_regexPatterns";
 export * from "./_integerUtils";
+export * from "./_json";

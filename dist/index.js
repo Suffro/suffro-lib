@@ -2576,6 +2576,17 @@ var Num = {
   F32: makeRefinement("f32", Pred.isF32),
   F64: makeRefinement("f64", Pred.isF64)
 };
+
+// src/_json.ts
+import Ajv from "ajv";
+import addFormats from "ajv-formats";
+var ajv = new Ajv({
+  allErrors: true,
+  // richer error messages
+  strict: false
+  // plays nice with draft-07 and relaxed schemas
+});
+addFormats(ajv);
 export {
   Num,
   Pred,
