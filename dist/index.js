@@ -1067,6 +1067,28 @@ function getErrorInfo(err, sanitize = true) {
   else finalMessage = message;
   return code != null ? { message: finalMessage, code } : { message: finalMessage };
 }
+function serializeToString(value) {
+  if (value === null || value === void 0) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (value instanceof Date) return value.toISOString();
+  if (value instanceof File) {
+    return `file:${value.name}:${value.size}:${value.lastModified}`;
+  }
+  if (Array.isArray(value)) {
+    return `[${value.map(serializeToString).join(",")}]`;
+  }
+  if (typeof value === "object") {
+    const entries = Object.entries(value).sort(
+      ([a], [b]) => a.localeCompare(b)
+    );
+    return `{${entries.map(([k, v]) => `${k}:${serializeToString(v)}`).join(",")}}`;
+  }
+  return String(value);
+}
+function createHashInput(values, separator = "|") {
+  return values.map(serializeToString).join(separator);
+}
 
 // src/_pageStore.ts
 function pageStore() {
@@ -3109,6 +3131,7 @@ export {
   clickOutside,
   componentCallbackDispatcher,
   copyToClipboard,
+  createHashInput,
   cryptoTools,
   dateToTime12h,
   dateToTime24h,
@@ -3166,6 +3189,7 @@ export {
   removeWWW,
   sanitizeMessageSensitiveData,
   scrollToElement,
+  serializeToString,
   setHiddenStatus,
   setTimeForDate,
   sleep,

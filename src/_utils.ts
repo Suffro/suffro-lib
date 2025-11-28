@@ -1344,3 +1344,52 @@ export function getErrorInfo(err: unknown, sanitize:boolean=true): ErrorInfo {
 
   return code != null ? { message: finalMessage, code } : { message: finalMessage };
 }
+
+
+/**
+ * Serializes an arbitrary values into a deterministic, hash-friendly string.
+ *
+ * - Objects are serialized with sorted keys to ensure stable ordering.
+ * - Arrays are serialized by preserving element order.
+ * - Dates are converted to ISO strings.
+ * - Files are represented by stable metadata (name, size, lastModified).
+ *
+ * @param value - The value or values to serialize.
+ * @returns A deterministic string representation.
+ */
+export function serializeToString(value: unknown): string {
+	if (value === null || value === undefined) return '';
+
+	if (typeof value === 'string') return value;
+	if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+
+	if (value instanceof Date) return value.toISOString();
+
+	if (value instanceof File) {
+		// Represent File by stable metadata only, not by its binary content
+		return `file:${value.name}:${value.size}:${value.lastModified}`;
+	}
+
+	if (Array.isArray(value)) {
+		// Serialize each element and preserve order
+		return `[${value.map(serializeToString).join(',')}]`;
+	}
+
+	if (typeof value === 'object') {
+		// Ensure deterministic key order for object properties
+		const entries = Object.entries(value as Record<string, unknown>).sort(([a], [b]) =>
+			a.localeCompare(b)
+		);
+		return `{${entries
+			.map(([k, v]) => `${k}:${serializeToString(v)}`)
+			.join(',')}}`;
+	}
+
+	// Fallback for other types
+	return String(value);
+}
+
+// Build a deterministic string from an array of values
+export function createHashInput(values: unknown[], separator = '|'): string {
+	return values.map(serializeToString).join(separator);
+}
