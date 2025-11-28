@@ -1668,15 +1668,20 @@ async function hmacSha256Hex(key, message) {
   const signature = await crypto.subtle.sign("HMAC", cryptoKey, msgData);
   return Array.from(new Uint8Array(signature)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
-async function sha256(input, weakFallback = true) {
+function nonCryptographicHash(input) {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = hash * 31 + input.charCodeAt(i) | 0;
+  }
+  return (hash >>> 0).toString(16);
+}
+async function sha256(input, nonCryptographicFallback = true) {
   if (typeof crypto === "undefined" || !crypto.subtle) {
-    if (!weakFallback) throw "crypto not found in this contex";
-    console.warn(`[crypto not found] using NON cryprographyc fallback, useful only as weak "checksum"`);
-    let hash = 0;
-    for (let i = 0; i < input.length; i++) {
-      hash = hash * 31 + input.charCodeAt(i) | 0;
-    }
-    return hash.toString(16);
+    if (!nonCryptographicFallback) throw "crypto not found in this contex";
+    console.warn(
+      `[crypto not found] using unsafe non-cryptographic fallback, useful only as weak "checksum"`
+    );
+    return nonCryptographicHash(input);
   }
   const encoder = new TextEncoder();
   const data = encoder.encode(input);
@@ -1727,7 +1732,8 @@ var cryptoTools = {
   digest: {
     digestHex,
     sha256,
-    hmacSha256Hex
+    hmacSha256Hex,
+    nonCryptographicHash
   },
   base64: {
     encode: encodeBase64,
@@ -3195,6 +3201,7 @@ export {
   logger,
   mapToObject,
   mergeByKey,
+  nonCryptographicHash,
   objectsDiffer,
   pageStore,
   parseCookie,
