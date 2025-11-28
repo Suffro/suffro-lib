@@ -34,6 +34,26 @@
       .map(b => b.toString(16).padStart(2, "0"))
       .join("");
   }
+
+  export async function sha256(input: string, weakFallback:boolean=true): Promise<string> {
+    if (typeof crypto === 'undefined' || !crypto.subtle) {
+      if(!weakFallback) throw "crypto not found in this contex";
+      console.warn(`[crypto not found] using NON cryprographyc fallback, useful only as weak "checksum"`);
+      let hash = 0;
+      for (let i = 0; i < input.length; i++) {
+        hash = (hash * 31 + input.charCodeAt(i)) | 0;
+      }
+      return hash.toString(16);
+    }
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    const bytes = new Uint8Array(digest);
+    return Array.from(bytes)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
   
   // ==============================
   // 📦 Base64
@@ -108,6 +128,7 @@ function decodeBase64(base64: string): string {
 export const cryptoTools = {
     digest: {
         digestHex,
+        sha256,
         hmacSha256Hex
     },
     base64: {
