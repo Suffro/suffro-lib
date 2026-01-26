@@ -1089,6 +1089,12 @@ function serializeToString(value) {
 function createHashInput(values, separator = "|") {
   return values.map(serializeToString).join(separator);
 }
+function arrayIncludesString(arr, needle, caseSensitive = false) {
+  if (!Array.isArray(arr) || typeof needle !== "string") return false;
+  if (caseSensitive) return arr.includes(needle);
+  const n = needle.toLowerCase();
+  return arr.some((s) => typeof s === "string" && s.toLowerCase() === n);
+}
 
 // src/_pageStore.ts
 function pageStore() {
@@ -3140,6 +3146,7 @@ export {
   addMinutesToDate,
   addMinutesToTime,
   arrayGetByKey,
+  arrayIncludesString,
   arrrayGetLast,
   authStateObsverver,
   backoffNoJitter,

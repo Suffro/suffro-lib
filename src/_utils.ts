@@ -1393,3 +1393,16 @@ export function serializeToString(value: unknown): string {
 export function createHashInput(values: unknown[], separator = '|'): string {
 	return values.map(serializeToString).join(separator);
 }
+
+export function arrayIncludesString(
+  arr: string[],
+  needle: string,
+  caseSensitive = false
+): boolean {
+  if (!Array.isArray(arr) || typeof needle !== "string") return false;
+
+  if (caseSensitive) return arr.includes(needle);
+
+  const n = needle.toLowerCase();
+  return arr.some((s) => typeof s === "string" && s.toLowerCase() === n);
+}
