@@ -1,5 +1,5 @@
 import type { Auth, User } from 'firebase/auth';
-import type { Firestore, Timestamp } from 'firebase/firestore';
+import type { FieldValue, Firestore, Timestamp } from 'firebase/firestore';
 import type { FirebaseAuthMethods } from './auth/_types';
 import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import type { FirebaseStorage } from 'firebase/storage';
@@ -16,7 +16,7 @@ export type Collections = string;
 export type CoreDocFields<T> = T & {
 	id?: string;
 	hash?: string; //changes on every document change and is a hash of the doc id and lastModified fields
-	createdAt: Timestamp;
+    createdAt: Timestamp | FieldValue;
 	deleted?: boolean;
 	ttlAt?: Timestamp;
 }

@@ -1,7 +1,7 @@
 import { IDBPDatabase, StoreNames, StoreKey, StoreValue, IndexNames } from 'idb';
 import * as firebase_auth from 'firebase/auth';
 import { User, Auth, RecaptchaVerifier } from 'firebase/auth';
-import { WhereFilterOp, Timestamp, Firestore } from 'firebase/firestore';
+import { WhereFilterOp, Timestamp, FieldValue, Firestore } from 'firebase/firestore';
 import { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import { FirebaseStorage } from 'firebase/storage';
 import { Functions, HttpsCallableOptions, HttpsCallable } from 'firebase/functions';
@@ -656,7 +656,7 @@ type Collections = string;
 type CoreDocFields<T> = T & {
     id?: string;
     hash?: string;
-    createdAt: Timestamp;
+    createdAt: Timestamp | FieldValue;
     deleted?: boolean;
     ttlAt?: Timestamp;
 };
