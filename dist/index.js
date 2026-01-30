@@ -2428,8 +2428,9 @@ var initFirestoreCurrentUserDocMethods = (auth, db) => ({
 });
 
 // src/firebase/firestore/_firestoreTypesValidation.ts
+import { Timestamp as Timestamp2 } from "firebase-admin/firestore";
 import {
-  Timestamp as Timestamp2,
+  Timestamp as LocalTimestamp,
   GeoPoint
 } from "firebase/firestore";
 

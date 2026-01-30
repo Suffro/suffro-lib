@@ -1,13 +1,16 @@
 import type { Auth, User } from 'firebase/auth';
-import type { FieldValue, Firestore, Timestamp } from 'firebase/firestore';
+import type { FieldValue, Firestore, Timestamp as LocalTimestamp } from 'firebase/firestore';
+import type { Timestamp } from 'firebase-admin/firestore';
 import type { FirebaseAuthMethods } from './auth/_types';
 import type { FirebaseApp, FirebaseOptions } from 'firebase/app';
 import type { FirebaseStorage } from 'firebase/storage';
 import { FStoreDoc, FStoreUser } from './firestore/_types';
 import { StorageMethodsInterface } from './storage';
 import { Functions, HttpsCallable, HttpsCallableOptions, HttpsCallableResult } from 'firebase/functions';
+
 export {type AuthState} from "./auth"
 
+export type FirebaseTimestamp = Timestamp | LocalTimestamp
 /**
  * The collection names in your firestore
  */
@@ -16,9 +19,9 @@ export type Collections = string;
 export type CoreDocFields<T> = T & {
 	id?: string;
 	hash?: string; //changes on every document change and is a hash of the doc id and lastModified fields
-    createdAt: Timestamp | FieldValue;
+    createdAt: FirebaseTimestamp | FieldValue;
 	deleted?: boolean;
-	ttlAt?: Timestamp;
+	ttlAt?: FirebaseTimestamp;
 }
 
 /**
@@ -58,7 +61,7 @@ export type AppUser = User & AppUserDoc;
 
 
 export type MetadataSubDocStatus = CoreDocFields<{
-	lastModified?: Timestamp;
+	lastModified?: FirebaseTimestamp;
 	hash: string; //changes on every document change and is a hash of the doc id and lastModified fields
 	[key: string]: unknown;
 }>
