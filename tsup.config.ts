@@ -6,7 +6,6 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   entry: {
-    index: './src/index.ts',
     'utils/index': './src/utils/index.ts',
     'firebase/index': './src/firebase/index.ts',
     'idb/index': './src/idb/index.ts',

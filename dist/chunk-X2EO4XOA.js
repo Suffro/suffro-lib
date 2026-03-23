@@ -266,36 +266,6 @@ var validate = {
   falsy: (v) => !v
 };
 
-// src/utils/_logger.ts
-var dev = isDev();
-var noop = () => {
-};
-var logger = {
-  log: dev ? console.log.bind(console) : noop,
-  warn: dev ? console.warn.bind(console) : noop,
-  error: console.error.bind(console),
-  // always logs
-  devError: dev ? console.error.bind(console) : noop,
-  logCaller: dev ? (...args) => {
-    const name = callerName(3);
-    console.log(`${name}()`, ...args);
-  } : noop,
-  page: dev ? () => {
-    console.log("Page:", pageStore().get());
-  } : noop,
-  prod: {
-    log: console.log.bind(console),
-    warn: console.warn.bind(console),
-    logCaller: (...args) => {
-      const name = callerName(3);
-      console.log(`${name}()`, ...args);
-    },
-    page: () => {
-      console.log("Page:", pageStore().get());
-    }
-  }
-};
-
 // src/utils/_utils.ts
 var isBrowser = () => {
   return typeof window !== "undefined" && typeof document !== "undefined";
@@ -1175,8 +1145,39 @@ function arrayIncludesString(arr, needle, caseSensitive = false) {
   return arr.some((s) => typeof s === "string" && s.toLowerCase() === n);
 }
 
+// src/utils/_logger.ts
+var dev = isDev();
+var noop = () => {
+};
+var logger = {
+  log: dev ? console.log.bind(console) : noop,
+  warn: dev ? console.warn.bind(console) : noop,
+  error: console.error.bind(console),
+  // always logs
+  devError: dev ? console.error.bind(console) : noop,
+  logCaller: dev ? (...args) => {
+    const name = callerName(3);
+    console.log(`${name}()`, ...args);
+  } : noop,
+  page: dev ? () => {
+    console.log("Page:", pageStore().get());
+  } : noop,
+  prod: {
+    log: console.log.bind(console),
+    warn: console.warn.bind(console),
+    logCaller: (...args) => {
+      const name = callerName(3);
+      console.log(`${name}()`, ...args);
+    },
+    page: () => {
+      console.log("Page:", pageStore().get());
+    }
+  }
+};
+
 export {
   pageStore,
+  logger,
   RE_WS,
   RE_QUERY_SENSITIVE,
   RE_AUTH,
@@ -1367,7 +1368,6 @@ export {
   getErrorInfo,
   serializeToString,
   createHashInput,
-  arrayIncludesString,
-  logger
+  arrayIncludesString
 };
-//# sourceMappingURL=chunk-54MRKUDF.js.map
+//# sourceMappingURL=chunk-X2EO4XOA.js.map
