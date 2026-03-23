@@ -8,7 +8,7 @@ import {
   type FirebaseStorage,
 } from "firebase/storage";
 import { StorageMethodsInterface } from "./_types";
-import { logger } from "../../_logger";
+import { logger } from "../../utils";
 
 const getFilePath = (
   fileName: string,

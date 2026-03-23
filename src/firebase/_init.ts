@@ -13,10 +13,10 @@ import {
   persistentLocalCache,
   persistentMultipleTabManager,
 } from "firebase/firestore";
-import { validate } from "../_typesValidation";
+import { validate } from "../utils";
 import { initializeFirebaseClient } from "./_client";
 import { ExtendedFirebaseOptions, FirebaseInitializationContext } from "./_types";
-import { isDev } from "../_utils";
+import { isDev } from "../utils";
 
 let _context: FirebaseInitializationContext | null | undefined;
 

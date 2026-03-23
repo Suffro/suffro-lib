@@ -1,5 +1,5 @@
-import type { AnyObject, DropdownOption, HexColor, PasswordStrength } from "./";
-import { logger } from "./";
+import type { AnyObject, DropdownOption, HexColor, PasswordStrength } from "../";
+import { logger } from "./_logger";
 import { RE_AUTH, RE_AWS_ACCESS_KEY, RE_EMAIL, RE_IPV4_NOLB, RE_JWT, RE_LONG_DIGITS, RE_PATH_SECRET, RE_PEM_BLOCK, RE_QUERY_SENSITIVE, RE_SECRET40, RE_WS } from "./_regexPatterns";
 import { validate } from "./_typesValidation";
 

@@ -1,4 +1,4 @@
-import {logger} from "./";
+import {logger} from "./_logger";
 
 export type BrowserStorageType = "local" | "session";
 

@@ -6,7 +6,7 @@ import {
     type StoreNames,
     type StoreValue
 } from 'idb';
-import { logger } from './_logger';
+import { logger } from '../utils/_logger';
 
 export interface IDBApi<T> {
     get(): Promise<IDBPDatabase<T>>;

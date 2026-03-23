@@ -1,5 +1,5 @@
 import { Auth, onAuthStateChanged, type User } from 'firebase/auth';
-import { validate } from '../../_typesValidation';
+import { validate } from '../../utils';
 import { AuthState } from './_types';
 
 let observer: AuthState | null | undefined = null;

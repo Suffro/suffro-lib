@@ -1,4 +1,4 @@
-import { logger, redirectOrReload, validate, wait } from "../../";
+import { logger, redirectOrReload, validate, wait } from "../../utils";
 import {
   browserLocalPersistence,
   browserSessionPersistence,

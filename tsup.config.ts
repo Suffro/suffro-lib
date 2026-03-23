@@ -1,9 +1,15 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig({
-  entry: ['src/index.ts'],
   format: ['esm'],
   dts: true,
   clean: true,
-  sourcemap: true
+  sourcemap: true,
+  entry: {
+    index: './src/index.ts',
+    'utils/index': './src/utils/index.ts',
+    'firebase/index': './src/firebase/index.ts',
+    'idb/index': './src/idb/index.ts',
+    'crypto/index': './src/crypto/index.ts',
+  }
 })

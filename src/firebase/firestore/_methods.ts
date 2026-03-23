@@ -23,8 +23,8 @@ import {
   type Collections,
   type FirebaseUserPublicData,
 } from "../";
-import { logger } from "../../";
-import { validate } from "../../";
+import { logger } from "../../utils";
+import { validate } from "../../utils";
 import {
   updateEmail,
   updatePassword,
@@ -37,7 +37,7 @@ import {
   type Auth,
 } from "firebase/auth";
 import type { FStore, FStoreDoc, FStoreUser } from "./_types";
-import { cryptoTools } from "../../_crypto";
+import { cryptoTools } from "../../crypto";
 
 const _userCollectionRestriction = (collectionName: Collections) => {
   if (collectionName === "users")

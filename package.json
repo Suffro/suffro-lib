@@ -18,5 +18,27 @@
   },
   "devDependencies": {
     "tsup": "^8.5.0"
+  },
+  "exports": {
+    "./src": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./src/firebase": {
+      "types": "./dist/firebase/index.d.ts",
+      "import": "./dist/firebase/index.js"
+    },
+    "./src/idb": {
+      "types": "./dist/idb/index.d.ts",
+      "import": "./dist/idb/index.js"
+    },
+    "./src/utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.js"
+    },
+    "./src/crypto": {
+      "types": "./dist/crypto/index.d.ts",
+      "import": "./dist/crypto/index.js"
+    }
   }
 }
