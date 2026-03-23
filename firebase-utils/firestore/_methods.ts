@@ -22,7 +22,7 @@ import {
   type AppUser,
   type Collections,
   type FirebaseUserPublicData,
-} from "../";
+} from "..";
 import { logger } from "../../utils";
 import { validate } from "../../utils";
 import {

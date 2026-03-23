@@ -6,9 +6,9 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   entry: {
-    'utils/index': './src/utils/index.ts',
-    'firebase/index': './src/firebase/index.ts',
-    'idb/index': './src/idb/index.ts',
-    'crypto/index': './src/crypto/index.ts',
+    'utils/index': './utils/index.ts',
+    'firebase-utils/index': './firebase-utils/index.ts',
+    'idb/index': './idb/index.ts',
+    'crypto/index': './crypto/index.ts',
   }
 })

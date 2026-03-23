@@ -1,6 +1,6 @@
 import {
   logger
-} from "../chunk-X2EO4XOA.js";
+} from "../chunk-FJ55SK4B.js";
 
 // node_modules/idb/build/wrap-idb-value.js
 var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
@@ -209,7 +209,7 @@ replaceTraps((oldTraps) => ({
   has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
 }));
 
-// src/idb/_idb.ts
+// idb/_idb.ts
 async function idb(dbName, version, storeDefs) {
   if (typeof window === "undefined" || typeof indexedDB === "undefined") {
     console.error("[IDB] IndexedDB is not available in this context.");

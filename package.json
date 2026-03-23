@@ -20,23 +20,23 @@
     "tsup": "^8.5.0"
   },
   "exports": {
-    "./src": {
+    ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./src/firebase": {
-      "types": "./dist/firebase/index.d.ts",
-      "import": "./dist/firebase/index.js"
+    "./firebase-utils": {
+      "types": "./dist/firebase-utils/index.d.ts",
+      "import": "./dist/firebase-utils/index.js"
     },
-    "./src/idb": {
+    "./idb": {
       "types": "./dist/idb/index.d.ts",
       "import": "./dist/idb/index.js"
     },
-    "./src/utils": {
+    "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js"
     },
-    "./src/crypto": {
+    "./crypto": {
       "types": "./dist/crypto/index.d.ts",
       "import": "./dist/crypto/index.js"
     }
